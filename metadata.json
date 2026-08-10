@@ -1,0 +1,8 @@
+{
+  "name": "DAVAS Deal Matcher",
+  "description": "Hệ thống AI Phân tích & Chấm điểm Độ Phù Hợp giữa Startup và Nhà Đầu Tư (VC) tại sự kiện DAVAS",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
