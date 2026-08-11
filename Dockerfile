@@ -14,8 +14,9 @@ COPY . .
 # Build ứng dụng Vite và API Server ra thư mục dist
 RUN npm run build
 
-# Thiết lập biến môi trường PORT cho Cloud Run
+# Thiết lập biến môi trường
 ENV PORT=8080
+ENV NODE_ENV=production
 EXPOSE 8080
 
 # Chạy backend server (chứa cả web tĩnh và API)
