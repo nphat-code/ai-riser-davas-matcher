@@ -8,7 +8,8 @@ function callGeminiAPI(startupInfo, investorInfo) {
 
 Hãy phân tích dựa trên các tiêu chí: Lĩnh vực, Giai đoạn gọi vốn, Ngân sách (Ticket size) và Triết lý đầu tư.
 
-BẮT BUỘC trả về kết quả dưới định dạng JSON với 3 trường: "matching_score", "reason", "ice_breakers"`;
+BẮT BUỘC trả về kết quả dưới định dạng JSON với 3 trường: "matching_score", "reason", "ice_breakers".
+LƯU Ý QUAN TRỌNG: Bạn PHẢI viết nội dung cho phần "reason" và "ice_breakers" hoàn toàn bằng TIẾNG ANH (English), bất kể ngôn ngữ đầu vào là gì.`;
 
   const promptText = `Vui lòng đánh giá cặp đôi sau:\n- Startup: ${startupInfo}\n- Nhà đầu tư: ${investorInfo}`;
 

@@ -19,7 +19,7 @@ Tài liệu này dùng để lưu trữ tiến độ chi tiết và những gì 
 - **Quyết định (Cấu hình):** 
   - **Lịch:** Linh hoạt gán thời gian là `10:00 AM` của `7 ngày` kể từ lúc code chạy.
   - **Thời lượng Meeting:** 30 phút.
-  - **Ngôn ngữ Email:** Tiếng Anh.
+  - **Ngôn ngữ Email:** Tiếng Anh (Kể cả phần AI tự gen ra: Reason & Ice-breakers cũng bị ép 100% tiếng Anh bằng System Prompt).
 - Đã xuất file code `AppsScript_Phase3.js` cho User.
 
 **4. Cấu trúc Dữ liệu thực tế (Google Sheets Headers)**

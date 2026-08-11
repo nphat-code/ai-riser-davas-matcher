@@ -40,11 +40,29 @@ Chúng ta sẽ viết thêm 2 hàm vào cùng một file `Code.gs` trong Apps Sc
 - **Automated Tests:** Chạy mô phỏng code với email cá nhân của bạn để đảm bảo không spam nhầm người lạ.
 - **Manual Verification:** Kiểm tra Hộp thư đến (Inbox) xem thư mời có đẹp không và kiểm tra Google Calendar xem sự kiện có được tạo tự động chưa.
 
-## Giai đoạn 4: Triển khai Cloud Run (10 điểm Bonus)
-- **Bước 4.1: Làm Web Dashboard đơn giản.**
-  - Lập trình trang web (Next.js/React) hiển thị kết quả cho BTC. Kết nối trực tiếp Google Sheets API.
-- **Bước 4.2: Đóng gói và Deploy.**
-  - Viết `Dockerfile` và deploy lên Google Cloud Run (Public).
+## Giai đoạn 4: Triển khai Cloud Run (10 điểm Bonus) - ĐANG THỰC HIỆN
+Mục tiêu: Đóng gói source code React/Vite hiện tại (có sẵn trong `src/frontend/`) thành một Docker container và đẩy lên Google Cloud Run để nhận 10 điểm Bonus tuyệt đối từ BTC.
+
+### User Review Required
+> [!IMPORTANT]
+> Google Cloud Run yêu cầu Project của bạn phải được liên kết với Thẻ thanh toán (Billing Account) còn hoạt động, dù dịch vụ này có Gói miễn phí (Free Tier) rất hào phóng. Nếu bạn dùng tài khoản chưa add thẻ, quá trình deploy sẽ bị lỗi từ chối.
+
+### Open Questions
+> [!WARNING]
+> 1. Bạn đã cài đặt công cụ **Google Cloud CLI (`gcloud`)** trên máy tính của mình chưa?
+> 2. Tài khoản Google Cloud của bạn hiện tại có đang được gắn Thẻ thanh toán hợp lệ không? (Nếu không, chúng ta có thể cân nhắc deploy lên Firebase Hosting hoặc Vercel làm phương án B, dù có thể mất điểm Bonus Cloud Run).
+
+### Proposed Changes
+Chúng ta sẽ chuẩn bị các file cấu hình cần thiết để hệ thống Google Cloud có thể đọc và chạy code của bạn:
+#### [NEW] `Dockerfile`
+Tạo file Dockerfile chuẩn cho dự án Node.js/Vite (build UI tĩnh và phục vụ bằng Node/Nginx hoặc phục vụ trực tiếp bằng `server.ts` hiện tại).
+
+#### [NEW] `.dockerignore`
+Loại bỏ `node_modules` và các file tạm khỏi tiến trình build để tăng tốc độ đẩy code.
+
+### Verification Plan
+- **Automated Tests:** Chạy thử `npm run build` và `npm run start` dưới local để đảm bảo code Web không lỗi.
+- **Manual Verification:** Truy cập vào đường link Public do Cloud Run cung cấp (ví dụ: `https://davas-matcher-abc.a.run.app`) để xem Dashboard hiện lên rực rỡ!
 
 ## Giai đoạn 5: Chuẩn bị nộp bài
 - Quay Video Demo (3-5 phút).
