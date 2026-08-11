@@ -40,29 +40,34 @@ Chúng ta sẽ viết thêm 2 hàm vào cùng một file `Code.gs` trong Apps Sc
 - **Automated Tests:** Chạy mô phỏng code với email cá nhân của bạn để đảm bảo không spam nhầm người lạ.
 - **Manual Verification:** Kiểm tra Hộp thư đến (Inbox) xem thư mời có đẹp không và kiểm tra Google Calendar xem sự kiện có được tạo tự động chưa.
 
-## Giai đoạn 4: Triển khai Cloud Run (10 điểm Bonus) - ĐANG THỰC HIỆN
-Mục tiêu: Đóng gói source code React/Vite hiện tại (có sẵn trong `src/frontend/`) thành một Docker container và đẩy lên Google Cloud Run để nhận 10 điểm Bonus tuyệt đối từ BTC.
+## Giai đoạn 4: Kết nối Dữ liệu Thật & Triển khai Cloud Run (10 điểm Bonus) - ĐANG THỰC HIỆN
+Mục tiêu: Đồng bộ giao diện React (Frontend) để đọc dữ liệu thật từ Google Sheets thay vì dùng `presetData.ts`, sau đó đóng gói lên Google Cloud Run.
 
 ### User Review Required
 > [!IMPORTANT]
-> Google Cloud Run yêu cầu Project của bạn phải được liên kết với Thẻ thanh toán (Billing Account) còn hoạt động, dù dịch vụ này có Gói miễn phí (Free Tier) rất hào phóng. Nếu bạn dùng tài khoản chưa add thẻ, quá trình deploy sẽ bị lỗi từ chối.
+> - Để Web đọc được Sheets thật, chúng ta cần biến Apps Script thành một API mở (bằng hàm `doGet`). Việc này yêu cầu bạn sẽ phải Deploy Apps Script dưới dạng **Web App** (trên giao diện Google Apps Script).
+> - Google Cloud Run yêu cầu Project của bạn phải được liên kết với Thẻ thanh toán (Billing Account). Nếu bạn dùng tài khoản chưa add thẻ, quá trình deploy sẽ bị lỗi từ chối.
 
 ### Open Questions
 > [!WARNING]
-> 1. Bạn đã cài đặt công cụ **Google Cloud CLI (`gcloud`)** trên máy tính của mình chưa?
-> 2. Tài khoản Google Cloud của bạn hiện tại có đang được gắn Thẻ thanh toán hợp lệ không? (Nếu không, chúng ta có thể cân nhắc deploy lên Firebase Hosting hoặc Vercel làm phương án B, dù có thể mất điểm Bonus Cloud Run).
+> 1. Bạn đồng ý làm thêm bước xuất API từ Google Sheets để Frontend đọc dữ liệu thật chứ? (Điều này sẽ làm Frontend "xịn" đúng nghĩa).
+> 2. Bạn đã cài đặt công cụ **Google Cloud CLI (`gcloud`)** trên máy tính của mình chưa?
+> 3. Tài khoản Google Cloud của bạn hiện tại có đang được gắn Thẻ thanh toán (Billing) hợp lệ không? 
 
 ### Proposed Changes
-Chúng ta sẽ chuẩn bị các file cấu hình cần thiết để hệ thống Google Cloud có thể đọc và chạy code của bạn:
-#### [NEW] `Dockerfile`
-Tạo file Dockerfile chuẩn cho dự án Node.js/Vite (build UI tĩnh và phục vụ bằng Node/Nginx hoặc phục vụ trực tiếp bằng `server.ts` hiện tại).
+#### [MODIFY] `AppsScript_Phase3.js`
+- Bổ sung hàm `doGet(e)` để trả về dữ liệu (JSON) gồm danh sách Startup và Nhà đầu tư lấy trực tiếp từ Google Sheets.
 
-#### [NEW] `.dockerignore`
-Loại bỏ `node_modules` và các file tạm khỏi tiến trình build để tăng tốc độ đẩy code.
+#### [MODIFY] `src/App.tsx` & `src/data/...`
+- Thêm logic `useEffect` và `fetch()` để gọi API từ Apps Script khi trang Web vừa load lên.
+- Gắn dữ liệu thật vào các State (`startups`, `investors`) thay thế cho `PRESET_STARTUPS` và `PRESET_INVESTORS`.
+
+#### [NEW] `Dockerfile` & `.dockerignore`
+- Tạo file cấu hình để đóng gói nguyên bộ source React này thành Docker Image, sẵn sàng đẩy lên Google Cloud Run.
 
 ### Verification Plan
-- **Automated Tests:** Chạy thử `npm run build` và `npm run start` dưới local để đảm bảo code Web không lỗi.
-- **Manual Verification:** Truy cập vào đường link Public do Cloud Run cung cấp (ví dụ: `https://davas-matcher-abc.a.run.app`) để xem Dashboard hiện lên rực rỡ!
+- **Automated Tests:** Chạy `npm run dev` ở dưới local, kiểm tra console xem dữ liệu từ Sheets đã kéo về được chưa.
+- **Manual Verification:** Deploy lên Cloud Run và truy cập Web thực tế để đảm bảo giao diện hiển thị đúng những người đã điền Form đăng ký.
 
 ## Giai đoạn 5: Chuẩn bị nộp bài
 - Quay Video Demo (3-5 phút).

@@ -209,3 +209,53 @@ function createCalendarEvent(startupEmail, investorEmail, startupName, investorN
     Logger.log("Error creating calendar event: " + e.toString());
   }
 }
+
+// =========================================================================
+// GIAI ĐOẠN 4: TẠO API (GET) CHO REACT WEB DASHBOARD
+// =========================================================================
+
+/**
+ * Hàm doGet biến Apps Script thành Web API
+ * Trả về danh sách Startups và Investors lấy trực tiếp từ Sheets dưới dạng JSON
+ */
+function doGet(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // Đọc danh sách Startups
+  const startupSheet = ss.getSheetByName("Startups");
+  const startupData = startupSheet ? startupSheet.getDataRange().getValues() : [];
+  const startups = [];
+  if (startupData.length > 1) {
+    const headers = startupData[0];
+    for (let i = 1; i < startupData.length; i++) {
+      let obj = {};
+      for (let j = 0; j < headers.length; j++) {
+        obj[headers[j]] = startupData[i][j];
+      }
+      startups.push(obj);
+    }
+  }
+
+  // Đọc danh sách Investors
+  const investorSheet = ss.getSheetByName("Investors");
+  const investorData = investorSheet ? investorSheet.getDataRange().getValues() : [];
+  const investors = [];
+  if (investorData.length > 1) {
+    const headers = investorData[0];
+    for (let i = 1; i < investorData.length; i++) {
+      let obj = {};
+      for (let j = 0; j < headers.length; j++) {
+        obj[headers[j]] = investorData[i][j];
+      }
+      investors.push(obj);
+    }
+  }
+  
+  const result = {
+    startups: startups,
+    investors: investors
+  };
+
+  return ContentService.createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}
