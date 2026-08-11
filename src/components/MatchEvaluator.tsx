@@ -505,21 +505,6 @@ export const MatchEvaluator: React.FC<MatchEvaluatorProps> = ({ startups, invest
             </div>
           </div>
 
-          {/* Raw JSON viewer */}
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs space-y-2">
-            <span className="text-slate-400 font-mono text-[11px]">Dữ liệu định dạng JSON:</span>
-            <pre className="bg-slate-900 p-3 rounded text-emerald-300 font-mono overflow-x-auto">
-              {JSON.stringify(
-                {
-                  matching_score: result.matching_score,
-                  reason: result.reason,
-                  ice_breakers: result.ice_breakers,
-                },
-                null,
-                2
-              )}
-            </pre>
-          </div>
         </div>
       )}
     </div>
