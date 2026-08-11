@@ -2,8 +2,8 @@ import React from 'react';
 import { Sparkles, Building2, UserCheck, Grid, Code, Calendar } from 'lucide-react';
 
 interface HeaderProps {
-  activeTab: 'edubot' | 'custom' | 'matrix' | 'json';
-  setActiveTab: (tab: 'edubot' | 'custom' | 'matrix' | 'json') => void;
+  activeTab: 'edubot' | 'custom' | 'matrix';
+  setActiveTab: (tab: 'edubot' | 'custom' | 'matrix') => void;
   onOpenAddModal: (type: 'startup' | 'investor') => void;
 }
 
@@ -73,18 +73,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenA
               <span className="md:hidden">Ma trận</span>
             </button>
 
-            <button
-              onClick={() => setActiveTab('json')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                activeTab === 'json'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-1 ring-indigo-400'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
-              }`}
-            >
-              <Code className="w-4 h-4 text-emerald-400" />
-              <span className="hidden md:inline">JSON Output</span>
-              <span className="md:hidden">JSON</span>
-            </button>
+
           </nav>
 
           {/* Action buttons */}

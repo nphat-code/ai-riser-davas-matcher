@@ -20,12 +20,10 @@ import {
 
 interface EduBotEvaluationCardProps {
   onRunCustomMatch?: () => void;
-  onOpenJsonView?: () => void;
 }
 
 export const EduBotEvaluationCard: React.FC<EduBotEvaluationCardProps> = ({
   onRunCustomMatch,
-  onOpenJsonView,
 }) => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [copiedJson, setCopiedJson] = useState<boolean>(false);

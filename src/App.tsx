@@ -10,7 +10,7 @@ import { PRESET_STARTUPS, PRESET_INVESTORS } from './data/presetData';
 import { Sparkles, ArrowRight, ShieldCheck, Cpu } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'edubot' | 'custom' | 'matrix' | 'json'>('edubot');
+  const [activeTab, setActiveTab] = useState<'edubot' | 'custom' | 'matrix'>('edubot');
   const [modalType, setModalType] = useState<'startup' | 'investor' | null>(null);
 
   const [startups, setStartups] = useState<Startup[]>(PRESET_STARTUPS);
@@ -90,7 +90,6 @@ export default function App() {
         {activeTab === 'edubot' && (
           <EduBotEvaluationCard
             onRunCustomMatch={() => setActiveTab('custom')}
-            onOpenJsonView={() => setActiveTab('json')}
           />
         )}
 
@@ -118,8 +117,7 @@ export default function App() {
           )
         )}
 
-        {/* Tab 4: Raw JSON Output Inspector */}
-        {activeTab === 'json' && <JsonInspectorModal />}
+
       </main>
 
       {/* Footer */}
