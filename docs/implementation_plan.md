@@ -16,11 +16,29 @@
   - Code Apps Script nhúng vào file Google Sheets.
   - Lắng nghe Trigger -> Gọi Gemini API -> Nhận JSON -> Ghi vào Sheet.
 
-## Giai đoạn 3: Đặt lịch và Hành động (Action)
-- **Bước 3.1: Tích hợp Google Calendar API.**
-  - Nếu `Matching_Score > 80`, Apps Script tự động tạo sự kiện lịch.
-- **Bước 3.2: Tích hợp Gmail.**
-  - Gửi thư mời cho cả Startup và Nhà đầu tư đính kèm `Reason` và `Ice_breakers`.
+## Giai đoạn 3: Đặt lịch và Hành động (Action) - ĐANG THỰC HIỆN
+Mục tiêu: Khi một cặp đấu được Gemini chấm điểm > 75, hệ thống sẽ lập tức gửi Email cho cả 2 bên và tạo sẵn một khung giờ gặp mặt (Sự kiện Calendar).
+
+### User Review Required
+> [!IMPORTANT]
+> Google Apps Script có giới hạn gửi Email (thường là 100 email/ngày cho tài khoản thường). Bạn cần xác nhận xem sự kiện DAVAS của bạn dự kiến có quy mô bao nhiêu cặp đấu một ngày để tránh vượt hạn mức.
+
+### Open Questions
+> [!WARNING]
+> 1. Sự kiện DAVAS sẽ diễn ra vào ngày nào? Chúng ta cần chốt một ngày cụ thể để code tự động gán ngày đó vào Google Calendar.
+> 2. Bạn muốn khung giờ meeting mặc định kéo dài bao nhiêu phút (ví dụ: 30 phút)?
+> 3. Bạn muốn thiết lập thư mời email bằng tiếng Anh hay tiếng Việt?
+
+### Proposed Changes
+Chúng ta sẽ viết thêm 2 hàm vào cùng một file `Code.gs` trong Apps Script:
+#### [MODIFY] `Code.gs`
+1. Thêm hàm `sendMatchEmail(startupEmail, investorEmail, reason, iceBreakers)` sử dụng `MailApp.sendEmail()`.
+2. Thêm hàm `createCalendarEvent(startupEmail, investorEmail, date, time)` sử dụng `CalendarApp.createEvent()`.
+3. Bổ sung vòng lặp điều kiện `if (score >= 75)` vào hàm `runMatchmaker` hiện tại để kích hoạt 2 hàm trên.
+
+### Verification Plan
+- **Automated Tests:** Chạy mô phỏng code với email cá nhân của bạn để đảm bảo không spam nhầm người lạ.
+- **Manual Verification:** Kiểm tra Hộp thư đến (Inbox) xem thư mời có đẹp không và kiểm tra Google Calendar xem sự kiện có được tạo tự động chưa.
 
 ## Giai đoạn 4: Triển khai Cloud Run (10 điểm Bonus)
 - **Bước 4.1: Làm Web Dashboard đơn giản.**

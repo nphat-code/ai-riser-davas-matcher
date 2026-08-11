@@ -9,13 +9,20 @@ Tài liệu này dùng để lưu trữ tiến độ chi tiết và những gì 
 - **AI Studio Prompt:** Đã test thành công System Prompt trên giao diện "Code and Chat" của AI Studio. Đã cấu hình ép kiểu trả về JSON nghiêm ngặt (`matching_score`, `reason`, `ice_breakers`).
 - **Giao diện phụ:** User đã Export thành công source code React/Vite UI do AI Studio sinh ra, cất vào `src/frontend/` để dự trữ cho Giai đoạn 4.
 
-**2. Giai đoạn 2: Đang thực hiện**
+**2. Giai đoạn 2: Đã hoàn thành (100%)**
 - **API Key:** Đã lấy thành công Gemini API Key (chuẩn Free Tier).
 - **Apps Script:** Đã test thành công hàm `testGemini` (nhận JSON thành công). 
-- **Script Matching (Hiện tại):** Đã cung cấp hàm `runMatchmaker` tự động đọc Header (Câu hỏi Form) và Value (Câu trả lời) để đóng gói gửi cho Gemini. 
-- **Next step:** User đang chạy thử hàm `runMatchmaker` với dữ liệu thực tế từ Form của họ.
+- **Script Matching:** Đã chạy thành công hàm `runMatchmaker`. AI đã chấm điểm chính xác (EcoGrow = 95/100, EduBot = 20/100) và xuất dữ liệu ra Sheet "Matches".
 
-**3. Cấu trúc Dữ liệu thực tế (Google Sheets Headers)**
+**3. Giai đoạn 3: Đang thực hiện**
+- Tự động hóa gửi Email (Gmail) và tạo sự kiện Google Calendar cho các cặp đấu có điểm số > 75.
+- **Quyết định (Cấu hình):** 
+  - **Lịch:** Linh hoạt gán thời gian là `10:00 AM` của `7 ngày` kể từ lúc code chạy.
+  - **Thời lượng Meeting:** 30 phút.
+  - **Ngôn ngữ Email:** Tiếng Anh.
+- Đã xuất file code `AppsScript_Phase3.js` cho User.
+
+**4. Cấu trúc Dữ liệu thực tế (Google Sheets Headers)**
 - **Investors Sheet:** `Timestamp`, `Investor or Fund Name`, `Representative Name`, `Email Address`, `Phone Number`, `Interested Industries`, `Maximum Ticket Size (USD)`, `Investment Philosophy and matching criteria`
 - **Startups Sheet:** `Timestamp`, `Startup Name`, `Representative Name`, `Email Address`, `Phone Number`, `Primary Industry`, `Current Funding Stage`, `Target Funding Amount in USD`, `Upload Pitch Deck (PDF)`
 
