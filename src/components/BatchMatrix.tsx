@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
-import { PRESET_STARTUPS, PRESET_INVESTORS, EDUBOT_GLOBAL_VENTURES_RESULT } from '../data/presetData';
+import React, { useState, useEffect } from 'react';
+import { Startup, Investor } from '../types';
+import { EDUBOT_GLOBAL_VENTURES_RESULT } from '../data/presetData';
 import { Grid, Sparkles, Award, ArrowUpRight, CheckCircle2, Search, Filter } from 'lucide-react';
 
-export const BatchMatrix: React.FC = () => {
-  const [selectedCell, setSelectedCell] = useState<{ startupId: string; investorId: string } | null>({
-    startupId: PRESET_STARTUPS[0].id,
-    investorId: PRESET_INVESTORS[0].id,
-  });
+interface BatchMatrixProps {
+  startups: Startup[];
+  investors: Investor[];
+}
+
+export const BatchMatrix: React.FC<BatchMatrixProps> = ({ startups, investors }) => {
+  const [selectedCell, setSelectedCell] = useState<{ startupId: string; investorId: string } | null>(null);
+
+  useEffect(() => {
+    if (startups.length > 0 && investors.length > 0 && !selectedCell) {
+      setSelectedCell({
+        startupId: startups[0].id,
+        investorId: investors[0].id,
+      });
+    }
+  }, [startups, investors]);
 
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -15,8 +27,8 @@ export const BatchMatrix: React.FC = () => {
     if (startupId === 'startup-edubot' && investorId === 'investor-global-ventures') {
       return 95;
     }
-    const s = PRESET_STARTUPS.find((p) => p.id === startupId);
-    const i = PRESET_INVESTORS.find((p) => p.id === investorId);
+    const s = startups.find((p) => p.id === startupId);
+    const i = investors.find((p) => p.id === investorId);
     if (!s || !i) return 50;
 
     let score = 60;
@@ -26,7 +38,7 @@ export const BatchMatrix: React.FC = () => {
     return score;
   };
 
-  const filteredStartups = PRESET_STARTUPS.filter(
+  const filteredStartups = startups.filter(
     (s) =>
       s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       s.sector.toLowerCase().includes(searchTerm.toLowerCase())
@@ -64,7 +76,7 @@ export const BatchMatrix: React.FC = () => {
           <thead>
             <tr className="border-b border-slate-800">
               <th className="p-3 text-xs font-semibold text-slate-400">Startup \ Quỹ VC</th>
-              {PRESET_INVESTORS.map((inv) => (
+              {investors.map((inv) => (
                 <th key={inv.id} className="p-3 text-xs font-bold text-white text-center">
                   <div className="flex flex-col items-center">
                     <span>{inv.name}</span>
@@ -88,7 +100,7 @@ export const BatchMatrix: React.FC = () => {
                   </div>
                 </td>
 
-                {PRESET_INVESTORS.map((inv) => {
+                {investors.map((inv) => {
                   const score = getMatrixScore(st.id, inv.id);
                   const isSelected =
                     selectedCell?.startupId === st.id && selectedCell?.investorId === inv.id;
@@ -122,8 +134,8 @@ export const BatchMatrix: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="text-base font-bold text-white flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-400" />
-              Chi Tiết Tương Thích: {PRESET_STARTUPS.find((s) => s.id === selectedCell.startupId)?.name} x{' '}
-              {PRESET_INVESTORS.find((i) => i.id === selectedCell.investorId)?.name}
+              Chi Tiết Tương Thích: {startups.find((s) => s.id === selectedCell.startupId)?.name} x{' '}
+              {investors.find((i) => i.id === selectedCell.investorId)?.name}
             </h3>
 
             <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30">

@@ -1,19 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Startup, Investor, MatchEvaluationResult } from '../types';
-import { PRESET_STARTUPS, PRESET_INVESTORS } from '../data/presetData';
 import { Sparkles, Building2, UserCheck, ArrowRightLeft, RefreshCw, AlertCircle, CheckCircle2, Copy, Check, Volume2, Code } from 'lucide-react';
 
 interface MatchEvaluatorProps {
+  startups: Startup[];
+  investors: Investor[];
   onEvaluationComplete?: (result: MatchEvaluationResult) => void;
 }
 
-export const MatchEvaluator: React.FC<MatchEvaluatorProps> = ({ onEvaluationComplete }) => {
+export const MatchEvaluator: React.FC<MatchEvaluatorProps> = ({ startups, investors, onEvaluationComplete }) => {
   // Selection mode: 'preset' or 'custom'
   const [mode, setMode] = useState<'preset' | 'custom'>('preset');
 
   // Preset selections
-  const [selectedStartupId, setSelectedStartupId] = useState<string>(PRESET_STARTUPS[0].id);
-  const [selectedInvestorId, setSelectedInvestorId] = useState<string>(PRESET_INVESTORS[0].id);
+  const [selectedStartupId, setSelectedStartupId] = useState<string>(startups.length > 0 ? startups[0].id : '');
+  const [selectedInvestorId, setSelectedInvestorId] = useState<string>(investors.length > 0 ? investors[0].id : '');
+
+  // Update selected if props change
+  useEffect(() => {
+    if (startups.length > 0 && !startups.find(s => s.id === selectedStartupId)) {
+      setSelectedStartupId(startups[0].id);
+    }
+    if (investors.length > 0 && !investors.find(i => i.id === selectedInvestorId)) {
+      setSelectedInvestorId(investors[0].id);
+    }
+  }, [startups, investors]);
 
   // Custom startup inputs
   const [customStartup, setCustomStartup] = useState<Startup>({
@@ -46,12 +57,12 @@ export const MatchEvaluator: React.FC<MatchEvaluatorProps> = ({ onEvaluationComp
 
   const activeStartup =
     mode === 'preset'
-      ? PRESET_STARTUPS.find((s) => s.id === selectedStartupId) || PRESET_STARTUPS[0]
+      ? startups.find((s) => s.id === selectedStartupId) || startups[0] || customStartup
       : customStartup;
 
   const activeInvestor =
     mode === 'preset'
-      ? PRESET_INVESTORS.find((i) => i.id === selectedInvestorId) || PRESET_INVESTORS[0]
+      ? investors.find((i) => i.id === selectedInvestorId) || investors[0] || customInvestor
       : customInvestor;
 
   const handleRunEvaluation = async () => {
@@ -169,9 +180,9 @@ export const MatchEvaluator: React.FC<MatchEvaluatorProps> = ({ onEvaluationComp
                 onChange={(e) => setSelectedStartupId(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                {PRESET_STARTUPS.map((s) => (
+                {startups.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.name} ({s.sector} - {s.stage} - {s.fundingNeeded})
+                    {s.name} ({s.sector} - {s.stage})
                   </option>
                 ))}
               </select>
@@ -278,9 +289,9 @@ export const MatchEvaluator: React.FC<MatchEvaluatorProps> = ({ onEvaluationComp
                 onChange={(e) => setSelectedInvestorId(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
               >
-                {PRESET_INVESTORS.map((i) => (
+                {investors.map((i) => (
                   <option key={i.id} value={i.id}>
-                    {i.name} ({i.targetSectors.join(', ')} - {i.ticketSize})
+                    {i.name} ({i.ticketSize})
                   </option>
                 ))}
               </select>

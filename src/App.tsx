@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { EduBotEvaluationCard } from './components/EduBotEvaluationCard';
 import { MatchEvaluator } from './components/MatchEvaluator';
@@ -15,6 +15,57 @@ export default function App() {
 
   const [startups, setStartups] = useState<Startup[]>(PRESET_STARTUPS);
   const [investors, setInvestors] = useState<Investor[]>(PRESET_INVESTORS);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRealData = async () => {
+      try {
+        const url = "https://script.google.com/macros/s/AKfycbxwY6c_N-fPpv54FCKYCqeULzUEbaSMKWgDNtr3gTkqE5S8m_EWK7q1-9_6ePmdaktf/exec";
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.startups && data.startups.length > 0) {
+          const mappedStartups: Startup[] = data.startups.map((s: any, index: number) => ({
+            id: `api-startup-${index}`,
+            name: s["Startup Name"] || `Startup ${index + 1}`,
+            sector: s["Primary Industry"] || "Tech",
+            stage: s["Current Funding Stage"] || "Seed",
+            fundingNeeded: `$${(Number(s["Target Funding Amount in USD"])||0).toLocaleString()}`,
+            fundingNeededVal: Number(s["Target Funding Amount in USD"]) || 0,
+            description: "Dữ liệu được lấy tự động từ Google Sheets (Form Đăng Ký).",
+            logoUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=150&auto=format&fit=crop&q=80',
+            location: 'Việt Nam',
+            founder: s["Email Address"] || 'Founder',
+            traction: 'Đang cập nhật'
+          }));
+          setStartups(mappedStartups);
+        }
+
+        if (data.investors && data.investors.length > 0) {
+          const mappedInvestors: Investor[] = data.investors.map((i: any, index: number) => ({
+            id: `api-investor-${index}`,
+            name: i["Investor or Fund Name"] || `Investor ${index + 1}`,
+            targetSectors: (i["Interested Industries"] || "Tech").split(",").map((s: string) => s.trim()),
+            investmentStages: ["Seed", "Pre-Seed", "Series A"],
+            ticketSize: `Up to $${(Number(i["Maximum Ticket Size (USD)"])||0).toLocaleString()}`,
+            ticketMin: 0,
+            ticketMax: Number(i["Maximum Ticket Size (USD)"]) || 0,
+            thesis: i["Investment Philosophy and matching criteria"] || "N/A",
+            logoUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=150&auto=format&fit=crop&q=80',
+            firmType: 'Quỹ VC / Angel',
+            representative: i["Representative Name"] || 'N/A',
+          }));
+          setInvestors(mappedInvestors);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu thật:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRealData();
+  }, []);
 
   const handleAddStartup = (s: Startup) => {
     setStartups((prev) => [s, ...prev]);
@@ -44,10 +95,28 @@ export default function App() {
         )}
 
         {/* Tab 2: Custom 1:1 Match Evaluator Tool */}
-        {activeTab === 'custom' && <MatchEvaluator />}
+        {activeTab === 'custom' && (
+          isLoading ? (
+            <div className="flex justify-center items-center h-64 text-slate-400">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mr-3"></div>
+              Đang đồng bộ dữ liệu thật từ Google Sheets...
+            </div>
+          ) : (
+            <MatchEvaluator startups={startups} investors={investors} />
+          )
+        )}
 
         {/* Tab 3: DAVAS Batch Matrix */}
-        {activeTab === 'matrix' && <BatchMatrix />}
+        {activeTab === 'matrix' && (
+          isLoading ? (
+            <div className="flex justify-center items-center h-64 text-slate-400">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mr-3"></div>
+              Đang đồng bộ dữ liệu thật từ Google Sheets...
+            </div>
+          ) : (
+            <BatchMatrix startups={startups} investors={investors} />
+          )
+        )}
 
         {/* Tab 4: Raw JSON Output Inspector */}
         {activeTab === 'json' && <JsonInspectorModal />}
