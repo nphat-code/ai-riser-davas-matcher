@@ -6,7 +6,8 @@ Khi làm việc với dự án này, AI bắt buộc phải tuân thủ nghiêm 
    - Đề tài #10 (Tối ưu lịch kết nối Business Matching, DAVAS Event).
 
 2. **Quy tắc làm việc cốt lõi (Ghi nhớ vĩnh viễn):**
-   - **BẮT BUỘC** phải luôn luôn "note lại những phần quan trọng" (các thay đổi lớn, tiến độ, cấu trúc dữ liệu mới) vào file `project_state.md` hoặc các file tài liệu tương ứng. KHÔNG ĐƯỢC làm xong rồi bỏ quên bối cảnh.
+   - **BẮT BUỘC** phải luôn luôn "note lại những phần quan trọng" (các thay đổi lớn, tiến độ, cấu trúc dữ liệu mới) vào file `docs/project_state.md` hoặc các file tài liệu tương ứng. KHÔNG ĐƯỢC làm xong rồi bỏ quên bối cảnh.
+   - **BẮT BUỘC:** Với dự án này, mọi kế hoạch (Plan/Architecture/Roadmap) phải được ghi/cập nhật trực tiếp vào file trong Source code (như `docs/plan.md` hoặc thư mục `docs/`). Memory ngắn hạn (não ẩn của AI) chỉ dùng để xử lý task hiện tại. Khi hoàn thành task, hãy tự động cập nhật trạng thái vào file plan trong source code.
 
 3. **Công nghệ cốt lõi:** 
    - Bắt buộc lấy **Google AI Studio (Gemini)** làm bộ não xử lý (Sử dụng System Instructions, Multimodal, và Structured Outputs JSON schema).
