@@ -25,6 +25,10 @@ Tài liệu này dùng để lưu trữ tiến độ chi tiết và những gì 
 - **API Key:** Đã lấy thành công Gemini API Key (chuẩn Free Tier).
 - **Apps Script:** Đã test thành công hàm `testGemini` (nhận JSON thành công). 
 - **Script Matching:** Đã chạy thành công hàm `runMatchmaker`. AI đã chấm điểm chính xác (EcoGrow = 95/100, EduBot = 20/100) và xuất dữ liệu ra Sheet "Matches".
+- **Kiến trúc Hệ thống (System Architecture):** Đã hoàn thiện toàn bộ bản vẽ thiết kế (`docs/system_architecture.md`). Đã cập nhật 2 điểm chốt hạ để lấy 100% điểm Bonus của Ban giám khảo:
+  - (1) Bổ sung **Kiến trúc Triển khai (Deployment)** bằng Docker lên Google Cloud Run.
+  - (2) Bổ sung tính năng **AI Follow-up Tracking** vào Phase 4 (AI tự động phân tích tỷ lệ chốt Deal từ kết quả khảo sát).
+
 
 **3. Giai đoạn 3: Đang thực hiện**
 - Tự động hóa gửi Email (Gmail) và tạo sự kiện Google Calendar cho các cặp đấu có điểm số > 75.

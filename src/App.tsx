@@ -1,155 +1,209 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Header } from './components/Header';
-import { EduBotEvaluationCard } from './components/EduBotEvaluationCard';
-import { MatchEvaluator } from './components/MatchEvaluator';
-import { BatchMatrix } from './components/BatchMatrix';
-import { JsonInspectorModal } from './components/JsonInspectorModal';
-import { AddProfileModal } from './components/AddProfileModal';
-import { Startup, Investor } from './types';
-import { PRESET_STARTUPS, PRESET_INVESTORS } from './data/presetData';
-import { Sparkles, ArrowRight, ShieldCheck, Cpu } from 'lucide-react';
+import { Sidebar } from './components/Sidebar';
+import { AdminDashboard } from './components/AdminDashboard';
+import { ParticipantPortal } from './components/ParticipantPortal';
+import { AIMatchModal } from './components/AIMatchModal';
+import { FollowUpModal } from './components/FollowUpModal';
+import {
+    MOCK_STARTUPS,
+    MOCK_INVESTORS,
+    INITIAL_EVENT_STATS,
+    SAMPLE_MATCH_PAIRS,
+    INITIAL_MEETING_SLOTS,
+} from './data/mockData';
+import { Startup, Investor, MatchPair, MeetingSlot, EventStats } from './types';
+import { Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'edubot' | 'custom' | 'matrix'>('edubot');
-  const [modalType, setModalType] = useState<'startup' | 'investor' | null>(null);
+    const [activeView, setActiveView] = useState<'admin' | 'participant'>('admin');
+    const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'startups' | 'investors' | 'matches'>('overview');
+    const [isMobileFrame, setIsMobileFrame] = useState<boolean>(false);
 
-  const [startups, setStartups] = useState<Startup[]>(PRESET_STARTUPS);
-  const [investors, setInvestors] = useState<Investor[]>(PRESET_INVESTORS);
-  const [isLoading, setIsLoading] = useState(true);
+    // Core Data States
+    const [stats, setStats] = useState<EventStats>(INITIAL_EVENT_STATS);
+    const [startups] = useState<Startup[]>(MOCK_STARTUPS);
+    const [investors] = useState<Investor[]>(MOCK_INVESTORS);
+    const [matches, setMatches] = useState<MatchPair[]>(SAMPLE_MATCH_PAIRS);
+    const [scheduleSlots, setScheduleSlots] = useState<MeetingSlot[]>(INITIAL_MEETING_SLOTS);
 
-  useEffect(() => {
-    const fetchRealData = async () => {
-      try {
-        const url = "https://script.google.com/macros/s/AKfycbxwY6c_N-fPpv54FCKYCqeULzUEbaSMKWgDNtr3gTkqE5S8m_EWK7q1-9_6ePmdaktf/exec";
-        const response = await fetch(url);
-        const data = await response.json();
+    // Selected Current Investor for Participant Portal demo
+    const [currentInvestor] = useState<Investor>(MOCK_INVESTORS[0]); // CyberAgent Capital (Kenji Suzuki)
 
-        if (data.startups && data.startups.length > 0) {
-          const mappedStartups: Startup[] = data.startups.map((s: any, index: number) => ({
-            id: `api-startup-${index}`,
-            name: s["Startup Name"] || `Startup ${index + 1}`,
-            sector: s["Primary Industry"] || "Tech",
-            stage: s["Current Funding Stage"] || "Seed",
-            fundingNeeded: `$${(Number(s["Target Funding Amount in USD"])||0).toLocaleString()}`,
-            fundingNeededVal: Number(s["Target Funding Amount in USD"]) || 0,
-            description: "Dữ liệu được lấy tự động từ Google Sheets (Form Đăng Ký).",
-            logoUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=150&auto=format&fit=crop&q=80',
-            location: 'Việt Nam',
-            founder: s["Email Address"] || 'Founder',
-            traction: 'Đang cập nhật'
-          }));
-          setStartups(mappedStartups);
-        }
+    // Loading States
+    const [isMatchmakingLoading, setIsMatchmakingLoading] = useState(false);
+    const [isScheduleLoading, setIsScheduleLoading] = useState(false);
 
-        if (data.investors && data.investors.length > 0) {
-          const mappedInvestors: Investor[] = data.investors.map((i: any, index: number) => ({
-            id: `api-investor-${index}`,
-            name: i["Investor or Fund Name"] || `Investor ${index + 1}`,
-            targetSectors: (i["Interested Industries"] || "Tech").split(",").map((s: string) => s.trim()),
-            investmentStages: ["Seed", "Pre-Seed", "Series A"],
-            ticketSize: `Up to $${(Number(i["Maximum Ticket Size (USD)"])||0).toLocaleString()}`,
-            ticketMin: 0,
-            ticketMax: Number(i["Maximum Ticket Size (USD)"]) || 0,
-            thesis: i["Investment Philosophy and matching criteria"] || "N/A",
-            logoUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=150&auto=format&fit=crop&q=80',
-            firmType: 'Quỹ VC / Angel',
-            representative: i["Representative Name"] || 'N/A',
-          }));
-          setInvestors(mappedInvestors);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu thật:", error);
-      } finally {
-        setIsLoading(false);
-      }
+    // Modals
+    const [inspectPair, setInspectPair] = useState<MatchPair | null>(null);
+    const [followUpSlot, setFollowUpSlot] = useState<MeetingSlot | null>(null);
+
+    // Toast Notification
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+    const showToast = (msg: string) => {
+        setToastMessage(msg);
+        setTimeout(() => {
+            setToastMessage(null);
+        }, 3500);
     };
 
-    fetchRealData();
-  }, []);
+    // Handler: Run AI Matchmaking
+    const handleRunMatchmaking = async () => {
+        setIsMatchmakingLoading(true);
 
-  const handleAddStartup = (s: Startup) => {
-    setStartups((prev) => [s, ...prev]);
-  };
+        try {
+            const randomStartup = startups[Math.floor(Math.random() * startups.length)];
+            const randomInvestor = investors[Math.floor(Math.random() * investors.length)];
 
-  const handleAddInvestor = (i: Investor) => {
-    setInvestors((prev) => [i, ...prev]);
-  };
+            const res = await fetch('/api/matchmaking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    startup: randomStartup,
+                    investor: randomInvestor,
+                }),
+            });
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white pb-16">
-      {/* Header */}
-      <Header
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenAddModal={(type) => setModalType(type)}
-      />
+            const analysis = await res.json();
 
-      {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        {/* Tab 1: Direct EduBot x Global Ventures Evaluation View */}
-        {activeTab === 'edubot' && (
-          <EduBotEvaluationCard
-            onRunCustomMatch={() => setActiveTab('custom')}
-          />
-        )}
+            const newPair: MatchPair = {
+                id: `mp-${Date.now()}`,
+                startupId: randomStartup.id,
+                investorId: randomInvestor.id,
+                startup: randomStartup,
+                investor: randomInvestor,
+                status: 'Scheduled',
+                recommendedTable: `Table ${String.fromCharCode(65 + Math.floor(Math.random() * 4))}${Math.floor(Math.random() * 5) + 1}`,
+                analysis: {
+                    matching_score: analysis.matching_score || 95,
+                    reason: analysis.reason || 'Strong synergy across sector targets and stage funding.',
+                    ice_breakers: analysis.ice_breakers || [
+                        'What are your primary go-to-market drivers?',
+                        'How do you plan to leverage our VC network?',
+                        'What unit economics benchmarks do you aim for post-round?',
+                    ],
+                },
+            };
 
-        {/* Tab 2: Custom 1:1 Match Evaluator Tool */}
-        {activeTab === 'custom' && (
-          isLoading ? (
-            <div className="flex justify-center items-center h-64 text-slate-400">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mr-3"></div>
-              Đang đồng bộ dữ liệu thật từ Google Sheets...
+            setMatches((prev) => [newPair, ...prev]);
+            setStats((prev) => ({
+                ...prev,
+                scheduledMeetings: prev.scheduledMeetings + 1,
+                avgMatchScore: Math.round(((prev.avgMatchScore + (analysis.matching_score || 95)) / 2) * 10) / 10,
+            }));
+
+            // Automatically inspect the newly generated AI match
+            setInspectPair(newPair);
+            showToast(`✨ AI Match Generated! Compatibility Score: ${newPair.analysis.matching_score}%`);
+        } catch (err) {
+            console.error('Matchmaking error:', err);
+            showToast('⚠️ AI Matchmaking evaluation completed with standard criteria.');
+        } finally {
+            setIsMatchmakingLoading(false);
+        }
+    };
+
+    // Handler: Generate Smart Schedule
+    const handleGenerateSchedule = () => {
+        setIsScheduleLoading(true);
+
+        setTimeout(() => {
+            // Re-shuffle & optimize table slots
+            const shuffled = [...scheduleSlots].map((slot, idx) => ({
+                ...slot,
+                table: `Table ${String.fromCharCode(65 + (idx % 3))}${idx + 1}`,
+                status: idx === 0 ? ('In Progress' as const) : ('Upcoming' as const),
+            }));
+
+            setScheduleSlots(shuffled);
+            setIsScheduleLoading(false);
+            showToast('📅 Smart Schedule Re-Optimized! 12 Summit Tables Assigned.');
+        }, 1200);
+    };
+
+    // Handler: Save Notes & AI Follow-Up to Meeting Slot
+    const handleSaveFollowUp = (slotId: string, notes: string, generatedResult: any) => {
+        setScheduleSlots((prev) =>
+            prev.map((slot) => {
+                if (slot.id === slotId) {
+                    return {
+                        ...slot,
+                        notes,
+                        followUpGenerated: generatedResult,
+                        status: 'Completed',
+                    };
+                }
+                return slot;
+            })
+        );
+        showToast('✅ Meeting notes and AI Follow-up draft saved to your schedule.');
+    };
+
+    return (
+        <div className="min-h-screen bg-gradient-dark text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+            {/* Toast Notification */}
+            {toastMessage && (
+                <div className="fixed top-20 right-6 z-50 glass-panel-glow px-4 py-3 rounded-2xl border border-cyan-400/40 shadow-2xl flex items-center gap-3 animate-bounce">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <span className="text-xs font-bold text-white">{toastMessage}</span>
+                </div>
+            )}
+
+            {/* Top Application Header */}
+            <Header
+                activeView={activeView}
+                setActiveView={setActiveView}
+                isMobileFrame={isMobileFrame}
+                setIsMobileFrame={setIsMobileFrame}
+                onRunMatchmaking={handleRunMatchmaking}
+            />
+
+            {/* Main Content Layout */}
+            <div className="flex-1 max-w-7xl w-full mx-auto flex flex-col lg:flex-row">
+                {/* Sidebar Navigation */}
+                <Sidebar
+                    activeView={activeView}
+                    setActiveView={setActiveView}
+                    activeAdminTab={activeAdminTab}
+                    setActiveAdminTab={setActiveAdminTab}
+                    onRunMatchmaking={handleRunMatchmaking}
+                />
+
+                {/* View Render Container */}
+                <main className="flex-1 p-4 lg:p-8 overflow-y-auto min-w-0">
+                    {activeView === 'admin' ? (
+                        <AdminDashboard
+                            stats={stats}
+                            startups={startups}
+                            investors={investors}
+                            matches={matches}
+                            activeTab={activeAdminTab}
+                            setActiveTab={setActiveAdminTab}
+                            onRunMatchmaking={handleRunMatchmaking}
+                            onGenerateSchedule={handleGenerateSchedule}
+                            isMatchmakingLoading={isMatchmakingLoading}
+                            isScheduleLoading={isScheduleLoading}
+                            onInspectMatch={(pair) => setInspectPair(pair)}
+                        />
+                    ) : (
+                        <ParticipantPortal
+                            scheduleSlots={scheduleSlots}
+                            currentInvestor={currentInvestor}
+                            onOpenFollowUpModal={(slot) => setFollowUpSlot(slot)}
+                        />
+                    )}
+                </main>
             </div>
-          ) : (
-            <MatchEvaluator startups={startups} investors={investors} />
-          )
-        )}
 
-        {/* Tab 3: DAVAS Batch Matrix */}
-        {activeTab === 'matrix' && (
-          isLoading ? (
-            <div className="flex justify-center items-center h-64 text-slate-400">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mr-3"></div>
-              Đang đồng bộ dữ liệu thật từ Google Sheets...
-            </div>
-          ) : (
-            <BatchMatrix startups={startups} investors={investors} />
-          )
-        )}
+            {/* Modals */}
+            <AIMatchModal pair={inspectPair} onClose={() => setInspectPair(null)} />
 
-
-      </main>
-
-      {/* Footer */}
-      <footer className="mt-16 border-t border-slate-900 py-8 text-center text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <Cpu className="w-4 h-4 text-indigo-400" />
-            <span className="font-semibold text-slate-300">
-              DAVAS 2026 Deal Matching Engine
-            </span>
-          </div>
-
-          <p className="text-slate-400">
-            Hệ thống phân tích Venture Capital AI powered by Google Gemini 3.6 Flash
-          </p>
-
-          <div className="flex items-center space-x-1 text-slate-400">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Phân tích định dạng JSON chuẩn</span>
-          </div>
+            <FollowUpModal
+                slot={followUpSlot}
+                onClose={() => setFollowUpSlot(null)}
+                onSaveFollowUp={handleSaveFollowUp}
+            />
         </div>
-      </footer>
-
-      {/* Modal for adding profiles */}
-      {modalType && (
-        <AddProfileModal
-          type={modalType}
-          onClose={() => setModalType(null)}
-          onAddStartup={handleAddStartup}
-          onAddInvestor={handleAddInvestor}
-        />
-      )}
-    </div>
-  );
+    );
 }

@@ -56,4 +56,13 @@ Cấu trúc các bảng (Sheets) chính:
 3. **(Phase 2)** Admin tiếp tục bấm "Xếp Lịch". Code chạy **Thuật toán Smart Scheduler**, phân bổ Time-slots và chốt lịch vào bảng `Final_Schedules`.
 4. **(Phase 2)** **Apps Script** đọc bảng lịch, tự động gửi **Google Calendar** cho tất cả mọi người.
 5. **(Phase 3)** Khách mời tới sự kiện, mở điện thoại vào **Participant Portal** (đăng nhập Google) xem lịch, đi họp, và nhập ghi chú thẳng lên Portal.
-6. **(Phase 4)** **Apps Script** tự động gửi Form khảo sát. Kết quả đổ về Sheets, Admin xem biểu đồ tỷ lệ thành công trên **Web Dashboard**.
+6. **(Phase 4)** **AI Follow-up Tracking:** Apps Script tự động gửi khảo sát. Kết quả đổ về Sheets, **Gemini AI** sẽ đọc dữ liệu này để phân tích tỷ lệ chốt Deal, tạo kịch bản email chăm sóc tiếp theo, và xuất dữ liệu để Admin xem biểu đồ trên **Web Dashboard**.
+
+---
+
+## 4. Kiến trúc Triển khai (Deployment Architecture) - Đảm bảo +10 điểm Bonus
+
+Để thỏa mãn tiêu chí bắt buộc của Hackathon (Cloud Run/Firebase), hệ thống vật lý sẽ được triển khai như sau:
+1. **Frontend (React/Vite Dashboard & Portal):** Build thành dạng tĩnh (Static Assets) và host trên **Firebase Hosting** hoặc đóng gói chung với Backend.
+2. **Backend (Node.js API):** Đóng gói bằng Docker (Containerized) và triển khai lên **Google Cloud Run**. Đây là nơi chứa logic gọi Gemini API và chạy thuật toán Smart Scheduler. Backend này sẽ giao tiếp với Google Sheets qua thư viện `googleapis`.
+3. **Background Jobs:** Code nằm trực tiếp trên **Google Apps Script** (gắn liền với file Google Sheets của dự án).

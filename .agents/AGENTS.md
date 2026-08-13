@@ -33,3 +33,11 @@ Khi làm việc với dự án này, AI bắt buộc phải tuân thủ nghiêm 
      - [ ] Link ứng dụng chạy thực tế trên Google Cloud Run.
      - [ ] Video Demo trên YouTube (Công khai).
      - [ ] Bài đăng mạng xã hội chia sẻ hành trình tham gia.
+
+7. **Phân công nhiệm vụ (Code Generation & AI Studio):**
+   - **Tuyệt đối tuân thủ:** Tất cả các phần code chính (Core Logic, Backend, Frontend Component) của dự án sẽ do User chủ động prompt trên **Google AI Studio** để sinh ra mã nguồn.
+   - **Vai trò của AI trong IDE (Tôi):** Chức năng chính chỉ là Thiết kế hệ thống (Architecture/Planning), Review Code, Debug lỗi khi cần thiết, Quản lý tài liệu (Docs), và đóng vai trò như một "Kiến trúc sư/Cố vấn kỹ thuật". KHÔNG tự ý viết mới các file tính năng lớn nếu User không yêu cầu cụ thể.
+
+8. **Ngôn ngữ giao diện (Language):**
+   - Mặc định toàn bộ ứng dụng Web (UI/UX), thông báo lỗi, nội dung text hiển thị, tên biến và tên hàm đều phải sử dụng **Tiếng Anh (English)** để đảm bảo tính chuyên nghiệp cho một sự kiện quốc tế.
+
