@@ -13,6 +13,7 @@ import {
     INITIAL_MEETING_SLOTS,
 } from './data/mockData';
 import { Startup, Investor, MatchPair, MeetingSlot, EventStats } from './types';
+import { generateSmartSchedule } from './utils/scheduler';
 import { Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function App() {
@@ -104,22 +105,27 @@ export default function App() {
         }
     };
 
-    // Handler: Generate Smart Schedule
+    // Handler: Generate Smart Schedule using Greedy + Priority Algorithm
     const handleGenerateSchedule = () => {
         setIsScheduleLoading(true);
 
-        setTimeout(() => {
-            // Re-shuffle & optimize table slots
-            const shuffled = [...scheduleSlots].map((slot, idx) => ({
-                ...slot,
-                table: `Table ${String.fromCharCode(65 + (idx % 3))}${idx + 1}`,
-                status: idx === 0 ? ('In Progress' as const) : ('Upcoming' as const),
+        try {
+            // Execute smart scheduling algorithm
+            const optimizedSlots = generateSmartSchedule(matches);
+
+            setScheduleSlots(optimizedSlots);
+            setStats((prev) => ({
+                ...prev,
+                scheduledMeetings: optimizedSlots.length,
             }));
 
-            setScheduleSlots(shuffled);
+            showToast(`📅 Smart Schedule Generated! ${optimizedSlots.length} 1:1 meetings assigned with zero collisions.`);
+        } catch (err) {
+            console.error('Smart scheduling failed:', err);
+            showToast('⚠️ Failed to generate schedule.');
+        } finally {
             setIsScheduleLoading(false);
-            showToast('📅 Smart Schedule Re-Optimized! 12 Summit Tables Assigned.');
-        }, 1200);
+        }
     };
 
     // Handler: Save Notes & AI Follow-Up to Meeting Slot
