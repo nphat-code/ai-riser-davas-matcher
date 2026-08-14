@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
     Sparkles,
     Calendar,
@@ -7,18 +8,12 @@ import {
     CheckCircle2,
     TrendingUp,
     ArrowUpRight,
-    ExternalLink,
     ChevronRight,
     Search,
-    Filter,
     RefreshCw,
     Zap,
-    Clock,
-    Layers,
-    MapPin,
     HelpCircle,
-    FileText,
-    DollarSign
+    FileText
 } from 'lucide-react';
 import { Startup, Investor, MatchPair, EventStats } from '../types';
 
@@ -35,6 +30,40 @@ interface AdminDashboardProps {
     isScheduleLoading: boolean;
     onInspectMatch: (pair: MatchPair) => void;
 }
+
+// Stagger container and item variants for list items
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.08,
+            delayChildren: 0.05,
+        },
+    },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            type: 'spring',
+            stiffness: 300,
+            damping: 24,
+        },
+    },
+};
+
+const statCardVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.35, ease: 'easeOut' },
+    },
+};
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     stats,
@@ -70,9 +99,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     });
 
     return (
-        <div className="space-y-6 animate-fadeIn pb-12">
+        <div className="space-y-6 pb-12">
             {/* Dashboard Top Banner */}
-            <div className="glass-panel p-6 rounded-3xl relative overflow-hidden border border-indigo-500/20">
+            <motion.div
+                initial={{ opacity: 0, y: -15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="glass-panel p-6 rounded-3xl relative overflow-hidden border border-indigo-500/20"
+            >
                 <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
                 <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-cyan-600/10 rounded-full blur-2xl pointer-events-none" />
 
@@ -82,7 +116,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <span className="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                                 DAVAS 2026 Summit Operating System
                             </span>
-                            <span className="text-xs text-slate-400 font-mono">v3.2 AI-Powered</span>
                         </div>
                         <h2 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
                             DavaSync Command Center
@@ -92,15 +125,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </p>
                     </div>
 
-                    {/* Action Panel Buttons (Prominent Gradient Buttons) */}
+                    {/* Action Panel Buttons (Prominent Gradient Buttons with Hover & Tap Interactions) */}
                     <div className="flex flex-wrap items-center gap-3 shrink-0">
                         {/* Button 1: Run AI Matchmaking */}
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={onRunMatchmaking}
                             disabled={isMatchmakingLoading}
                             className={`relative group overflow-hidden px-5 py-3 rounded-2xl text-xs font-bold text-white transition-all duration-300 shadow-xl border cursor-pointer ${isMatchmakingLoading
                                     ? 'bg-slate-800 border-slate-700 opacity-80 cursor-wait'
-                                    : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 border-cyan-400/30 shadow-purple-600/30 active:scale-95'
+                                    : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 border-cyan-400/30 shadow-purple-600/30'
                                 }`}
                         >
                             <div className="flex items-center gap-2.5">
@@ -116,15 +151,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     </>
                                 )}
                             </div>
-                        </button>
+                        </motion.button>
 
                         {/* Button 2: Generate Smart Schedule */}
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={onGenerateSchedule}
                             disabled={isScheduleLoading}
                             className={`relative px-5 py-3 rounded-2xl text-xs font-bold text-white transition-all duration-300 shadow-xl border cursor-pointer ${isScheduleLoading
                                     ? 'bg-slate-800 border-slate-700 opacity-80 cursor-wait'
-                                    : 'bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-white border-cyan-500/30 shadow-cyan-500/10 active:scale-95'
+                                    : 'bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-white border-cyan-500/30 shadow-cyan-500/10'
                                 }`}
                         >
                             <div className="flex items-center gap-2.5">
@@ -140,15 +177,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     </>
                                 )}
                             </div>
-                        </button>
+                        </motion.button>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
-            {/* Quick Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {/* Quick Stats Grid with Staggered Fade-in */}
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"
+            >
                 {/* Total Startups */}
-                <div className="glass-panel p-5 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition-all">
+                <motion.div
+                    variants={statCardVariants}
+                    whileHover={{ y: -3 }}
+                    className="glass-panel p-5 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition-all"
+                >
                     <div className="flex items-center justify-between text-slate-400 mb-3">
                         <span className="text-xs font-semibold uppercase tracking-wider">Total Startups</span>
                         <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
@@ -159,10 +205,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <p className="text-[11px] text-emerald-400 font-medium mt-1.5 flex items-center gap-1">
                         <ArrowUpRight className="w-3 h-3" /> 100% Vetted for DAVAS
                     </p>
-                </div>
+                </motion.div>
 
                 {/* Total Investors */}
-                <div className="glass-panel p-5 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition-all">
+                <motion.div
+                    variants={statCardVariants}
+                    whileHover={{ y: -3 }}
+                    className="glass-panel p-5 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition-all"
+                >
                     <div className="flex items-center justify-between text-slate-400 mb-3">
                         <span className="text-xs font-semibold uppercase tracking-wider">Total VCs / Angels</span>
                         <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
@@ -173,10 +223,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <p className="text-[11px] text-cyan-400 font-medium mt-1.5 flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" /> $250M+ Total Capital
                     </p>
-                </div>
+                </motion.div>
 
                 {/* Scheduled Meetings */}
-                <div className="glass-panel p-5 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition-all">
+                <motion.div
+                    variants={statCardVariants}
+                    whileHover={{ y: -3 }}
+                    className="glass-panel p-5 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition-all"
+                >
                     <div className="flex items-center justify-between text-slate-400 mb-3">
                         <span className="text-xs font-semibold uppercase tracking-wider">1:1 Meetings</span>
                         <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
@@ -187,10 +241,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <p className="text-[11px] text-purple-400 font-medium mt-1.5">
                         across 12 Summit Tables
                     </p>
-                </div>
+                </motion.div>
 
                 {/* Avg Match Score */}
-                <div className="glass-panel p-5 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition-all">
+                <motion.div
+                    variants={statCardVariants}
+                    whileHover={{ y: -3 }}
+                    className="glass-panel p-5 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition-all"
+                >
                     <div className="flex items-center justify-between text-slate-400 mb-3">
                         <span className="text-xs font-semibold uppercase tracking-wider">Avg AI Match Score</span>
                         <div className="p-2 rounded-xl bg-yellow-500/10 text-yellow-400">
@@ -201,10 +259,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <p className="text-[11px] text-yellow-400 font-medium mt-1.5">
                         Gemini Flash Criteria
                     </p>
-                </div>
+                </motion.div>
 
                 {/* Deal Success Rate */}
-                <div className="glass-panel p-5 rounded-2xl border border-indigo-500/30 hover:border-indigo-500/50 transition-all bg-indigo-950/20">
+                <motion.div
+                    variants={statCardVariants}
+                    whileHover={{ y: -3 }}
+                    className="glass-panel p-5 rounded-2xl border border-indigo-500/30 hover:border-indigo-500/50 transition-all bg-indigo-950/20"
+                >
                     <div className="flex items-center justify-between text-slate-400 mb-3">
                         <span className="text-xs font-semibold uppercase tracking-wider text-indigo-300">Deal Success Rate</span>
                         <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-300">
@@ -215,51 +277,59 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <p className="text-[11px] text-indigo-300 font-medium mt-1.5">
                         Post-Event Term Sheets
                     </p>
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
 
             {/* Main Tabs Navigation */}
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('overview')}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'overview'
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'overview'
                                 ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
                                 : 'text-slate-400 hover:text-white'
                             }`}
                     >
                         📊 Analytics & Deal Flow
-                    </button>
+                    </motion.button>
 
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('matches')}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'matches'
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'matches'
                                 ? 'bg-purple-950/80 text-purple-300 border border-purple-500/40 shadow-md shadow-purple-500/10'
                                 : 'text-slate-400 hover:text-white'
                             }`}
                     >
                         ✨ AI Match Pairings ({matches.length})
-                    </button>
+                    </motion.button>
 
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('startups')}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'startups'
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'startups'
                                 ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
                                 : 'text-slate-400 hover:text-white'
                             }`}
                     >
                         🚀 Startups ({startups.length})
-                    </button>
+                    </motion.button>
 
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('investors')}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'investors'
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'investors'
                                 ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
                                 : 'text-slate-400 hover:text-white'
                             }`}
                     >
                         💼 VCs & Angels ({investors.length})
-                    </button>
+                    </motion.button>
                 </div>
 
                 {/* Filter / Search Bar */}
@@ -277,371 +347,443 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
             </div>
 
-            {/* TAB 1: OVERVIEW & POST-EVENT ANALYTICS */}
-            {activeTab === 'overview' && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Post-Event Deal Success Chart Panel */}
-                    <div className="lg:col-span-2 glass-panel p-6 rounded-3xl border border-slate-800 space-y-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                                    <TrendingUp className="w-5 h-5 text-emerald-400" />
-                                    <span>Post-Event Analytics: Deal Success & Term Sheet Conversion</span>
-                                </h3>
-                                <p className="text-xs text-slate-400 mt-0.5">
-                                    Real-time conversion rate from 1:1 business matching to term sheets issued at DAVAS
-                                </p>
+            {/* AnimatePresence for Page / Tab Transitions */}
+            <AnimatePresence mode="wait">
+                {/* TAB 1: OVERVIEW & POST-EVENT ANALYTICS */}
+                {activeTab === 'overview' && (
+                    <motion.div
+                        key="overview"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                    >
+                        {/* Post-Event Deal Success Chart Panel */}
+                        <div className="lg:col-span-2 glass-panel p-6 rounded-3xl border border-slate-800 space-y-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-base font-bold text-white flex items-center gap-2">
+                                        <TrendingUp className="w-5 h-5 text-emerald-400" />
+                                        <span>Post-Event Analytics: Deal Success & Term Sheet Conversion</span>
+                                    </h3>
+                                    <p className="text-xs text-slate-400 mt-0.5">
+                                        Real-time conversion rate from 1:1 business matching to term sheets issued at DAVAS
+                                    </p>
+                                </div>
+                                <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                                    +14.2% vs DAVAS 2025
+                                </span>
                             </div>
-                            <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                                +14.2% vs DAVAS 2025
+
+                            {/* Progress Bar & Success Gauge */}
+                            <div className="space-y-4 bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+                                <div className="flex items-center justify-between text-xs">
+                                    <span className="font-semibold text-slate-300">Overall Matching-to-Term Sheet Velocity</span>
+                                    <span className="font-mono font-bold text-cyan-400">{stats.dealSuccessRate}% Target Achieved</span>
+                                </div>
+                                <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${stats.dealSuccessRate}%` }}
+                                        transition={{ duration: 1, ease: 'easeOut' }}
+                                        className="h-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 rounded-full shadow-lg shadow-cyan-500/50"
+                                    />
+                                </div>
+
+                                {/* Conversion Funnel Breakdown */}
+                                <div className="grid grid-cols-3 gap-3 pt-2 text-center">
+                                    <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+                                        <div className="text-[11px] text-slate-400">1:1 Meetings Completed</div>
+                                        <div className="text-lg font-bold text-white mt-0.5">156 Meetings</div>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+                                        <div className="text-[11px] text-slate-400">Deep-Dive DD Initiated</div>
+                                        <div className="text-lg font-bold text-purple-300 mt-0.5">92 Startups</div>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+                                        <div className="text-[11px] text-slate-400">Term Sheets Signed</div>
+                                        <div className="text-lg font-bold text-emerald-400 mt-0.5">$18.4M Total</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Sector Breakdown Bars */}
+                            <div>
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                                    Deal Flow Density by Industry Sector
+                                </h4>
+                                <div className="space-y-3">
+                                    {[
+                                        { sector: 'AI & DeepTech', percent: 88, count: '18 Startups', color: 'bg-purple-500' },
+                                        { sector: 'FinTech & Payments', percent: 76, count: '12 Startups', color: 'bg-blue-500' },
+                                        { sector: 'AgriTech & Climate', percent: 64, count: '8 Startups', color: 'bg-emerald-500' },
+                                        { sector: 'EdTech & Consumer', percent: 52, count: '6 Startups', color: 'bg-yellow-500' },
+                                        { sector: 'CleanTech & Mobility', percent: 45, count: '4 Startups', color: 'bg-cyan-500' },
+                                    ].map((item, idx) => (
+                                        <div key={idx} className="space-y-1">
+                                            <div className="flex justify-between text-xs text-slate-300">
+                                                <span className="font-medium">{item.sector}</span>
+                                                <span className="text-slate-400">{item.count} ({item.percent}%)</span>
+                                            </div>
+                                            <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${item.percent}%` }}
+                                                    transition={{ duration: 0.8, delay: idx * 0.1 }}
+                                                    className={`h-full ${item.color} rounded-full`}
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Quick AI Match Engine Highlights */}
+                        <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col justify-between gap-6">
+                            <div>
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="p-2 rounded-xl bg-purple-500/20 text-purple-300">
+                                        <Zap className="w-5 h-5 text-purple-400" />
+                                    </div>
+                                    <h3 className="text-base font-bold text-white">AI Matchmaking Logic</h3>
+                                </div>
+                                <p className="text-xs text-slate-300 leading-relaxed">
+                                    DavaSync evaluates 4 core investment pillars with Gemini 3.6 Flash:
+                                </p>
+
+                                <ul className="mt-4 space-y-2.5 text-xs text-slate-400">
+                                    <li className="flex items-start gap-2">
+                                        <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                                        <span><strong className="text-slate-200">Sector Fit:</strong> Maps startup taxonomy directly against VC focus areas.</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                                        <span><strong className="text-slate-200">Funding Stage:</strong> Pre-Seed, Seed, Series A check size compatibility.</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                                        <span><strong className="text-slate-200">Ticket Size:</strong> Aligns startup ask with VC minimum/maximum checks.</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                                        <span><strong className="text-slate-200">Investment Thesis:</strong> Contextual alignment with founder background & SEA moat.</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 text-center space-y-2">
+                                <span className="text-[11px] text-indigo-300 font-semibold uppercase tracking-wider">Ready to Match?</span>
+                                <p className="text-xs text-slate-300">
+                                    Trigger real-time evaluation for all {startups.length} startups and {investors.length} investors.
+                                </p>
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={onRunMatchmaking}
+                                    disabled={isMatchmakingLoading}
+                                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 border border-purple-400/30 transition-all cursor-pointer"
+                                >
+                                    ✨ Evaluate AI Match Pairs
+                                </motion.button>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* TAB 2: AI MATCH PAIRINGS LIST with Staggered & Hover Card Animations */}
+                {activeTab === 'matches' && (
+                    <motion.div
+                        key="matches"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-4"
+                    >
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-base font-bold text-white flex items-center gap-2">
+                                <Sparkles className="w-5 h-5 text-yellow-400" />
+                                <span>Recommended High-Conviction Match Pairs</span>
+                            </h3>
+                            <span className="text-xs text-slate-400">
+                                Showing {matches.length} AI evaluated pairs
                             </span>
                         </div>
 
-                        {/* Progress Bar & Success Gauge */}
-                        <div className="space-y-4 bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
-                            <div className="flex items-center justify-between text-xs">
-                                <span className="font-semibold text-slate-300">Overall Matching-to-Term Sheet Velocity</span>
-                                <span className="font-mono font-bold text-cyan-400">{stats.dealSuccessRate}% Target Achieved</span>
-                            </div>
-                            <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
-                                <div
-                                    className="h-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 rounded-full transition-all duration-1000 shadow-lg shadow-cyan-500/50"
-                                    style={{ width: `${stats.dealSuccessRate}%` }}
-                                />
-                            </div>
-
-                            {/* Conversion Funnel Breakdown */}
-                            <div className="grid grid-cols-3 gap-3 pt-2 text-center">
-                                <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                                    <div className="text-[11px] text-slate-400">1:1 Meetings Completed</div>
-                                    <div className="text-lg font-bold text-white mt-0.5">156 Meetings</div>
-                                </div>
-                                <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                                    <div className="text-[11px] text-slate-400">Deep-Dive DD Initiated</div>
-                                    <div className="text-lg font-bold text-purple-300 mt-0.5">92 Startups</div>
-                                </div>
-                                <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                                    <div className="text-[11px] text-slate-400">Term Sheets Signed</div>
-                                    <div className="text-lg font-bold text-emerald-400 mt-0.5">$18.4M Total</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Sector Breakdown Bars */}
-                        <div>
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-                                Deal Flow Density by Industry Sector
-                            </h4>
-                            <div className="space-y-3">
-                                {[
-                                    { sector: 'AI & DeepTech', percent: 88, count: '18 Startups', color: 'bg-purple-500' },
-                                    { sector: 'FinTech & Payments', percent: 76, count: '12 Startups', color: 'bg-blue-500' },
-                                    { sector: 'AgriTech & Climate', percent: 64, count: '8 Startups', color: 'bg-emerald-500' },
-                                    { sector: 'EdTech & Consumer', percent: 52, count: '6 Startups', color: 'bg-yellow-500' },
-                                    { sector: 'CleanTech & Mobility', percent: 45, count: '4 Startups', color: 'bg-cyan-500' },
-                                ].map((item, idx) => (
-                                    <div key={idx} className="space-y-1">
-                                        <div className="flex justify-between text-xs text-slate-300">
-                                            <span className="font-medium">{item.sector}</span>
-                                            <span className="text-slate-400">{item.count} ({item.percent}%)</span>
-                                        </div>
-                                        <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
-                                            <div className={`h-full ${item.color} rounded-full`} style={{ width: `${item.percent}%` }} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Quick AI Match Engine Highlights */}
-                    <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col justify-between gap-6">
-                        <div>
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="p-2 rounded-xl bg-purple-500/20 text-purple-300">
-                                    <Zap className="w-5 h-5 text-purple-400" />
-                                </div>
-                                <h3 className="text-base font-bold text-white">AI Matchmaking Logic</h3>
-                            </div>
-                            <p className="text-xs text-slate-300 leading-relaxed">
-                                DavaSync evaluates 4 core investment pillars with Gemini 3.6 Flash:
-                            </p>
-
-                            <ul className="mt-4 space-y-2.5 text-xs text-slate-400">
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                                    <span><strong className="text-slate-200">Sector Fit:</strong> Maps startup taxonomy directly against VC focus areas.</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                                    <span><strong className="text-slate-200">Funding Stage:</strong> Pre-Seed, Seed, Series A check size compatibility.</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                                    <span><strong className="text-slate-200">Ticket Size:</strong> Aligns startup ask with VC minimum/maximum checks.</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                                    <span><strong className="text-slate-200">Investment Thesis:</strong> Contextual alignment with founder background & SEA moat.</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 text-center space-y-2">
-                            <span className="text-[11px] text-indigo-300 font-semibold uppercase tracking-wider">Ready to Match?</span>
-                            <p className="text-xs text-slate-300">
-                                Trigger real-time evaluation for all {startups.length} startups and {investors.length} investors.
-                            </p>
-                            <button
-                                onClick={onRunMatchmaking}
-                                disabled={isMatchmakingLoading}
-                                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 border border-purple-400/30 transition-all cursor-pointer"
-                            >
-                                ✨ Evaluate AI Match Pairs
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* TAB 2: AI MATCH PAIRINGS LIST */}
-            {activeTab === 'matches' && (
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-base font-bold text-white flex items-center gap-2">
-                            <Sparkles className="w-5 h-5 text-yellow-400" />
-                            <span>Recommended High-Conviction Match Pairs</span>
-                        </h3>
-                        <span className="text-xs text-slate-400">
-                            Showing {matches.length} AI evaluated pairs
-                        </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        {matches.map((pair) => (
-                            <div
-                                key={pair.id}
-                                className="glass-panel p-5 rounded-2xl border border-slate-800 hover:border-purple-500/40 transition-all hover:shadow-xl hover:shadow-purple-950/20 group relative"
-                            >
-                                {/* Match Score Badge */}
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="flex items-center gap-2">
-                                        <span className="px-2.5 py-1 rounded-full text-xs font-extrabold bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
-                                            <Sparkles className="w-3 h-3 text-yellow-400" />
-                                            {pair.analysis.matching_score}% Match Score
-                                        </span>
-                                        <span className="text-xs text-slate-400 font-mono">
-                                            {pair.recommendedTable || 'Table A1'}
-                                        </span>
-                                    </div>
-                                    <span className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">
-                                        {pair.status}
-                                    </span>
-                                </div>
-
-                                {/* Match Pair Bridge */}
-                                <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 mb-4">
-                                    {/* Startup Side */}
-                                    <div className="space-y-1">
-                                        <div className="text-[10px] uppercase font-bold text-slate-500">Startup</div>
-                                        <div className="flex items-center gap-2">
-                                            <img
-                                                src={pair.startup.logo}
-                                                alt={pair.startup.name}
-                                                className="w-7 h-7 rounded-lg object-cover border border-slate-700"
-                                            />
-                                            <div>
-                                                <h4 className="text-xs font-bold text-white truncate">{pair.startup.name}</h4>
-                                                <p className="text-[10px] text-cyan-400 font-medium">{pair.startup.stage} • {pair.startup.targetAsk}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Investor Side */}
-                                    <div className="space-y-1 border-l border-slate-800 pl-3">
-                                        <div className="text-[10px] uppercase font-bold text-slate-500">Investor VC</div>
-                                        <div className="flex items-center gap-2">
-                                            <img
-                                                src={pair.investor.avatar}
-                                                alt={pair.investor.name}
-                                                className="w-7 h-7 rounded-full object-cover border border-slate-700"
-                                            />
-                                            <div>
-                                                <h4 className="text-xs font-bold text-white truncate">{pair.investor.firm}</h4>
-                                                <p className="text-[10px] text-purple-300 font-medium">{pair.investor.name}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* AI Analytical Reason (Mandatory Vietnamese / English prompt output) */}
-                                <div className="space-y-2 mb-4">
-                                    <div className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                                        <FileText className="w-3.5 h-3.5 text-indigo-400" />
-                                        <span>AI Synergy Analysis:</span>
-                                    </div>
-                                    <p className="text-xs text-slate-400 italic bg-slate-950/50 p-2.5 rounded-lg border border-slate-800/80 leading-relaxed">
-                                        "{pair.analysis.reason}"
-                                    </p>
-                                </div>
-
-                                {/* Ice Breakers Preview */}
-                                <div className="space-y-1.5">
-                                    <div className="text-[11px] font-bold text-cyan-300 flex items-center gap-1">
-                                        <HelpCircle className="w-3 h-3 text-cyan-400" />
-                                        <span>Suggested Ice Breaker:</span>
-                                    </div>
-                                    <p className="text-[11px] text-slate-300 line-clamp-1 bg-cyan-950/20 px-2.5 py-1 rounded border border-cyan-500/20">
-                                        "{pair.analysis.ice_breakers[0] || 'How do you plan to scale in SEA?'}"
-                                    </p>
-                                </div>
-
-                                <div className="mt-4 pt-3 border-t border-slate-800/80 flex justify-end">
-                                    <button
-                                        onClick={() => onInspectMatch(pair)}
-                                        className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
-                                    >
-                                        <span>View Full Match Breakdown</span>
-                                        <ChevronRight className="w-3.5 h-3.5" />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* TAB 3: STARTUPS TABLE */}
-            {activeTab === 'startups' && (
-                <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
-                    <div className="p-4 border-b border-slate-800 flex items-center justify-between gap-4">
-                        <h3 className="text-sm font-bold text-white">
-                            DAVAS Participating Startups ({filteredStartups.length})
-                        </h3>
-                        {/* Sector Dropdown */}
-                        <select
-                            value={selectedSectorFilter}
-                            onChange={(e) => setSelectedSectorFilter(e.target.value)}
-                            className="bg-slate-900 border border-slate-800 text-xs text-slate-300 rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500"
+                        <motion.div
+                            variants={containerVariants}
+                            initial="hidden"
+                            animate="visible"
+                            className="grid grid-cols-1 lg:grid-cols-2 gap-4"
                         >
-                            {sectors.map((sec) => (
-                                <option key={sec} value={sec}>{sec}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs text-slate-300">
-                            <thead className="bg-slate-900/80 text-slate-400 uppercase font-semibold text-[10px] border-b border-slate-800">
-                                <tr>
-                                    <th className="py-3 px-4">Startup & Founder</th>
-                                    <th className="py-3 px-4">Sector</th>
-                                    <th className="py-3 px-4">Stage</th>
-                                    <th className="py-3 px-4">Target Ask</th>
-                                    <th className="py-3 px-4">Key Metrics</th>
-                                    <th className="py-3 px-4">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-800/60">
-                                {filteredStartups.map((s) => (
-                                    <tr key={s.id} className="hover:bg-slate-800/30 transition-colors">
-                                        <td className="py-3 px-4">
-                                            <div className="flex items-center gap-3">
-                                                <img src={s.logo} alt={s.name} className="w-9 h-9 rounded-xl object-cover border border-slate-700" />
-                                                <div>
-                                                    <div className="font-bold text-white text-sm">{s.name}</div>
-                                                    <div className="text-[11px] text-slate-400">{s.founderName} ({s.founderTitle})</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                                                {s.sector}
+                            {matches.map((pair) => (
+                                <motion.div
+                                    key={pair.id}
+                                    variants={itemVariants}
+                                    whileHover={{
+                                        y: -4,
+                                        boxShadow: '0px 10px 20px rgba(124, 58, 237, 0.2)',
+                                    }}
+                                    className="glass-panel p-5 rounded-2xl border border-slate-800 hover:border-purple-500/40 transition-colors group relative"
+                                >
+                                    {/* Match Score Badge */}
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="px-2.5 py-1 rounded-full text-xs font-extrabold bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
+                                                <Sparkles className="w-3 h-3 text-yellow-400" />
+                                                {pair.analysis.matching_score}% Match Score
                                             </span>
-                                        </td>
-                                        <td className="py-3 px-4 font-semibold text-cyan-300">{s.stage}</td>
-                                        <td className="py-3 px-4">
-                                            <span className="font-bold text-emerald-400">{s.targetAsk}</span>
-                                            <div className="text-[10px] text-slate-500">Val: {s.valuation}</div>
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <div className="text-slate-200 font-medium">{s.metrics.mrr || s.metrics.arr || 'N/A'}</div>
-                                            <div className="text-[10px] text-emerald-400">{s.metrics.growthRate}</div>
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <button
-                                                onClick={onRunMatchmaking}
-                                                className="px-3 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition-all"
-                                            >
-                                                Match VC
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            )}
+                                            <span className="text-xs text-slate-400 font-mono">
+                                                {pair.recommendedTable || 'Table A1'}
+                                            </span>
+                                        </div>
+                                        <span className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">
+                                            {pair.status}
+                                        </span>
+                                    </div>
 
-            {/* TAB 4: INVESTORS TABLE */}
-            {activeTab === 'investors' && (
-                <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
-                    <div className="p-4 border-b border-slate-800">
-                        <h3 className="text-sm font-bold text-white">
-                            DAVAS Attending VCs & Angel Investors ({filteredInvestors.length})
-                        </h3>
-                    </div>
-
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs text-slate-300">
-                            <thead className="bg-slate-900/80 text-slate-400 uppercase font-semibold text-[10px] border-b border-slate-800">
-                                <tr>
-                                    <th className="py-3 px-4">Investor Representative</th>
-                                    <th className="py-3 px-4">Firm / Fund</th>
-                                    <th className="py-3 px-4">Target Sectors</th>
-                                    <th className="py-3 px-4">Ticket Size</th>
-                                    <th className="py-3 px-4">Investment Thesis</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-800/60">
-                                {filteredInvestors.map((inv) => (
-                                    <tr key={inv.id} className="hover:bg-slate-800/30 transition-colors">
-                                        <td className="py-3 px-4">
-                                            <div className="flex items-center gap-3">
-                                                <img src={inv.avatar} alt={inv.name} className="w-9 h-9 rounded-full object-cover border border-slate-700" />
+                                    {/* Match Pair Bridge */}
+                                    <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 mb-4">
+                                        {/* Startup Side */}
+                                        <div className="space-y-1">
+                                            <div className="text-[10px] uppercase font-bold text-slate-500">Startup</div>
+                                            <div className="flex items-center gap-2">
+                                                <img
+                                                    src={pair.startup.logo}
+                                                    alt={pair.startup.name}
+                                                    className="w-7 h-7 rounded-lg object-cover border border-slate-700"
+                                                />
                                                 <div>
-                                                    <div className="font-bold text-white text-sm">{inv.name}</div>
-                                                    <div className="text-[11px] text-slate-400">{inv.role}</div>
+                                                    <h4 className="text-xs font-bold text-white truncate">{pair.startup.name}</h4>
+                                                    <p className="text-[10px] text-cyan-400 font-medium">{pair.startup.stage} • {pair.startup.targetAsk}</p>
                                                 </div>
                                             </div>
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <span className="font-bold text-purple-300 text-sm">{inv.firm}</span>
-                                            <div className="text-[10px] text-slate-500">{inv.country}</div>
-                                        </td>
-                                        <td className="py-3 px-4">
-                                            <div className="flex flex-wrap gap-1 max-w-xs">
-                                                {inv.targetSectors.map((sec, i) => (
-                                                    <span key={i} className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300">
-                                                        {sec}
-                                                    </span>
-                                                ))}
+                                        </div>
+
+                                        {/* Investor Side */}
+                                        <div className="space-y-1 border-l border-slate-800 pl-3">
+                                            <div className="text-[10px] uppercase font-bold text-slate-500">Investor VC</div>
+                                            <div className="flex items-center gap-2">
+                                                <img
+                                                    src={pair.investor.avatar}
+                                                    alt={pair.investor.name}
+                                                    className="w-7 h-7 rounded-full object-cover border border-slate-700"
+                                                />
+                                                <div>
+                                                    <h4 className="text-xs font-bold text-white truncate">{pair.investor.firm}</h4>
+                                                    <p className="text-[10px] text-purple-300 font-medium">{pair.investor.name}</p>
+                                                </div>
                                             </div>
-                                        </td>
-                                        <td className="py-3 px-4 font-mono font-bold text-emerald-400">
-                                            {inv.ticketSizeRange}
-                                        </td>
-                                        <td className="py-3 px-4 text-slate-400 text-[11px] max-w-sm line-clamp-2">
-                                            {inv.investmentPhilosophy}
-                                        </td>
-                                    </tr>
+                                        </div>
+                                    </div>
+
+                                    {/* AI Analytical Reason */}
+                                    <div className="space-y-2 mb-4">
+                                        <div className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                                            <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                                            <span>AI Synergy Analysis:</span>
+                                        </div>
+                                        <p className="text-xs text-slate-400 italic bg-slate-950/50 p-2.5 rounded-lg border border-slate-800/80 leading-relaxed">
+                                            "{pair.analysis.reason}"
+                                        </p>
+                                    </div>
+
+                                    {/* Ice Breakers Preview */}
+                                    <div className="space-y-1.5">
+                                        <div className="text-[11px] font-bold text-cyan-300 flex items-center gap-1">
+                                            <HelpCircle className="w-3 h-3 text-cyan-400" />
+                                            <span>Suggested Ice Breaker:</span>
+                                        </div>
+                                        <p className="text-[11px] text-slate-300 line-clamp-1 bg-cyan-950/20 px-2.5 py-1 rounded border border-cyan-500/20">
+                                            "{pair.analysis.ice_breakers[0] || 'How do you plan to scale in SEA?'}"
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-4 pt-3 border-t border-slate-800/80 flex justify-end">
+                                        <motion.button
+                                            whileHover={{ x: 2 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={() => onInspectMatch(pair)}
+                                            className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors cursor-pointer"
+                                        >
+                                            <span>View Full Match Breakdown</span>
+                                            <ChevronRight className="w-3.5 h-3.5" />
+                                        </motion.button>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    </motion.div>
+                )}
+
+                {/* TAB 3: STARTUPS TABLE */}
+                {activeTab === 'startups' && (
+                    <motion.div
+                        key="startups"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="glass-panel rounded-2xl border border-slate-800 overflow-hidden"
+                    >
+                        <div className="p-4 border-b border-slate-800 flex items-center justify-between gap-4">
+                            <h3 className="text-sm font-bold text-white">
+                                DAVAS Participating Startups ({filteredStartups.length})
+                            </h3>
+                            {/* Sector Dropdown */}
+                            <select
+                                value={selectedSectorFilter}
+                                onChange={(e) => setSelectedSectorFilter(e.target.value)}
+                                className="bg-slate-900 border border-slate-800 text-xs text-slate-300 rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500"
+                            >
+                                {sectors.map((sec) => (
+                                    <option key={sec} value={sec}>{sec}</option>
                                 ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            )}
+                            </select>
+                        </div>
+
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs text-slate-300">
+                                <thead className="bg-slate-900/80 text-slate-400 uppercase font-semibold text-[10px] border-b border-slate-800">
+                                    <tr>
+                                        <th className="py-3 px-4">Startup & Founder</th>
+                                        <th className="py-3 px-4">Sector</th>
+                                        <th className="py-3 px-4">Stage</th>
+                                        <th className="py-3 px-4">Target Ask</th>
+                                        <th className="py-3 px-4">Key Metrics</th>
+                                        <th className="py-3 px-4">Action</th>
+                                    </tr>
+                                </thead>
+                                <motion.tbody
+                                    variants={containerVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    className="divide-y divide-slate-800/60"
+                                >
+                                    {filteredStartups.map((s) => (
+                                        <motion.tr
+                                            key={s.id}
+                                            variants={itemVariants}
+                                            className="hover:bg-slate-800/30 transition-colors"
+                                        >
+                                            <td className="py-3 px-4">
+                                                <div className="flex items-center gap-3">
+                                                    <img src={s.logo} alt={s.name} className="w-9 h-9 rounded-xl object-cover border border-slate-700" />
+                                                    <div>
+                                                        <div className="font-bold text-white text-sm">{s.name}</div>
+                                                        <div className="text-[11px] text-slate-400">{s.founderName} ({s.founderTitle})</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                                                    {s.sector}
+                                                </span>
+                                            </td>
+                                            <td className="py-3 px-4 font-semibold text-cyan-300">{s.stage}</td>
+                                            <td className="py-3 px-4">
+                                                <span className="font-bold text-emerald-400">{s.targetAsk}</span>
+                                                <div className="text-[10px] text-slate-500">Val: {s.valuation}</div>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                <div className="text-slate-200 font-medium">{s.metrics.mrr || s.metrics.arr || 'N/A'}</div>
+                                                <div className="text-[10px] text-emerald-400">{s.metrics.growthRate}</div>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                <motion.button
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    onClick={onRunMatchmaking}
+                                                    className="px-3 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition-all cursor-pointer"
+                                                >
+                                                    Match VC
+                                                </motion.button>
+                                            </td>
+                                        </motion.tr>
+                                    ))}
+                                </motion.tbody>
+                            </table>
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* TAB 4: INVESTORS TABLE */}
+                {activeTab === 'investors' && (
+                    <motion.div
+                        key="investors"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="glass-panel rounded-2xl border border-slate-800 overflow-hidden"
+                    >
+                        <div className="p-4 border-b border-slate-800">
+                            <h3 className="text-sm font-bold text-white">
+                                DAVAS Attending VCs & Angel Investors ({filteredInvestors.length})
+                            </h3>
+                        </div>
+
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs text-slate-300">
+                                <thead className="bg-slate-900/80 text-slate-400 uppercase font-semibold text-[10px] border-b border-slate-800">
+                                    <tr>
+                                        <th className="py-3 px-4">Investor Representative</th>
+                                        <th className="py-3 px-4">Firm / Fund</th>
+                                        <th className="py-3 px-4">Target Sectors</th>
+                                        <th className="py-3 px-4">Ticket Size</th>
+                                        <th className="py-3 px-4">Investment Thesis</th>
+                                    </tr>
+                                </thead>
+                                <motion.tbody
+                                    variants={containerVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    className="divide-y divide-slate-800/60"
+                                >
+                                    {filteredInvestors.map((inv) => (
+                                        <motion.tr
+                                            key={inv.id}
+                                            variants={itemVariants}
+                                            className="hover:bg-slate-800/30 transition-colors"
+                                        >
+                                            <td className="py-3 px-4">
+                                                <div className="flex items-center gap-3">
+                                                    <img src={inv.avatar} alt={inv.name} className="w-9 h-9 rounded-full object-cover border border-slate-700" />
+                                                    <div>
+                                                        <div className="font-bold text-white text-sm">{inv.name}</div>
+                                                        <div className="text-[11px] text-slate-400">{inv.role}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                <span className="font-bold text-purple-300 text-sm">{inv.firm}</span>
+                                                <div className="text-[10px] text-slate-500">{inv.country}</div>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                <div className="flex flex-wrap gap-1 max-w-xs">
+                                                    {inv.targetSectors.map((sec, i) => (
+                                                        <span key={i} className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300">
+                                                            {sec}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </td>
+                                            <td className="py-3 px-4 font-mono font-bold text-emerald-400">
+                                                {inv.ticketSizeRange}
+                                            </td>
+                                            <td className="py-3 px-4 text-slate-400 text-[11px] max-w-sm line-clamp-2">
+                                                {inv.investmentPhilosophy}
+                                            </td>
+                                        </motion.tr>
+                                    ))}
+                                </motion.tbody>
+                            </table>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

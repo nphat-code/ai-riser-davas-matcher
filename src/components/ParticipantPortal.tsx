@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import {
     Calendar,
     Clock,
     MapPin,
     Sparkles,
     FileText,
-    Send,
     CheckCircle2,
     ChevronRight,
-    UserCheck,
-    Building2,
-    ExternalLink,
-    MessageSquare,
-    Smartphone,
     Info
 } from 'lucide-react';
 import { MeetingSlot, Investor } from '../types';
@@ -22,6 +17,31 @@ interface ParticipantPortalProps {
     currentInvestor: Investor;
     onOpenFollowUpModal: (slot: MeetingSlot) => void;
 }
+
+// Staggered variants for vertical timeline
+const timelineContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+            delayChildren: 0.1,
+        },
+    },
+};
+
+const timelineItemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            type: 'spring',
+            stiffness: 300,
+            damping: 24,
+        },
+    },
+};
 
 export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
     scheduleSlots,
@@ -37,9 +57,14 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
     });
 
     return (
-        <div className="max-w-md mx-auto min-h-screen pb-20 space-y-5 animate-fadeIn px-2 sm:px-0">
+        <div className="max-w-md mx-auto min-h-screen pb-20 space-y-5 px-2 sm:px-0">
             {/* Mobile Device Frame Header Accent */}
-            <div className="glass-panel p-5 rounded-3xl border border-cyan-500/30 relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950">
+            <motion.div
+                initial={{ opacity: 0, y: -15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="glass-panel p-5 rounded-3xl border border-cyan-500/30 relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950"
+            >
                 <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
 
                 {/* Welcome Investor Header */}
@@ -74,20 +99,29 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
 
                 {/* Quick Day Stats Banner */}
                 <div className="mt-4 pt-3 border-t border-slate-800 grid grid-cols-3 gap-2 text-center">
-                    <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+                    <motion.div
+                        whileHover={{ scale: 1.03 }}
+                        className="bg-slate-950/60 p-2 rounded-xl border border-slate-800"
+                    >
                         <div className="text-[10px] text-slate-400 uppercase font-bold">1:1 Meetings</div>
                         <div className="text-base font-black text-cyan-300">{scheduleSlots.length}</div>
-                    </div>
-                    <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+                    </motion.div>
+                    <motion.div
+                        whileHover={{ scale: 1.03 }}
+                        className="bg-slate-950/60 p-2 rounded-xl border border-slate-800"
+                    >
                         <div className="text-[10px] text-slate-400 uppercase font-bold">Hall Location</div>
                         <div className="text-xs font-bold text-white mt-1">Furama A1</div>
-                    </div>
-                    <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+                    </motion.div>
+                    <motion.div
+                        whileHover={{ scale: 1.03 }}
+                        className="bg-slate-950/60 p-2 rounded-xl border border-slate-800"
+                    >
                         <div className="text-[10px] text-slate-400 uppercase font-bold">Avg AI Match</div>
                         <div className="text-base font-black text-yellow-400">95%</div>
-                    </div>
+                    </motion.div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* View Title & Filter Tabs */}
             <div className="space-y-3 px-1">
@@ -109,34 +143,41 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                 {/* Status Filter Chips */}
                 <div className="flex items-center gap-2 p-1 bg-slate-900/90 rounded-2xl border border-slate-800">
                     {(['All', 'Upcoming', 'Completed'] as const).map((filter) => (
-                        <button
+                        <motion.button
                             key={filter}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setActiveFilter(filter)}
-                            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${activeFilter === filter
+                            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${activeFilter === filter
                                     ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-500/20'
                                     : 'text-slate-400 hover:text-white'
                                 }`}
                         >
                             {filter}
-                        </button>
+                        </motion.button>
                     ))}
                 </div>
             </div>
 
-            {/* Vertical Timeline Schedule */}
-            <div className="space-y-4 relative">
+            {/* Vertical Timeline Schedule with Stagger Animation */}
+            <motion.div
+                variants={timelineContainerVariants}
+                initial="hidden"
+                animate="visible"
+                className="space-y-4 relative"
+            >
                 {/* Timeline Connecting Line */}
                 <div className="absolute left-6 top-3 bottom-3 w-0.5 bg-slate-800 pointer-events-none" />
 
-                {filteredSlots.map((slot, index) => {
+                {filteredSlots.map((slot) => {
                     const isCompleted = slot.status === 'Completed';
                     const isInProgress = slot.status === 'In Progress';
 
                     return (
-                        <div
+                        <motion.div
                             key={slot.id}
-                            className={`relative pl-12 transition-all group ${isInProgress ? 'scale-[1.01]' : ''
-                                }`}
+                            variants={timelineItemVariants}
+                            className="relative pl-12 group"
                         >
                             {/* Timeline Indicator Dot */}
                             <div
@@ -154,9 +195,13 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                 )}
                             </div>
 
-                            {/* Schedule Card Mobile Card */}
-                            <div
-                                className={`glass-panel p-4 rounded-2xl border transition-all ${isInProgress
+                            {/* Schedule Card Mobile Card with Hover Animation */}
+                            <motion.div
+                                whileHover={{
+                                    y: -4,
+                                    boxShadow: '0px 10px 20px rgba(124, 58, 237, 0.2)',
+                                }}
+                                className={`glass-panel p-4 rounded-2xl border transition-colors ${isInProgress
                                         ? 'border-cyan-400/50 shadow-lg shadow-cyan-500/10 bg-slate-900/90'
                                         : 'border-slate-800/80 bg-slate-950/70 hover:border-slate-700'
                                     }`}
@@ -224,24 +269,26 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                     </div>
                                 )}
 
-                                {/* Primary Action Button (Strictly Large Touch Target for Mobile) */}
+                                {/* Primary Action Button (Strictly Large Touch Target for Mobile with Hover/Tap Animation) */}
                                 <div className="mt-4 pt-2">
-                                    <button
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.95 }}
                                         onClick={() => onOpenFollowUpModal(slot)}
-                                        className="w-full min-h-[44px] px-4 rounded-xl bg-gradient-to-r from-cyan-600 via-indigo-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white text-xs font-extrabold shadow-lg shadow-cyan-600/20 border border-cyan-400/30 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
+                                        className="w-full min-h-[44px] px-4 rounded-xl bg-gradient-to-r from-cyan-600 via-indigo-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white text-xs font-extrabold shadow-lg shadow-cyan-600/20 border border-cyan-400/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
                                     >
                                         <FileText className="w-4 h-4 text-cyan-200" />
                                         <span>
                                             {slot.followUpGenerated ? 'View / Edit AI Follow-up Draft' : 'Add Notes & AI Follow-up'}
                                         </span>
                                         <ChevronRight className="w-4 h-4 ml-auto text-cyan-200" />
-                                    </button>
+                                    </motion.button>
                                 </div>
-                            </div>
-                        </div>
+                            </motion.div>
+                        </motion.div>
                     );
                 })}
-            </div>
+            </motion.div>
 
             {/* Footnote tips for summit attendees */}
             <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center text-xs text-slate-400 space-y-1">
