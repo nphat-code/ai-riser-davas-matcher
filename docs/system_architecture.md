@@ -1,68 +1,58 @@
 # Thiết Kế Kiến Trúc Hệ Thống (System Architecture) - DAVAS Matchmaker
 
-Tài liệu này là bản vẽ kỹ thuật (Blueprint) tổng thể cho toàn bộ hệ thống DAVAS Matchmaker. Nó mô tả các thành phần (Components) sẽ tương tác với nhau như thế nào xuyên suốt 4 giai đoạn của sự kiện.
+Tài liệu này là bản vẽ kỹ thuật (Blueprint) tổng thể cho toàn bộ hệ thống DAVAS Matchmaker. Phiên bản này phản ánh kiến trúc Full-Stack mới nhất (React + Express), phù hợp với tiêu chí Hackathon.
 
 ## 1. Các Quyết Định Kiến Trúc (Architectural Decisions)
-Dựa trên yêu cầu của bạn, hệ thống được thiết kế theo hướng **Zero-cost MVP** (Tối giản chi phí, ra mắt nhanh):
-- **Authentication (Xác thực):** Sử dụng **Google Login** để đảm bảo tính bảo mật và nhanh chóng.
-- **Database (Lưu trữ):** Khởi tạo với **Google Sheets** làm cơ sở dữ liệu chính yếu.
-- **Backend/Logic:** Kết hợp giữa Node.js (thuật toán phức tạp) và Google Apps Script (tương tác với hệ sinh thái Google).
+Hệ thống được thiết kế theo hướng **Full-Stack Web App** linh hoạt, dễ dàng scale và có giao diện (UI/UX) cao cấp.
+- **Frontend (UI/UX):** Sử dụng **React** (với Vite), TailwindCSS để xây dựng giao diện Glassmorphism.
+- **Backend (API/Logic):** Sử dụng **Node.js (Express)** để xử lý logic nội bộ và giao tiếp với Google Gemini.
+- **AI Engine:** Tích hợp trực tiếp `@google/genai` vào Backend (Model `gemini-3.6-flash`) để xử lý các bài toán suy luận (Matching & Follow-up).
+- **Deployment (Triển khai):** Đóng gói bằng **Docker** để chạy trên **Google Cloud Run**.
 
 ---
 
 ## 2. Mô hình các lớp Hệ thống (System Layers)
 
-### Lớp 1: Giao diện người dùng (Frontend / UI)
-Ứng dụng Web (React/Vite) được chia làm 2 phân hệ (Portals):
+### Lớp 1: Giao diện người dùng (Frontend / UI - `src/`)
+Được chia làm 2 phân hệ (Views) chính trong ứng dụng:
 1. **Admin Dashboard (Dành cho Ban tổ chức):**
-   - Xem tổng quan tất cả hồ sơ Startups / Investors.
-   - Nút kích hoạt AI chấm điểm toàn bộ.
-   - Nút kích hoạt **Thuật toán xếp lịch (Smart Scheduler)**.
-   - Xem Dashboard thống kê sau sự kiện.
+   - Quản lý danh sách Startups và Investors.
+   - Theo dõi sự kiện (Overview Dashboard).
+   - Chạy AI Matchmaker và Smart Scheduler.
 2. **Participant Portal (Dành cho Khách mời - Startups & Investors):**
-   - Khách mời Đăng nhập bằng Google Login.
-   - Xem Lịch trình 1:1 cá nhân (Ví dụ: 13:00 gặp quỹ A, 14:00 gặp quỹ B).
-   - Gợi ý hội thảo cá nhân hóa.
-   - Chức năng **Check-in & Note-taking** ngay trên web sau mỗi cuộc họp.
+   - Hiển thị Lịch trình cá nhân 1:1.
+   - Giao diện điền Note-taking và tạo bản nháp Follow-up email từ AI.
 
-### Lớp 2: Lõi xử lý nghiệp vụ (Business Logic / Backend)
-1. **AI Matchmaking Engine:**
-   - Giao tiếp với Google Gemini API.
-   - Đầu vào: Dữ liệu JSON (Hồ sơ từ Form).
-   - Đầu ra: Điểm tương thích (Score 1-100), Lý do (Rationale), 3 Câu hỏi phá băng (Ice-breakers).
-2. **Smart Scheduler Engine (Sẽ được code đầu tiên):**
-   - Thuật toán nhận vào danh sách điểm số từ AI.
-   - Đầu ra: Bảng phân bổ lịch họp (Time-slots) tối ưu nhất, cam kết không trùng lịch.
+### Lớp 2: Lõi xử lý nghiệp vụ (Backend API - `server.ts`)
+Server Express cung cấp các API endpoints phục vụ Frontend:
+1. **`POST /api/matchmaking`**: 
+   - Đầu vào: Object Startup và Investor.
+   - Xử lý: Xây dựng Prompt tổng hợp gửi tới Gemini AI, yêu cầu Structured Output (JSON Schema).
+   - Đầu ra: `matching_score`, `reason`, `ice_breakers`.
+2. **`POST /api/ai-followup`**:
+   - Đầu vào: Profile Startup/Investor và Ghi chú (User Notes).
+   - Đầu ra: Draft Email (`emailSubject`, `emailBody`), `keyTakeaways`, `actionItems`.
 
-### Lớp 3: Tự động hóa & Tích hợp (Google Workspace Layer)
-Được viết bằng Google Apps Script, hoạt động như một hệ thống Background Job:
-1. **Lắng nghe Form Submit:** Chuẩn hóa dữ liệu ngay khi có người điền Form đăng ký.
-2. **Calendar Automation:** Nhận kết quả từ thuật toán Xếp lịch -> Tự động bắn thư mời Google Calendar hàng loạt.
-3. **Follow-up Trigger:** Cài đặt hẹn giờ (Time-driven). Đúng 1 tháng sau sự kiện, tự động gửi Email chứa link Google Form khảo sát tỷ lệ chốt Deal.
-
-### Lớp 4: Cơ sở dữ liệu (Database - Google Sheets)
-Cấu trúc các bảng (Sheets) chính:
-- `Investors_Raw` / `Startups_Raw`: Lưu dữ liệu gốc từ Form.
-- `AI_Scores_Matrix`: Bảng lưu điểm số mọi cặp đôi do AI sinh ra.
-- `Final_Schedules`: Bảng lưu lịch họp chính thức (Ai - Gặp ai - Giờ nào - Bàn số mấy).
-- `Post_Event_Feedback`: Nơi đổ về kết quả Note-taking và Follow-up.
+### Lớp 3: Tích hợp Dữ liệu (Database / Data Layer)
+- **Tình trạng hiện tại (Dev):** Đang sử dụng Mock Data (Object cứng trong mã nguồn) để kiểm thử Frontend và luồng AI.
+- **Định hướng tiếp theo:** Khởi tạo lớp giao tiếp với **Google Sheets API** (hoặc DB khác) để đọc dữ liệu từ Google Forms thực tế lúc runtime.
 
 ---
 
 ## 3. Luồng dữ liệu (Data Flow) trong thực tế
 
-1. **(Phase 1)** Startups/Investors điền **Google Form**. Dữ liệu chảy vào **Google Sheets**.
-2. **(Phase 2)** Admin mở **Web Dashboard**, bấm nút "Chạy AI". Code sẽ kéo dữ liệu từ Sheets, gửi lên **Gemini**, nhận kết quả và lưu ngược lại Sheets.
-3. **(Phase 2)** Admin tiếp tục bấm "Xếp Lịch". Code chạy **Thuật toán Smart Scheduler**, phân bổ Time-slots và chốt lịch vào bảng `Final_Schedules`.
-4. **(Phase 2)** **Apps Script** đọc bảng lịch, tự động gửi **Google Calendar** cho tất cả mọi người.
-5. **(Phase 3)** Khách mời tới sự kiện, mở điện thoại vào **Participant Portal** (đăng nhập Google) xem lịch, đi họp, và nhập ghi chú thẳng lên Portal.
-6. **(Phase 4)** **AI Follow-up Tracking:** Apps Script tự động gửi khảo sát. Kết quả đổ về Sheets, **Gemini AI** sẽ đọc dữ liệu này để phân tích tỷ lệ chốt Deal, tạo kịch bản email chăm sóc tiếp theo, và xuất dữ liệu để Admin xem biểu đồ trên **Web Dashboard**.
+1. **(Data Ingestion)** Khách điền Google Form -> Dữ liệu đổ về Google Sheets.
+2. **(Admin Action)** Admin truy cập Dashboard, nhấn "Run AI Matchmaking". 
+3. **(AI Processing)** Frontend gọi API `/api/matchmaking` -> Backend Node.js gọi Google Gemini -> Trả kết quả JSON về Frontend.
+4. **(Scheduling)** Admin bấm "Generate Smart Schedule" -> Thuật toán sắp xếp lịch (Frontend/Backend) chia đều các Slot.
+5. **(Participant Action)** Khách tham dự xem lịch trong Participant Portal, gặp mặt, điền Ghi chú vào form.
+6. **(Follow-up)** Khi nhấn lưu ghi chú, Frontend gọi `/api/ai-followup` -> AI phân tích Note, tạo bản nháp Follow-up ngay lập tức để nhà đầu tư gửi cho startup.
 
 ---
 
 ## 4. Kiến trúc Triển khai (Deployment Architecture) - Đảm bảo +10 điểm Bonus
 
-Để thỏa mãn tiêu chí bắt buộc của Hackathon (Cloud Run/Firebase), hệ thống vật lý sẽ được triển khai như sau:
-1. **Frontend (React/Vite Dashboard & Portal):** Build thành dạng tĩnh (Static Assets) và host trên **Firebase Hosting** hoặc đóng gói chung với Backend.
-2. **Backend (Node.js API):** Đóng gói bằng Docker (Containerized) và triển khai lên **Google Cloud Run**. Đây là nơi chứa logic gọi Gemini API và chạy thuật toán Smart Scheduler. Backend này sẽ giao tiếp với Google Sheets qua thư viện `googleapis`.
-3. **Background Jobs:** Code nằm trực tiếp trên **Google Apps Script** (gắn liền với file Google Sheets của dự án).
+Để thỏa mãn tiêu chí bắt buộc của Hackathon (Cloud Run/Firebase):
+1. **Single Container (Docker):** Dự án đóng gói cả Frontend (sau khi build tĩnh) và Backend Express vào chung 1 Docker container.
+2. **Google Cloud Run:** Deploy container này lên Cloud Run, exposed cổng 3000 hoặc theo biến môi trường `PORT`.
+3. Khi người dùng truy cập web, Express sẽ Serve các file tĩnh của React. Khi React gọi API `/api/*`, Express sẽ xử lý. Kiến trúc này tiết kiệm chi phí, dễ deploy và hoàn toàn Serverless.

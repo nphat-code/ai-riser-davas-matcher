@@ -1,51 +1,41 @@
 # Kế hoạch triển khai: Thuật toán xếp lịch thông minh (Smart Scheduler)
 
-Dựa trên sự thống nhất của chúng ta: Dùng Google Login, lưu trữ Google Sheets, và **Ưu tiên làm Thuật toán xếp lịch trước**, dưới đây là kế hoạch chi tiết để lập trình thuật toán này ngay trong source code hiện tại (bằng TypeScript).
+Tính năng "Smart Scheduler" nhằm mục đích tự động sắp xếp lịch hẹn (1:1 Meeting) cho Startups và Investors dựa trên điểm số (Matching Score) do AI đánh giá, đảm bảo tối ưu hóa quỹ thời gian có hạn của sự kiện. 
 
 ## 1. Bài toán xếp lịch (Scheduling Problem)
 - **Đầu vào (Input):** 
   - Danh sách Startups (S).
   - Danh sách Investors (I).
-  - Danh sách Điểm tương thích (Matching Scores) giữa từng cặp S-I (do AI đánh giá).
-  - Số lượng khung giờ (Time-slots) có sẵn (Ví dụ: 4 slots).
+  - Danh sách Điểm tương thích (Matching Scores) giữa từng cặp S-I (do AI trả về từ `/api/matchmaking`).
+  - Số lượng khung giờ (Time-slots) có sẵn trong sự kiện (Ví dụ: Slot 1: 13:00, Slot 2: 13:30...).
 - **Ràng buộc (Constraints):**
   1. Trong cùng 1 khung giờ, 1 Startup chỉ được gặp tối đa 1 Investor (và ngược lại). Không được trùng lịch (No Overlap).
   2. Hai người chỉ gặp nhau 1 lần duy nhất trong toàn bộ sự kiện.
-  3. Chỉ ưu tiên xếp lịch cho các cặp có điểm số đủ cao (Ví dụ: Điểm > 75).
-- **Mục tiêu (Objective):** Lấp đầy các khung giờ sao cho **tổng điểm Matching của toàn bộ sự kiện là cao nhất**.
+  3. (Tùy chọn) Chỉ xếp lịch cho các cặp có điểm số AI đánh giá đủ cao (Ví dụ: > 75 điểm).
+- **Mục tiêu (Objective):** Lấp đầy các khung giờ sao cho **tổng điểm Matching của toàn bộ sự kiện là cao nhất**, từ đó mang lại giá trị cao nhất cho các bên tham gia.
 
 ## 2. Phương pháp tiếp cận thuật toán
-Để phù hợp với 1 hệ thống MVP chạy nhanh và hiệu quả, chúng ta sẽ áp dụng **Thuật toán Tham lam (Greedy Algorithm)** kết hợp với Hàng đợi Ưu tiên (Priority Queue).
+Vì đây là một bài toán tối ưu tổ hợp (có thể phức tạp nếu dữ liệu lớn), để phù hợp với kiến trúc Web App hiện tại, chúng ta sẽ áp dụng **Thuật toán Tham lam (Greedy Algorithm)** kết hợp với Hàng đợi (Sorting).
 
 **Luồng chạy của thuật toán (Workflow):**
-1. Lấy tất cả các cặp có Điểm Match > 75.
-2. Sắp xếp danh sách này theo thứ tự Điểm từ cao xuống thấp (Ví dụ cặp 95 điểm đứng đầu).
-3. Khởi tạo các khung giờ trống (Slot 1, Slot 2, ...).
-4. Duyệt qua từng cặp trong danh sách đã sắp xếp:
-   - Thử nhét cặp (Startup A - Investor B) này vào khung giờ sớm nhất (Slot 1).
-   - Kiểm tra điều kiện: Nếu ở Slot 1, cả Startup A và Investor B đều đang "rảnh", thì chốt lịch! Đánh dấu cả hai là "bận" ở Slot 1.
-   - Nếu một trong hai người "bận", tiếp tục thử ở Slot 2, Slot 3... cho đến khi tìm được chỗ trống.
-5. Thuật toán kết thúc khi đã duyệt hết danh sách hoặc các slot đã kín.
+1. Nhận toàn bộ mảng `matches` từ Frontend State.
+2. Sắp xếp mảng này theo thứ tự `matching_score` giảm dần (Ưu tiên các cặp hợp nhau nhất).
+3. Khởi tạo mảng các khung giờ trống (Ví dụ có 5 Slots, mỗi Slot quản lý danh sách ai đang bận).
+4. Duyệt qua từng cặp trong mảng `matches`:
+   - Lặp qua các khung giờ từ sớm đến muộn (Slot 1, Slot 2...).
+   - Kiểm tra: Tại Slot hiện tại, nếu cả Startup và Investor đều đang "Rảnh" (chưa có lịch ở slot này), thì gán cặp này vào Slot đó. Đánh dấu cả hai là "Bận".
+   - Nếu bị trùng, chuyển sang Slot tiếp theo.
+5. Lặp đến khi hết Slot hoặc hết danh sách. Trả về mảng Lịch trình cuối cùng.
 
-## 3. Các thay đổi về File & Code (Proposed Changes)
+## 3. Kế hoạch Code (Proposed Changes)
+Việc xếp lịch có thể thực hiện thẳng ở phía Frontend (React) để hiển thị ngay lập tức, hoặc đưa xuống Backend (Node.js) nếu cần chia sẻ lịch cho nhiều người dùng xem cùng lúc.
 
-Chúng ta sẽ tạo ra các file tiện ích trong ứng dụng React hiện tại để mô phỏng và test thuật toán này.
+#### Nếu thực hiện tại Frontend (`src/utils/scheduler.ts`):
+1. Tạo thư mục `src/utils/` và file `scheduler.ts`.
+2. Viết hàm `generateSmartSchedule(matches, availableSlots)`.
+3. Import vào `src/App.tsx`.
+4. Trong hàm `handleGenerateSchedule`, thay vì dùng `setTimeout` giả lập, ta sẽ gọi `generateSmartSchedule` và cập nhật lại state `scheduleSlots`.
 
-### Core Component (Logic)
-
-#### [NEW] [scheduler.ts](file:///c:/Study/Projects/ai-riser-davas-matcher/src/utils/scheduler.ts)
-- Viết core logic thuật toán `generateSchedule(startups, investors, scores, numSlots, threshold)`.
-- Trả về cấu trúc dữ liệu Lịch trình (Schedule) cho từng Time-slot.
-
-#### [NEW] [SchedulerView.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/SchedulerView.tsx)
-- Một trang giao diện mới (Tab mới trên UI) để bạn bấm nút "Chạy xếp lịch".
-- Hiển thị kết quả xếp lịch dạng Bảng (Timeline) phân chia theo từng Slot, hiển thị rõ ai gặp ai.
-
-#### [MODIFY] [App.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/App.tsx)
-- Bổ sung tab `scheduler` vào thanh điều hướng.
-- Import và render component `SchedulerView`.
-
-## 4. Kế hoạch kiểm thử (Verification Plan)
-- Tạo một tập dữ liệu giả lập nhỏ (5 Startups x 5 Investors) với điểm số cố định.
-- Chạy thuật toán và in kết quả ra màn hình (hoặc console).
-- Dò bằng mắt thường xem có cặp nào bị trùng khung giờ (Conflict) hay không, để chứng minh thuật toán hoạt động đúng ranh giới thời gian.
+#### Kiểm thử (Verification Plan):
+- Giao diện AdminDashboard phải render được bảng lịch trình phân chia rõ ràng theo từng Slot và Table.
+- Không có bất kỳ Startup hay Investor nào xuất hiện 2 lần trong cùng 1 Time-slot.
