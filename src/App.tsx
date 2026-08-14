@@ -174,6 +174,9 @@ export default function App() {
                     activeAdminTab={activeAdminTab}
                     setActiveAdminTab={setActiveAdminTab}
                     onRunMatchmaking={handleRunMatchmaking}
+                    startupsCount={startups.length}
+                    investorsCount={investors.length}
+                    matchesCount={matches.length}
                 />
 
                 {/* View Render Container */}

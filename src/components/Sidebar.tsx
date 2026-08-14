@@ -7,6 +7,9 @@ interface SidebarProps {
     activeAdminTab: 'overview' | 'startups' | 'investors' | 'matches';
     setActiveAdminTab: (tab: 'overview' | 'startups' | 'investors' | 'matches') => void;
     onRunMatchmaking: () => void;
+    startupsCount: number;
+    investorsCount: number;
+    matchesCount: number;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -15,6 +18,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     activeAdminTab,
     setActiveAdminTab,
     onRunMatchmaking,
+    startupsCount,
+    investorsCount,
+    matchesCount,
 }) => {
     return (
         <aside className="w-full lg:w-64 glass-panel border-r border-slate-800 shrink-0 p-4 flex flex-col justify-between gap-6">
@@ -100,7 +106,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     }`}
                             >
                                 <Building2 className="w-4 h-4 text-blue-400" />
-                                <span>Startups Profiles (48)</span>
+                                <span>Startups Profiles ({startupsCount})</span>
                             </button>
 
                             <button
@@ -111,7 +117,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     }`}
                             >
                                 <UserCheck className="w-4 h-4 text-emerald-400" />
-                                <span>Investors / VCs (32)</span>
+                                <span>Investors / VCs ({investorsCount})</span>
                             </button>
 
                             <button
@@ -122,7 +128,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     }`}
                             >
                                 <Sparkles className="w-4 h-4 text-yellow-400" />
-                                <span>AI Matches (156)</span>
+                                <span>AI Matches ({matchesCount})</span>
                             </button>
                         </div>
                     </div>

@@ -125,7 +125,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </p>
                     </div>
 
-                    {/* Action Panel Buttons (Prominent Gradient Buttons with Hover & Tap Interactions) */}
+                    {/* Action Panel Buttons (Run AI Matchmaking & Generate Smart Schedule) */}
                     <div className="flex flex-wrap items-center gap-3 shrink-0">
                         {/* Button 1: Run AI Matchmaking */}
                         <motion.button
@@ -142,7 +142,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 {isMatchmakingLoading ? (
                                     <>
                                         <RefreshCw className="w-4 h-4 text-cyan-300 animate-spin" />
-                                        <span>Analyzing Criteria with Gemini...</span>
+                                        <span>Analyzing Criteria...</span>
                                     </>
                                 ) : (
                                     <>
@@ -239,7 +239,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </div>
                     <div className="text-2xl font-black text-white">{stats.scheduledMeetings}</div>
                     <p className="text-[11px] text-purple-400 font-medium mt-1.5">
-                        across 12 Summit Tables
+                        across {Math.min(stats.scheduledMeetings, 12)} Summit Tables
                     </p>
                 </motion.div>
 
@@ -394,15 +394,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 {/* Conversion Funnel Breakdown */}
                                 <div className="grid grid-cols-3 gap-3 pt-2 text-center">
                                     <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                                        <div className="text-[11px] text-slate-400">1:1 Meetings Completed</div>
-                                        <div className="text-lg font-bold text-white mt-0.5">156 Meetings</div>
+                                        <div className="text-[11px] text-slate-400">1:1 Meetings Scheduled</div>
+                                        <div className="text-lg font-bold text-white mt-0.5">{stats.scheduledMeetings} Meetings</div>
                                     </div>
                                     <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                                        <div className="text-[11px] text-slate-400">Deep-Dive DD Initiated</div>
-                                        <div className="text-lg font-bold text-purple-300 mt-0.5">92 Startups</div>
+                                        <div className="text-[11px] text-slate-400">AI Matches Generated</div>
+                                        <div className="text-lg font-bold text-purple-300 mt-0.5">{matches.length} Matches</div>
                                     </div>
                                     <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                                        <div className="text-[11px] text-slate-400">Term Sheets Signed</div>
+                                        <div className="text-[11px] text-slate-400">Term Sheets Target</div>
                                         <div className="text-lg font-bold text-emerald-400 mt-0.5">$18.4M Total</div>
                                     </div>
                                 </div>
@@ -411,15 +411,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             {/* Sector Breakdown Bars */}
                             <div>
                                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-                                    Deal Flow Density by Industry Sector
+                                    Deal Flow Density by Industry Sector ({startups.length} Startups)
                                 </h4>
                                 <div className="space-y-3">
                                     {[
-                                        { sector: 'AI & DeepTech', percent: 88, count: '18 Startups', color: 'bg-purple-500' },
-                                        { sector: 'FinTech & Payments', percent: 76, count: '12 Startups', color: 'bg-blue-500' },
-                                        { sector: 'AgriTech & Climate', percent: 64, count: '8 Startups', color: 'bg-emerald-500' },
-                                        { sector: 'EdTech & Consumer', percent: 52, count: '6 Startups', color: 'bg-yellow-500' },
-                                        { sector: 'CleanTech & Mobility', percent: 45, count: '4 Startups', color: 'bg-cyan-500' },
+                                        { sector: 'EdTech & AI', percent: 20, count: '1 Startup', color: 'bg-purple-500' },
+                                        { sector: 'FinTech & Payments', percent: 20, count: '1 Startup', color: 'bg-blue-500' },
+                                        { sector: 'AgriTech & Climate', percent: 20, count: '1 Startup', color: 'bg-emerald-500' },
+                                        { sector: 'HealthTech & AI', percent: 20, count: '1 Startup', color: 'bg-yellow-500' },
+                                        { sector: 'CleanTech & Mobility', percent: 20, count: '1 Startup', color: 'bg-cyan-500' },
                                     ].map((item, idx) => (
                                         <div key={idx} className="space-y-1">
                                             <div className="flex justify-between text-xs text-slate-300">
@@ -441,7 +441,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </div>
 
                         {/* Quick AI Match Engine Highlights */}
-                        <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col justify-between gap-6">
+                        <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
                             <div>
                                 <div className="flex items-center gap-2 mb-3">
                                     <div className="p-2 rounded-xl bg-purple-500/20 text-purple-300">
@@ -471,22 +471,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                         <span><strong className="text-slate-200">Investment Thesis:</strong> Contextual alignment with founder background & SEA moat.</span>
                                     </li>
                                 </ul>
-                            </div>
-
-                            <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 text-center space-y-2">
-                                <span className="text-[11px] text-indigo-300 font-semibold uppercase tracking-wider">Ready to Match?</span>
-                                <p className="text-xs text-slate-300">
-                                    Trigger real-time evaluation for all {startups.length} startups and {investors.length} investors.
-                                </p>
-                                <motion.button
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={onRunMatchmaking}
-                                    disabled={isMatchmakingLoading}
-                                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 border border-purple-400/30 transition-all cursor-pointer"
-                                >
-                                    ✨ Evaluate AI Match Pairs
-                                </motion.button>
                             </div>
                         </div>
                     </motion.div>

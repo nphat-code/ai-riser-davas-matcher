@@ -1,14 +1,5 @@
 import { Startup, Investor, MeetingSlot, EventStats, MatchPair } from '../types';
 
-export const INITIAL_EVENT_STATS: EventStats = {
-    totalStartups: 48,
-    totalInvestors: 32,
-    scheduledMeetings: 156,
-    avgMatchScore: 92.4,
-    dealSuccessRate: 86.5,
-    topSector: 'AI & DeepTech',
-};
-
 export const MOCK_STARTUPS: Startup[] = [
     {
         id: 'st-1',
@@ -246,6 +237,20 @@ Managing Director, CyberAgent Capital`,
         matchScore: 95,
     },
 ];
+
+export const INITIAL_STARTUPS = MOCK_STARTUPS;
+export const INITIAL_INVESTORS = MOCK_INVESTORS;
+
+export const INITIAL_EVENT_STATS: EventStats = {
+    totalStartups: INITIAL_STARTUPS.length,
+    totalInvestors: INITIAL_INVESTORS.length,
+    scheduledMeetings: INITIAL_MEETING_SLOTS.length,
+    avgMatchScore: 92.4,
+    dealSuccessRate: 86.5,
+    topSector: 'AI & DeepTech',
+};
+
+export const initialStats = INITIAL_EVENT_STATS;
 
 export const SAMPLE_MATCH_PAIRS: MatchPair[] = [
     {

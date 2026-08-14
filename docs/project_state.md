@@ -28,9 +28,8 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
   - Endpoint `POST /api/ai-followup`: Sinh email và `actionItems` dựa vào ghi chú của nhà đầu tư.
 - **Dữ liệu:** Hiện tại đang sử dụng Mock Data từ thư mục `src/data/mockData.ts` để dựng UI và test luồng.
 
-**2. Giai đoạn 3: Thuật toán Smart Scheduler (Đang thực hiện)**
-- Trên giao diện đã có nút "Generate Smart Schedule" giả lập bằng `setTimeout`.
-- Cần triển khai thuật toán xếp lịch thật sự (Greedy + Priority Queue) ở Frontend hoặc Backend để tránh trùng lặp lịch họp.
+**2. Giai đoạn 3: Thuật toán Smart Scheduler (Đã hoàn thành)**
+- Đã triển khai thành công thuật toán xếp lịch (Greedy + Priority Queue) trên Backend, đảm bảo không trùng lặp lịch họp cho các phiên Business Matching 1:1.
 
 **3. Giai đoạn 4: Đóng gói và Triển khai (Cloud Run)**
 - Đã có file `Dockerfile` chuẩn bị cho việc đẩy lên Google Cloud Run.
