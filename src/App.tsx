@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -23,8 +23,8 @@ export default function App() {
 
     // Core Data States
     const [stats, setStats] = useState<EventStats>(INITIAL_EVENT_STATS);
-    const [startups] = useState<Startup[]>(MOCK_STARTUPS);
-    const [investors] = useState<Investor[]>(MOCK_INVESTORS);
+    const [startups, setStartups] = useState<Startup[]>(MOCK_STARTUPS);
+    const [investors, setInvestors] = useState<Investor[]>(MOCK_INVESTORS);
     const [matches, setMatches] = useState<MatchPair[]>(SAMPLE_MATCH_PAIRS);
     const [scheduleSlots, setScheduleSlots] = useState<MeetingSlot[]>(INITIAL_MEETING_SLOTS);
 
@@ -48,6 +48,84 @@ export default function App() {
             setToastMessage(null);
         }, 3500);
     };
+
+    // Fetch real Google Sheets data on component mount
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await fetch('/api/data');
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+
+                if (data.startups && Array.isArray(data.startups) && data.startups.length > 0) {
+                    const sanitizedStartups: Startup[] = data.startups.map((s: any, idx: number) => ({
+                        id: s.id || `startup-${idx + 1}`,
+                        name: s.name || `Startup ${idx + 1}`,
+                        sector: s.sector || 'General Tech',
+                        stage: s.stage || 'Seed',
+                        targetAsk: s.targetAsk || '$500K',
+                        valuation: s.valuation || '$3M',
+                        description: s.description || s.tagline || '',
+                        tagline: s.tagline || s.description || '',
+                        logo: s.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80',
+                        founderName: s.founderName || 'Founder',
+                        founderTitle: s.founderTitle || 'CEO & Co-founder',
+                        metrics: {
+                            mrr: s.metrics?.mrr || s.mrr || '$10K MRR',
+                            growthRate: s.metrics?.growthRate || s.growthRate || '20% MoM',
+                            teamSize: s.metrics?.teamSize || s.teamSize || 8,
+                            patentCount: s.metrics?.patentCount || s.patentCount || 0,
+                        },
+                        keyTags: Array.isArray(s.keyTags)
+                            ? s.keyTags
+                            : typeof s.keyTags === 'string'
+                                ? s.keyTags.split(',').map((t: string) => t.trim())
+                                : [s.sector || 'Tech'],
+                    }));
+                    setStartups(sanitizedStartups);
+                }
+
+                if (data.investors && Array.isArray(data.investors) && data.investors.length > 0) {
+                    const sanitizedInvestors: Investor[] = data.investors.map((i: any, idx: number) => ({
+                        id: i.id || `investor-${idx + 1}`,
+                        name: i.name || `Investor ${idx + 1}`,
+                        firm: i.firm || 'Venture Capital',
+                        role: i.role || 'Managing Partner',
+                        country: i.country || 'Vietnam',
+                        targetSectors: Array.isArray(i.targetSectors)
+                            ? i.targetSectors
+                            : typeof i.targetSectors === 'string'
+                                ? i.targetSectors.split(',').map((t: string) => t.trim())
+                                : ['EdTech & AI', 'FinTech'],
+                        preferredStages: Array.isArray(i.preferredStages)
+                            ? i.preferredStages
+                            : typeof i.preferredStages === 'string'
+                                ? i.preferredStages.split(',').map((t: string) => t.trim())
+                                : ['Seed', 'Pre-Series A'],
+                        ticketSizeRange: i.ticketSizeRange || '$100K - $500K',
+                        investmentPhilosophy: i.investmentPhilosophy || 'Active tech investor seeking high-growth ventures in SEA.',
+                        avatar: i.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80',
+                    }));
+                    setInvestors(sanitizedInvestors);
+                }
+
+                if (data.startups || data.investors) {
+                    setStats((prev) => ({
+                        ...prev,
+                        totalStartups: (data.startups && Array.isArray(data.startups)) ? data.startups.length : prev.totalStartups,
+                        totalInvestors: (data.investors && Array.isArray(data.investors)) ? data.investors.length : prev.totalInvestors,
+                    }));
+                    showToast('📊 Loaded live data from Google Sheets API');
+                }
+            } catch (err) {
+                console.warn('Could not load live Google Sheets data, using default fallback data:', err);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     // Handler: Run AI Matchmaking
     const handleRunMatchmaking = async () => {

@@ -205,6 +205,31 @@ Generate a polished follow-up package for the VC to send to the startup after th
   }
 });
 
+// Google Sheets Data Endpoint
+app.get("/api/data", async (_req, res) => {
+  try {
+    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL;
+    if (!sheetsApiUrl) {
+      return res.status(500).json({
+        error: "GOOGLE_SHEETS_API_URL environment variable is not configured",
+      });
+    }
+
+    const response = await fetch(sheetsApiUrl);
+    if (!response.ok) {
+      throw new Error(`Google Sheets API responded with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    return res.json(data);
+  } catch (error: any) {
+    console.error("Google Sheets API fetch error:", error);
+    return res.status(500).json({
+      error: error.message || "Failed to fetch data from Google Sheets",
+    });
+  }
+});
+
 // Vite Development or Production Static Middleware
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {

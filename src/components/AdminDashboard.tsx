@@ -83,18 +83,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
     const sectors = ['All', 'EdTech & AI', 'AgriTech & Climate', 'FinTech', 'HealthTech & AI', 'CleanTech & Hardware'];
 
-    const filteredStartups = startups.filter((s) => {
-        const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            s.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            s.founderName.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredStartups = (startups || []).filter((s) => {
+        if (!s) return false;
+        const sName = s.name || '';
+        const sDesc = s.description || s.tagline || '';
+        const sFounder = s.founderName || '';
+        const query = (searchTerm || '').toLowerCase();
+        const matchesSearch =
+            sName.toLowerCase().includes(query) ||
+            sDesc.toLowerCase().includes(query) ||
+            sFounder.toLowerCase().includes(query);
         const matchesSector = selectedSectorFilter === 'All' || s.sector === selectedSectorFilter;
         return matchesSearch && matchesSector;
     });
 
-    const filteredInvestors = investors.filter((i) => {
-        const matchesSearch = i.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            i.firm.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            i.investmentPhilosophy.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredInvestors = (investors || []).filter((i) => {
+        if (!i) return false;
+        const iName = i.name || '';
+        const iFirm = i.firm || '';
+        const iThesis = i.investmentPhilosophy || '';
+        const query = (searchTerm || '').toLowerCase();
+        const matchesSearch =
+            iName.toLowerCase().includes(query) ||
+            iFirm.toLowerCase().includes(query) ||
+            iThesis.toLowerCase().includes(query);
         return matchesSearch;
     });
 
@@ -654,26 +666,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                         >
                                             <td className="py-3 px-4">
                                                 <div className="flex items-center gap-3">
-                                                    <img src={s.logo} alt={s.name} className="w-9 h-9 rounded-xl object-cover border border-slate-700" />
+                                                    <img src={s.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80'} alt={s.name} className="w-9 h-9 rounded-xl object-cover border border-slate-700" />
                                                     <div>
                                                         <div className="font-bold text-white text-sm">{s.name}</div>
-                                                        <div className="text-[11px] text-slate-400">{s.founderName} ({s.founderTitle})</div>
+                                                        <div className="text-[11px] text-slate-400">{s.founderName} {s.founderTitle ? `(${s.founderTitle})` : ''}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="py-3 px-4">
                                                 <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                                                    {s.sector}
+                                                    {s.sector || 'General Tech'}
                                                 </span>
                                             </td>
-                                            <td className="py-3 px-4 font-semibold text-cyan-300">{s.stage}</td>
+                                            <td className="py-3 px-4 font-semibold text-cyan-300">{s.stage || 'Seed'}</td>
                                             <td className="py-3 px-4">
-                                                <span className="font-bold text-emerald-400">{s.targetAsk}</span>
-                                                <div className="text-[10px] text-slate-500">Val: {s.valuation}</div>
+                                                <span className="font-bold text-emerald-400">{s.targetAsk || 'TBD'}</span>
+                                                <div className="text-[10px] text-slate-500">Val: {s.valuation || 'TBD'}</div>
                                             </td>
                                             <td className="py-3 px-4">
-                                                <div className="text-slate-200 font-medium">{s.metrics.mrr || s.metrics.arr || 'N/A'}</div>
-                                                <div className="text-[10px] text-emerald-400">{s.metrics.growthRate}</div>
+                                                <div className="text-slate-200 font-medium">{s.metrics?.mrr || s.metrics?.arr || 'N/A'}</div>
+                                                <div className="text-[10px] text-emerald-400">{s.metrics?.growthRate || ''}</div>
                                             </td>
                                             <td className="py-3 px-4">
                                                 <motion.button
@@ -726,42 +738,54 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     animate="visible"
                                     className="divide-y divide-slate-800/60"
                                 >
-                                    {filteredInvestors.map((inv) => (
-                                        <motion.tr
-                                            key={inv.id}
-                                            variants={itemVariants}
-                                            className="hover:bg-slate-800/30 transition-colors"
-                                        >
-                                            <td className="py-3 px-4">
-                                                <div className="flex items-center gap-3">
-                                                    <img src={inv.avatar} alt={inv.name} className="w-9 h-9 rounded-full object-cover border border-slate-700" />
-                                                    <div>
-                                                        <div className="font-bold text-white text-sm">{inv.name}</div>
-                                                        <div className="text-[11px] text-slate-400">{inv.role}</div>
+                                    {filteredInvestors.map((inv) => {
+                                        const sectorsList = Array.isArray(inv.targetSectors)
+                                            ? inv.targetSectors
+                                            : typeof inv.targetSectors === 'string'
+                                                ? (inv.targetSectors as string).split(',').map((x: string) => x.trim())
+                                                : [];
+
+                                        return (
+                                            <motion.tr
+                                                key={inv.id}
+                                                variants={itemVariants}
+                                                className="hover:bg-slate-800/30 transition-colors"
+                                            >
+                                                <td className="py-3 px-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <img
+                                                            src={inv.avatar || 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80'}
+                                                            alt={inv.name}
+                                                            className="w-9 h-9 rounded-full object-cover border border-slate-700"
+                                                        />
+                                                        <div>
+                                                            <div className="font-bold text-white text-sm">{inv.name}</div>
+                                                            <div className="text-[11px] text-slate-400">{inv.role || 'Partner'}</div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                <span className="font-bold text-purple-300 text-sm">{inv.firm}</span>
-                                                <div className="text-[10px] text-slate-500">{inv.country}</div>
-                                            </td>
-                                            <td className="py-3 px-4">
-                                                <div className="flex flex-wrap gap-1 max-w-xs">
-                                                    {inv.targetSectors.map((sec, i) => (
-                                                        <span key={i} className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300">
-                                                            {sec}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </td>
-                                            <td className="py-3 px-4 font-mono font-bold text-emerald-400">
-                                                {inv.ticketSizeRange}
-                                            </td>
-                                            <td className="py-3 px-4 text-slate-400 text-[11px] max-w-sm line-clamp-2">
-                                                {inv.investmentPhilosophy}
-                                            </td>
-                                        </motion.tr>
-                                    ))}
+                                                </td>
+                                                <td className="py-3 px-4">
+                                                    <span className="font-bold text-purple-300 text-sm">{inv.firm}</span>
+                                                    <div className="text-[10px] text-slate-500">{inv.country || 'Vietnam'}</div>
+                                                </td>
+                                                <td className="py-3 px-4">
+                                                    <div className="flex flex-wrap gap-1 max-w-xs">
+                                                        {sectorsList.map((sec, i) => (
+                                                            <span key={i} className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300">
+                                                                {sec}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </td>
+                                                <td className="py-3 px-4 font-mono font-bold text-emerald-400">
+                                                    {inv.ticketSizeRange || '$50k - $250k'}
+                                                </td>
+                                                <td className="py-3 px-4 text-slate-400 text-[11px] max-w-sm line-clamp-2">
+                                                    {inv.investmentPhilosophy || 'Active VC and Angel investor in SEA.'}
+                                                </td>
+                                            </motion.tr>
+                                        );
+                                    })}
                                 </motion.tbody>
                             </table>
                         </div>
