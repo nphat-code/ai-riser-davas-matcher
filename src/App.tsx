@@ -51,6 +51,22 @@ export default function App() {
 
     // Fetch real Google Sheets data on component mount
     useEffect(() => {
+        const formatCurrency = (val: any): string => {
+            if (val === undefined || val === null || val === '') return 'TBD';
+            const cleanStr = String(val).replace(/[^0-9.-]+/g, '');
+            const num = parseFloat(cleanStr);
+            if (isNaN(num)) return String(val) || 'TBD';
+            if (num >= 1_000_000) {
+                const formatted = (num / 1_000_000).toFixed(1).replace(/\.0$/, '');
+                return `$${formatted}M`;
+            }
+            if (num >= 1_000) {
+                const formatted = (num / 1_000).toFixed(1).replace(/\.0$/, '');
+                return `$${formatted}K`;
+            }
+            return `$${num}`;
+        };
+
         const fetchData = async () => {
             try {
                 const res = await fetch('/api/data');
@@ -60,54 +76,69 @@ export default function App() {
                 const data = await res.json();
 
                 if (data.startups && Array.isArray(data.startups) && data.startups.length > 0) {
-                    const sanitizedStartups: Startup[] = data.startups.map((s: any, idx: number) => ({
-                        id: s.id || `startup-${idx + 1}`,
-                        name: s.name || `Startup ${idx + 1}`,
-                        sector: s.sector || 'General Tech',
-                        stage: s.stage || 'Seed',
-                        targetAsk: s.targetAsk || '$500K',
-                        valuation: s.valuation || '$3M',
-                        description: s.description || s.tagline || '',
-                        tagline: s.tagline || s.description || '',
-                        logo: s.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80',
-                        founderName: s.founderName || 'Founder',
-                        founderTitle: s.founderTitle || 'CEO & Co-founder',
-                        metrics: {
-                            mrr: s.metrics?.mrr || s.mrr || '$10K MRR',
-                            growthRate: s.metrics?.growthRate || s.growthRate || '20% MoM',
-                            teamSize: s.metrics?.teamSize || s.teamSize || 8,
-                            patentCount: s.metrics?.patentCount || s.patentCount || 0,
-                        },
-                        keyTags: Array.isArray(s.keyTags)
-                            ? s.keyTags
-                            : typeof s.keyTags === 'string'
-                                ? s.keyTags.split(',').map((t: string) => t.trim())
-                                : [s.sector || 'Tech'],
-                    }));
+                    const sanitizedStartups: Startup[] = data.startups.map((s: any, idx: number) => {
+                        const name = s["Startup Name"] || s.name || `Startup ${idx + 1}`;
+                        const sector = s["Primary Industry"] || s.sector || 'General Tech';
+                        const stage = s["Current Funding Stage"] || s.stage || 'Seed';
+                        const rawTargetAsk = s["Target Funding Amount in USD"] ?? s.targetAsk;
+                        const targetAsk = rawTargetAsk ? formatCurrency(rawTargetAsk) : '$500K';
+                        const founderName = s["Representative Name"] || s.founderName || 'Founder';
+                        const summaryDesc = `A promising ${stage} startup in ${sector}`;
+
+                        return {
+                            id: s["Email Address"] || s.id || `startup-${idx + 1}`,
+                            name,
+                            sector,
+                            stage,
+                            targetAsk,
+                            valuation: s.valuation || 'TBD',
+                            description: s.description || summaryDesc,
+                            tagline: s.tagline || summaryDesc,
+                            logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`,
+                            founderName,
+                            founderTitle: 'Founder & CEO',
+                            metrics: {
+                                mrr: s.metrics?.mrr || s.mrr || 'TBD',
+                                growthRate: s.metrics?.growthRate || s.growthRate || 'N/A',
+                                teamSize: s.metrics?.teamSize || s.teamSize || 8,
+                                patentCount: s.metrics?.patentCount || s.patentCount || 0,
+                            },
+                            keyTags: sector.split(',').map((t: string) => t.trim()).filter(Boolean),
+                        };
+                    });
                     setStartups(sanitizedStartups);
                 }
 
                 if (data.investors && Array.isArray(data.investors) && data.investors.length > 0) {
-                    const sanitizedInvestors: Investor[] = data.investors.map((i: any, idx: number) => ({
-                        id: i.id || `investor-${idx + 1}`,
-                        name: i.name || `Investor ${idx + 1}`,
-                        firm: i.firm || 'Venture Capital',
-                        role: i.role || 'Managing Partner',
-                        country: i.country || 'Vietnam',
-                        targetSectors: Array.isArray(i.targetSectors)
-                            ? i.targetSectors
-                            : typeof i.targetSectors === 'string'
-                                ? i.targetSectors.split(',').map((t: string) => t.trim())
-                                : ['EdTech & AI', 'FinTech'],
-                        preferredStages: Array.isArray(i.preferredStages)
-                            ? i.preferredStages
-                            : typeof i.preferredStages === 'string'
-                                ? i.preferredStages.split(',').map((t: string) => t.trim())
-                                : ['Seed', 'Pre-Series A'],
-                        ticketSizeRange: i.ticketSizeRange || '$100K - $500K',
-                        investmentPhilosophy: i.investmentPhilosophy || 'Active tech investor seeking high-growth ventures in SEA.',
-                        avatar: i.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80',
-                    }));
+                    const sanitizedInvestors: Investor[] = data.investors.map((i: any, idx: number) => {
+                        const name = i["Representative Name"] || i.name || `Investor ${idx + 1}`;
+                        const firm = i["Investor or Fund Name"] || i.firm || 'Venture Capital';
+                        const rawSectors = i["Interested Industries"] || i.targetSectors || 'EdTech & AI, FinTech';
+                        const targetSectors = (typeof rawSectors === 'string' ? rawSectors : String(rawSectors))
+                            .split(',')
+                            .map((t: string) => t.trim())
+                            .filter(Boolean);
+                        const maxTicket = i["Maximum Ticket Size (USD)"];
+                        const ticketSizeRange = maxTicket ? `Up to ${formatCurrency(maxTicket)}` : (i.ticketSizeRange || '$100K - $500K');
+                        const investmentPhilosophy = i["Investment Philosophy and matching criteria"] || i.investmentPhilosophy || 'Active tech investor seeking high-growth ventures in SEA.';
+
+                        return {
+                            id: i["Email Address"] || i.id || `investor-${idx + 1}`,
+                            name,
+                            firm,
+                            role: 'Investment Partner',
+                            country: i.country || 'Vietnam',
+                            targetSectors,
+                            preferredStages: Array.isArray(i.preferredStages)
+                                ? i.preferredStages
+                                : typeof i.preferredStages === 'string'
+                                    ? i.preferredStages.split(',').map((t: string) => t.trim())
+                                    : ['Seed', 'Pre-Series A'],
+                            ticketSizeRange,
+                            investmentPhilosophy,
+                            avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`,
+                        };
+                    });
                     setInvestors(sanitizedInvestors);
                 }
 
