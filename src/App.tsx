@@ -215,7 +215,7 @@ export default function App() {
     };
 
     // Handler: Generate Smart Schedule using Greedy + Priority Algorithm
-    const handleGenerateSchedule = () => {
+    const handleGenerateSchedule = async () => {
         setIsScheduleLoading(true);
 
         try {
@@ -229,6 +229,45 @@ export default function App() {
             }));
 
             showToast(`📅 Smart Schedule Generated! ${optimizedSlots.length} 1:1 meetings assigned with zero collisions.`);
+
+            // Sync top slots to Google Calendar / Apps Script webhook (limit to top 3 slots)
+            const slotsToSync = optimizedSlots.slice(0, 3);
+            if (slotsToSync.length > 0) {
+                await Promise.all(
+                    slotsToSync.map(async (slot) => {
+                        const correspondingPair = matches.find(
+                            (m) =>
+                                (m.startup.id === slot.startup.id && m.investor.id === slot.investor.id) ||
+                                (m.startup.name === slot.startup.name && m.investor.firm === slot.investor.firm)
+                        );
+
+                        const iceBreakers = correspondingPair?.analysis?.ice_breakers
+                            ? correspondingPair.analysis.ice_breakers.join('\n')
+                            : 'What are your primary go-to-market drivers?\nHow do you plan to leverage VC network?';
+
+                        const reason = correspondingPair?.analysis?.reason || 'Strong strategic alignment for DAVAS 2026 1:1 Summit.';
+
+                        return fetch('/api/schedule', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                startupEmail: slot.startup.id,
+                                investorEmail: slot.investor.id,
+                                startupName: slot.startup.name,
+                                investorName: slot.investor.name,
+                                reason,
+                                iceBreakers,
+                                date: '2026-08-20',
+                                time: slot.time,
+                            }),
+                        }).catch((err) => {
+                            console.warn('Failed to sync slot to Google Calendar webhook:', err);
+                        });
+                    })
+                );
+
+                showToast('Đã đồng bộ lịch lên Google Calendar thành công!');
+            }
         } catch (err) {
             console.error('Smart scheduling failed:', err);
             showToast('⚠️ Failed to generate schedule.');

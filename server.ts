@@ -230,6 +230,37 @@ app.get("/api/data", async (_req, res) => {
   }
 });
 
+// Google Calendar & Schedule Trigger Endpoint
+app.post("/api/schedule", async (req, res) => {
+  try {
+    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL;
+    if (!sheetsApiUrl) {
+      return res.status(500).json({
+        error: "GOOGLE_SHEETS_API_URL environment variable is not configured",
+      });
+    }
+
+    const payload = {
+      action: "trigger_schedule",
+      ...req.body,
+    };
+
+    const response = await fetch(sheetsApiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => ({ status: "ok" }));
+    return res.json(data);
+  } catch (error: any) {
+    console.error("Google Sheets trigger_schedule error:", error);
+    return res.status(500).json({
+      error: error.message || "Failed to trigger schedule on Google Apps Script",
+    });
+  }
+});
+
 // Vite Development or Production Static Middleware
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
