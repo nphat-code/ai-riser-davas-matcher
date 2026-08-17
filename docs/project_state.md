@@ -31,9 +31,17 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
 **2. Giai đoạn 3: Thuật toán Smart Scheduler (Đã hoàn thành)**
 - Đã triển khai thành công thuật toán xếp lịch (Greedy + Priority Queue) trên Backend, đảm bảo không trùng lặp lịch họp cho các phiên Business Matching 1:1.
 
-**3. Giai đoạn 4: Đóng gói và Triển khai (Cloud Run)**
+**4. Giai đoạn 4: Tích hợp Google Sheets API (Đã hoàn thành)**
+- Tích hợp thành công API đọc dữ liệu thật từ Google Sheets (bằng Apps Script).
+- Bổ sung logic parse/làm giàu dữ liệu (Data Enrichment) tại `App.tsx` giúp format giao diện UI.
+
+**5. Giai đoạn 5: Google Calendar & Email Sync (Đã hoàn thành)**
+- Nút "Generate Smart Schedule" gọi API POST `/api/schedule` để đẩy webhook sang Apps Script.
+- Tự động hóa gửi email và đặt lịch 1:1 trên Google Calendar bằng Apps Script cho từng cặp Match.
+
+**6. Giai đoạn 6: Đóng gói và Triển khai (Cloud Run)**
 - Đã có file `Dockerfile` chuẩn bị cho việc đẩy lên Google Cloud Run.
-- Cần hoàn thiện việc kết nối dữ liệu thật (từ Google Sheets hoặc DB) để loại bỏ Mock Data trước khi Public dự án.
+- Cần public dự án và test thử.
 
 ## 3. Quy trình tổ chức và tham gia (DAVAS Workflow)
 
