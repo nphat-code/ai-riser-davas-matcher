@@ -155,12 +155,12 @@ export default function App() {
                 // Load existing matches from Google Sheets if available
                 if (data.matches && Array.isArray(data.matches) && data.matches.length > 0) {
                     const loadedMatches: MatchPair[] = data.matches.map((m: any, idx: number) => {
-                        const startupName = m.startupName || m["Startup Name"] || `Startup ${idx + 1}`;
-                        const startupEmail = m.startupEmail || m["Startup Email"] || m["Email Address"] || `startup-${idx + 1}`;
-                        const startupSector = m.startupSector || m["Startup Sector"] || m["Primary Industry"] || 'General Tech';
-                        const startupStage = m.startupStage || m["Startup Stage"] || m["Current Funding Stage"] || 'Seed';
-                        const targetAsk = m.targetAsk || m["Target Ask"] || '$500K';
-                        const founderName = m.founderName || m["Founder Name"] || 'Founder';
+                        const startupName = m.Startup_Name || m["Startup_Name"] || m.startupName || m["Startup Name"] || `Startup ${idx + 1}`;
+                        const startupEmail = m.Startup_Email || m["Startup_Email"] || m.startupEmail || m["Startup Email"] || `startup-${idx + 1}`;
+                        const startupSector = m.Startup_Sector || m["Startup_Sector"] || m.startupSector || m["Startup Sector"] || 'General Tech';
+                        const startupStage = m.Startup_Stage || m["Startup_Stage"] || m.startupStage || m["Startup Stage"] || 'Seed';
+                        const targetAsk = m.Target_Ask || m["Target_Ask"] || m.targetAsk || m["Target Ask"] || '$500K';
+                        const founderName = m.Founder_Name || m["Founder_Name"] || m.founderName || m["Founder Name"] || 'Founder';
 
                         const matchedStartup: Startup = sanitizedStartups.find(
                             (s) => s.id === startupEmail || s.name === startupName
@@ -182,9 +182,9 @@ export default function App() {
                             keyTags: startupSector.split(',').map((t: string) => t.trim()).filter(Boolean),
                         };
 
-                        const investorFirm = m.investorFirm || m["Investor Firm"] || m["Investor or Fund Name"] || 'Venture Capital';
-                        const investorName = m.investorName || m["Investor Name"] || m["Representative Name"] || 'Investor';
-                        const investorEmail = m.investorEmail || m["Investor Email"] || `investor-${idx + 1}`;
+                        const investorFirm = m.Investor_Firm || m["Investor_Firm"] || m.investorFirm || m["Investor Firm"] || 'Venture Capital';
+                        const investorName = m.Investor_Representative || m["Investor_Representative"] || m.investorName || m["Investor Name"] || 'Investor';
+                        const investorEmail = m.Investor_Email || m["Investor_Email"] || m.investorEmail || m["Investor Email"] || `investor-${idx + 1}`;
 
                         const matchedInvestor: Investor = sanitizedInvestors.find(
                             (i) => i.id === investorEmail || i.firm === investorFirm
@@ -202,7 +202,11 @@ export default function App() {
                             avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(investorName)}&background=random`,
                         };
 
-                        const rawIce = m.iceBreakers || m.ice_breakers || m["Ice Breakers"];
+                        const rawIce = m.AI_Ice_Breakers || m["AI_Ice_Breakers"] || m.iceBreakers || m.ice_breakers || m["Ice Breakers"];
+                        const score = Number(m.AI_Match_Score || m["AI_Match_Score"] || m.score || m.matching_score || 90);
+                        const reason = m.AI_Match_Reason || m["AI_Match_Reason"] || m.reason || m["Reason"] || 'Strong strategic alignment for DAVAS 2026 1:1 Summit.';
+                        const recommendedTable = m.Assigned_Table || m["Assigned_Table"] || m.table || m.recommendedTable || `Table A${(idx % 5) + 1}`;
+
                         const iceBreakers = Array.isArray(rawIce)
                             ? rawIce
                             : typeof rawIce === 'string'
@@ -212,10 +216,6 @@ export default function App() {
                                     'How do you plan to leverage our VC network?',
                                     'What unit economics benchmarks do you aim for post-round?',
                                 ];
-
-                        const score = Number(m.score || m.matching_score || m["Score"] || 90);
-                        const reason = m.reason || m["Reason"] || 'Strong strategic alignment for DAVAS 2026 1:1 Summit.';
-                        const recommendedTable = m.table || m.recommendedTable || m["Table"] || `Table A${(idx % 5) + 1}`;
 
                         return {
                             id: m.id || m["ID"] || `mp-sheet-${idx + 1}`,
