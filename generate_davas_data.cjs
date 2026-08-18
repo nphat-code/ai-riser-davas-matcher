@@ -13,21 +13,6 @@ const countries = ["Vietnam", "Singapore", "South Korea", "Japan", "USA", "Austr
 const firstNames = ["Nguyen", "Tran", "Le", "Pham", "Hoang", "David", "Sarah", "Michael", "Kenji", "Lee", "Park", "Alex", "Maria", "John", "Jessica"];
 const lastNames = ["Anh", "Binh", "C", "Smith", "Johnson", "Suzuki", "Kim", "Wong", "Chen", "Tan", "Gomez", "Williams", "Nguyen", "Tran"];
 
-const fundPrefixes = ["Global", "Green", "Alpha", "Vertex", "CyberAgent", "Do", "Mekong", "Vina", "Golden Gate", "East", "Monk's Hill", "500", "Sequoia", "Lightspeed", "Wavemaker", "Jungle", "Insignia", "Openspace", "Antler", "Nextrans"];
-const fundSuffixes = ["Ventures", "Capital", "Partners", "Global", "Fund", "Holdings", "Group"];
-const investmentPhilosophies = [
-  "Seeking sustainable development solutions at a micro-scale that create significant environmental impact.",
-  "Prioritizing AI-applied startups to personalize learning. The founding team must have practical experience.",
-  "Active tech investor seeking high-growth ventures in SEA with a focus on unit economics.",
-  "We back early-stage founders building disruptive SaaS and FinTech solutions in emerging markets.",
-  "Focus on DeepTech and Healthcare innovations that improve life expectancy and health systems.",
-  "Looking for scalable platforms with strong network effects in the logistics and e-commerce space.",
-  "Data-driven investment in AI, Blockchain, and Next-Gen infrastructure.",
-  "Supporting female-led startups and sustainable business models in Southeast Asia.",
-  "B2B SaaS focused fund looking for proven product-market fit and MRR > $50k.",
-  "We are sector agnostic but founder-focused. We look for grit, vision, and execution ability."
-];
-
 // Helpers
 const randomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -67,38 +52,53 @@ for (let i = 0; i < 62; i++) {
   });
 }
 
-// Generate 31 Investors
-for (let i = 0; i < 31; i++) {
-  let fundName = "";
-  if (i < fundPrefixes.length) {
-     fundName = `${fundPrefixes[i]} ${randomItem(fundSuffixes)}`;
-  } else {
-     fundName = `${randomItem(fundPrefixes)} ${randomItem(fundSuffixes)}`;
-  }
-  
-  const fName = `${randomItem(firstNames)} ${randomItem(lastNames)}`;
-  
-  // Pick 2-4 target industries
-  let indCount = randomInt(2, 4);
-  let ind = [];
-  for(let j=0; j<indCount; j++) {
-      let rInd = randomItem(industries);
-      if(!ind.includes(rInd)) ind.push(rInd);
-  }
+// Bespoke 31 Investors with 100% matched sectors and philosophies
+const curatedInvestors = [
+  { fund: "Global Partners", name: "John Nguyen", sectors: "Cleantech, AgriTech", ticket: 2000000, thesis: "Backing tech-enabled circular economy models and high-yield, climate-resilient farming solutions across the Mekong Delta." },
+  { fund: "Green Global", name: "Kenji Suzuki", sectors: "DeepTech, Cleantech", ticket: 2000000, thesis: "Investing in early-stage material science, carbon accounting platforms, and energy transition hardware with verifiable ESG metrics." },
+  { fund: "Alpha Partners", name: "Alex Tan", sectors: "EdTech, Artificial Intelligence, SaaS", ticket: 3000000, thesis: "Partnering with founders building generative AI-native learning companions and automated corporate upskilling ecosystems." },
+  { fund: "Vertex Fund", name: "David Williams", sectors: "HealthTech, Artificial Intelligence", ticket: 3000000, thesis: "Targeting AI-assisted diagnostic tools, telemedicine infrastructure, and digital pharmacy networks serving tier-2 SEA cities." },
+  { fund: "CyberAgent Holdings", name: "Sarah Kim", sectors: "SaaS, FinTech", ticket: 4000000, thesis: "Hunting for high-retention B2B SaaS workflows and embedded payment gateways with proven net dollar retention > 115%." },
+  { fund: "Do Capital", name: "Lee Anh", sectors: "FinTech, E-commerce", ticket: 5000000, thesis: "Backing seed-stage platforms that democratize micro-insurance and supply-chain financing for unbanked micro-merchants." },
+  { fund: "Mekong Group", name: "Alex C", sectors: "AgriTech, Logistics", ticket: 3000000, thesis: "Modernizing agriculture cold-chains, farm-to-table logistics, and IoT-driven post-harvest loss prevention systems." },
+  { fund: "Vina Partners", name: "Michael Anh", sectors: "FinTech, SaaS", ticket: 4000000, thesis: "Investing in next-generation accounting automation, e-invoicing compliance, and automated payroll infrastructure for SEA enterprises." },
+  { fund: "Golden Gate Group", name: "Lee Chen", sectors: "DeepTech, Artificial Intelligence, Blockchain", ticket: 4000000, thesis: "Backing technical founders building decentralized compute networks, zero-knowledge security, and enterprise AI orchestration layers." },
+  { fund: "East Capital", name: "David Nguyen", sectors: "E-commerce, D2C, Sustainability", ticket: 5000000, thesis: "Empowering female-founded consumer brands, omni-channel retail tech, and sustainable direct-to-consumer lifestyle innovations." },
+  { fund: "Monk's Hill Fund", name: "Michael Williams", sectors: "SaaS, Logistics", ticket: 3000000, thesis: "Series A lead investor focused on gritty operators solving fundamental infrastructure and fragmented logistics bottlenecks in ASEAN." },
+  { fund: "500 Holdings", name: "Sarah Nguyen", sectors: "FinTech, PropTech", ticket: 3000000, thesis: "Backing aggressive, fast-executing seed founders modernizing fractional real estate investments and digital mortgage origination." },
+  { fund: "Sequoia Partners", name: "Hoang Johnson", sectors: "Artificial Intelligence, SaaS", ticket: 5000000, thesis: "Seeking visionary founders creating category-defining vertical AI agents with deep proprietary workflow data moats." },
+  { fund: "Lightspeed Global", name: "Pham Anh", sectors: "E-commerce, MediaTech", ticket: 2000000, thesis: "Investing in live-commerce enablement tools, cross-border social shopping engines, and affiliate monetization platforms." },
+  { fund: "Wavemaker Global", name: "Nguyen Tan", sectors: "DeepTech, Robotics, IoT", ticket: 4000000, thesis: "Early-stage enterprise and hard-tech fund backing industrial robotics, factory automation, and smart manufacturing in Vietnam." },
+  { fund: "Jungle Holdings", name: "Pham Chen", sectors: "SaaS, FinTech", ticket: 1000000, thesis: "Supporting regional category leaders with strong unit economics, low churn, and clear pathways to $10M+ ARR expansion." },
+  { fund: "Insignia Global", name: "Pham Williams", sectors: "HealthTech, InsurTech", ticket: 3000000, thesis: "Investing in digital health platforms connecting outpatient care with preventive corporate wellness and micro-health policies." },
+  { fund: "Openspace Capital", name: "Michael Smith", sectors: "AgriTech, FoodTech", ticket: 2000000, thesis: "Partnering with growth-stage tech companies solving alternative protein, bio-fertilizers, and supply-demand price discovery." },
+  { fund: "Antler Fund", name: "Kenji Smith", sectors: "Artificial Intelligence, DeepTech", ticket: 1000000, thesis: "Day-zero co-founder to top-tier engineers and domain experts launching high-velocity AI-first startups in Southeast Asia." },
+  { fund: "Nextrans Global", name: "John Wong", sectors: "Cleantech, Mobility", ticket: 1000000, thesis: "Backing electric two-wheeler ecosystems, smart battery-swapping networks, and smart urban mobility hardware." },
+  { fund: "Lightspeed Group", name: "Le Anh", sectors: "EdTech, Gaming", ticket: 4000000, thesis: "Focusing on gamified learning applications, interactive STEM platforms, and immersive educational software." },
+  { fund: "Jungle Global", name: "Park Gomez", sectors: "FinTech, WealthTech", ticket: 4000000, thesis: "Democratizing algorithmic retail investment tools, automated robo-advisory, and digital asset custody solutions." },
+  { fund: "CyberAgent Group", name: "Le Tan", sectors: "MediaTech, Artificial Intelligence", ticket: 3000000, thesis: "Investing in automated AI content creation tools, synthetic media, and personalized digital marketing engines." },
+  { fund: "Vina Capital", name: "Hoang Wong", sectors: "AgriTech, Renewable Energy", ticket: 3000000, thesis: "Financing rooftop solar optimization software, smart irrigation grids, and carbon credit tokenization platforms." },
+  { fund: "Alpha Fund", name: "Alex Suzuki", sectors: "SaaS, Cybersecurity", ticket: 3000000, thesis: "Protecting mid-market enterprises with automated penetration testing, cloud identity governance, and threat intelligence AI." },
+  { fund: "Insignia Capital", name: "John Nguyen", sectors: "Logistics, E-commerce", ticket: 2000000, thesis: "Backing on-demand hyper-local delivery tech, warehouse robotics, and automated customs clearance platforms." },
+  { fund: "Golden Gate Fund", name: "David Kim", sectors: "FinTech, SME Banking", ticket: 2000000, thesis: "Building all-in-one neo-banking suites, corporate credit cards, and treasury management tools tailored for emerging Asian startups." },
+  { fund: "Jungle Ventures", name: "Le Nguyen", sectors: "TravelTech, Hospitality", ticket: 4000000, thesis: "Modernizing boutique hotel management systems, experiential travel marketplaces, and dynamic flight pricing algorithms." },
+  { fund: "Lightspeed Fund", name: "John Suzuki", sectors: "HealthTech, Biotech", ticket: 3000000, thesis: "Supporting personalized genomics analytics, early cancer screening hardware, and decentralized clinical trial software." },
+  { fund: "Vertex Group", name: "Hoang C", sectors: "EdTech, Future of Work", ticket: 2000000, thesis: "Backing remote team collaboration software, AI technical interview screening, and global talent credential verification." },
+  { fund: "Nextrans Ventures", name: "Jessica Tran", sectors: "Robotics, Logistics", ticket: 4000000, thesis: "Investing in autonomous last-mile delivery drones, smart warehousing sensors, and fleet telematics optimization." }
+];
 
-  let ticketSize = randomInt(1, 5) * 1000000; // 1M - 5M
-
+curatedInvestors.forEach((inv, i) => {
   investors.push({
     "Timestamp": randomDate(new Date(2026, 6, 1), new Date(2026, 7, 10)),
-    "Investor or Fund Name": fundName,
-    "Representative Name": fName,
-    "Email Address": generateEmail(fName.split(" ")[0], fName.split(" ")[1], fundName.replace(/\s+/g, "").toLowerCase()),
+    "Investor or Fund Name": inv.fund,
+    "Representative Name": inv.name,
+    "Email Address": generateEmail(inv.name.split(" ")[0], inv.name.split(" ")[1], inv.fund.replace(/[^a-zA-Z0-9]/g, "").toLowerCase()),
     "Phone Number": generatePhone(),
-    "Interested Industries": ind.join(", "),
-    "Maximum Ticket Size (USD)": ticketSize,
-    "Investment Philosophy and matching criteria": randomItem(investmentPhilosophies)
+    "Interested Industries": inv.sectors,
+    "Maximum Ticket Size (USD)": inv.ticket,
+    "Investment Philosophy and matching criteria": inv.thesis
   });
-}
+});
 
 // Convert to CSV
 const toCSV = (data) => {
@@ -119,4 +119,4 @@ const toCSV = (data) => {
 fs.writeFileSync('davas_startups.csv', '\uFEFF' + toCSV(startups));
 fs.writeFileSync('davas_investors.csv', '\uFEFF' + toCSV(investors));
 
-console.log("Generated davas_startups.csv (62 rows) and davas_investors.csv (31 rows).");
+console.log("Successfully generated clean and realistic davas_startups.csv and davas_investors.csv.");

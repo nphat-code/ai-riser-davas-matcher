@@ -9,9 +9,12 @@ import {
     TrendingUp,
     ArrowUpRight,
     ChevronRight,
+    ChevronLeft,
     ChevronDown,
     ChevronUp,
     Search,
+    Filter,
+    X,
     RefreshCw,
     Zap,
     HelpCircle,
@@ -80,39 +83,186 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     isScheduleLoading,
     onInspectMatch,
 }) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedSectorFilter, setSelectedSectorFilter] = useState('All');
+    const ITEMS_PER_PAGE = 8;
+
+    // Startup Tab States
+    const [startupSearch, setStartupSearch] = useState('');
+    const [startupSector, setStartupSector] = useState('All');
+    const [startupPage, setStartupPage] = useState(1);
+
+    // Investor Tab States
+    const [investorSearch, setInvestorSearch] = useState('');
+    const [investorSector, setInvestorSector] = useState('All');
+    const [investorPage, setInvestorPage] = useState(1);
+
+    // Overview Sector Bar State
     const [showAllSectors, setShowAllSectors] = useState(false);
 
-    const availableSectors = ['All', ...Array.from(new Set(startups.map((s) => s.sector).filter(Boolean)))];
-    const sectors = availableSectors.length > 1 ? availableSectors : ['All', 'EdTech & AI', 'AgriTech & Climate', 'FinTech', 'HealthTech & AI', 'CleanTech & Hardware'];
+    // Dynamic Sectors list for Startups
+    const startupSectors = ['All', ...Array.from(new Set(startups.map((s) => s.sector).filter(Boolean))).sort()];
 
+    // Dynamic Sectors list for Investors
+    const allInvestorSectors = new Set<string>();
+    investors.forEach((inv) => {
+        if (Array.isArray(inv.targetSectors)) {
+            inv.targetSectors.forEach((sec) => sec && allInvestorSectors.add(sec.trim()));
+        } else if (typeof inv.targetSectors === 'string' && inv.targetSectors) {
+            (inv.targetSectors as string).split(',').forEach((sec) => sec && allInvestorSectors.add(sec.trim()));
+        }
+    });
+    const investorSectors = ['All', ...Array.from(allInvestorSectors).sort()];
+
+    // Filtered Startups with comprehensive search
     const filteredStartups = (startups || []).filter((s) => {
         if (!s) return false;
         const sName = s.name || '';
         const sDesc = s.description || s.tagline || '';
         const sFounder = s.founderName || '';
-        const query = (searchTerm || '').toLowerCase();
+        const sSector = s.sector || '';
+        const sStage = s.stage || '';
+        const sAsk = s.targetAsk || '';
+        const query = (startupSearch || '').toLowerCase().trim();
+
         const matchesSearch =
+            !query ||
             sName.toLowerCase().includes(query) ||
             sDesc.toLowerCase().includes(query) ||
-            sFounder.toLowerCase().includes(query);
-        const matchesSector = selectedSectorFilter === 'All' || s.sector === selectedSectorFilter;
+            sFounder.toLowerCase().includes(query) ||
+            sSector.toLowerCase().includes(query) ||
+            sStage.toLowerCase().includes(query) ||
+            sAsk.toLowerCase().includes(query);
+
+        const matchesSector = startupSector === 'All' || s.sector === startupSector;
         return matchesSearch && matchesSector;
     });
 
+    const startupTotalPages = Math.max(1, Math.ceil(filteredStartups.length / ITEMS_PER_PAGE));
+    const paginatedStartups = filteredStartups.slice(
+        (startupPage - 1) * ITEMS_PER_PAGE,
+        startupPage * ITEMS_PER_PAGE
+    );
+
+    // Filtered Investors with comprehensive search
     const filteredInvestors = (investors || []).filter((i) => {
         if (!i) return false;
         const iName = i.name || '';
         const iFirm = i.firm || '';
+        const iRole = i.role || '';
         const iThesis = i.investmentPhilosophy || '';
-        const query = (searchTerm || '').toLowerCase();
+        const iCountry = i.country || '';
+        const iTicket = i.ticketSizeRange || '';
+        const query = (investorSearch || '').toLowerCase().trim();
+
         const matchesSearch =
+            !query ||
             iName.toLowerCase().includes(query) ||
             iFirm.toLowerCase().includes(query) ||
-            iThesis.toLowerCase().includes(query);
-        return matchesSearch;
+            iRole.toLowerCase().includes(query) ||
+            iThesis.toLowerCase().includes(query) ||
+            iCountry.toLowerCase().includes(query) ||
+            iTicket.toLowerCase().includes(query);
+
+        let matchesSector = investorSector === 'All';
+        if (investorSector !== 'All') {
+            if (Array.isArray(i.targetSectors)) {
+                matchesSector = i.targetSectors.some((sec) => sec && sec.toLowerCase().includes(investorSector.toLowerCase()));
+            } else if (typeof i.targetSectors === 'string') {
+                matchesSector = (i.targetSectors as string).toLowerCase().includes(investorSector.toLowerCase());
+            }
+        }
+
+        return matchesSearch && matchesSector;
     });
+
+    const investorTotalPages = Math.max(1, Math.ceil(filteredInvestors.length / ITEMS_PER_PAGE));
+    const paginatedInvestors = filteredInvestors.slice(
+        (investorPage - 1) * ITEMS_PER_PAGE,
+        investorPage * ITEMS_PER_PAGE
+    );
+
+    // Reusable Pagination Controller
+    const renderPagination = (
+        currentPage: number,
+        totalPages: number,
+        totalItems: number,
+        onPageChange: (page: number) => void
+    ) => {
+        if (totalItems === 0) return null;
+
+        const startItem = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+        const endItem = Math.min(currentPage * ITEMS_PER_PAGE, totalItems);
+
+        // Dynamic smart page numbering
+        const pages: (number | string)[] = [];
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) pages.push(i);
+        } else {
+            if (currentPage <= 4) {
+                pages.push(1, 2, 3, 4, 5, '...', totalPages);
+            } else if (currentPage >= totalPages - 3) {
+                pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+            } else {
+                pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+            }
+        }
+
+        return (
+            <div className="p-4 border-t border-slate-800/80 bg-slate-950/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                <div className="text-slate-400 text-xs">
+                    Showing <span className="font-bold text-white">{startItem}</span> to{' '}
+                    <span className="font-bold text-white">{endItem}</span> of{' '}
+                    <span className="font-bold text-cyan-400">{totalItems}</span> entries
+                    <span className="ml-2 text-[11px] text-slate-500 font-mono">
+                        (Page {currentPage} of {totalPages})
+                    </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap justify-center">
+                    <button
+                        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 transition-all cursor-pointer font-medium text-xs shadow-sm"
+                    >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                        <span>Prev</span>
+                    </button>
+
+                    {pages.map((p, idx) => {
+                        if (p === '...') {
+                            return (
+                                <span key={`ellipsis-${idx}`} className="px-2 py-1 text-slate-600 select-none">
+                                    ...
+                                </span>
+                            );
+                        }
+                        const pageNum = Number(p);
+                        const isActive = pageNum === currentPage;
+                        return (
+                            <button
+                                key={pageNum}
+                                onClick={() => onPageChange(pageNum)}
+                                className={`min-w-[32px] h-8 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${isActive
+                                    ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 text-white border-cyan-400/40 shadow-md shadow-indigo-500/25'
+                                    : 'bg-slate-900/90 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                                    }`}
+                            >
+                                {pageNum}
+                            </button>
+                        );
+                    })}
+
+                    <button
+                        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 transition-all cursor-pointer font-medium text-xs shadow-sm"
+                    >
+                        <span>Next</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="space-y-6 pb-12">
@@ -150,8 +300,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             onClick={onRunMatchmaking}
                             disabled={isMatchmakingLoading}
                             className={`relative group overflow-hidden px-5 py-3 rounded-2xl text-xs font-bold text-white transition-all duration-300 shadow-xl border cursor-pointer ${isMatchmakingLoading
-                                    ? 'bg-slate-800 border-slate-700 opacity-80 cursor-wait'
-                                    : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 border-cyan-400/30 shadow-purple-600/30'
+                                ? 'bg-slate-800 border-slate-700 opacity-80 cursor-wait'
+                                : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 border-cyan-400/30 shadow-purple-600/30'
                                 }`}
                         >
                             <div className="flex items-center gap-2.5">
@@ -176,8 +326,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             onClick={onGenerateSchedule}
                             disabled={isScheduleLoading}
                             className={`relative px-5 py-3 rounded-2xl text-xs font-bold text-white transition-all duration-300 shadow-xl border cursor-pointer ${isScheduleLoading
-                                    ? 'bg-slate-800 border-slate-700 opacity-80 cursor-wait'
-                                    : 'bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-white border-cyan-500/30 shadow-cyan-500/10'
+                                ? 'bg-slate-800 border-slate-700 opacity-80 cursor-wait'
+                                : 'bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-white border-cyan-500/30 shadow-cyan-500/10'
                                 }`}
                         >
                             <div className="flex items-center gap-2.5">
@@ -304,8 +454,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('overview')}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'overview'
-                                ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
-                                : 'text-slate-400 hover:text-white'
+                            ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
+                            : 'text-slate-400 hover:text-white'
                             }`}
                     >
                         📊 Analytics & Deal Flow
@@ -316,8 +466,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('matches')}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'matches'
-                                ? 'bg-purple-950/80 text-purple-300 border border-purple-500/40 shadow-md shadow-purple-500/10'
-                                : 'text-slate-400 hover:text-white'
+                            ? 'bg-purple-950/80 text-purple-300 border border-purple-500/40 shadow-md shadow-purple-500/10'
+                            : 'text-slate-400 hover:text-white'
                             }`}
                     >
                         ✨ AI Match Pairings ({matches.length})
@@ -328,8 +478,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('startups')}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'startups'
-                                ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
-                                : 'text-slate-400 hover:text-white'
+                            ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
+                            : 'text-slate-400 hover:text-white'
                             }`}
                     >
                         🚀 Startups ({startups.length})
@@ -340,27 +490,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('investors')}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'investors'
-                                ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
-                                : 'text-slate-400 hover:text-white'
+                            ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
+                            : 'text-slate-400 hover:text-white'
                             }`}
                     >
                         💼 VCs & Angels ({investors.length})
                     </motion.button>
                 </div>
 
-                {/* Filter / Search Bar */}
-                <div className="hidden sm:flex items-center gap-2">
-                    <div className="relative">
-                        <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
-                        <input
-                            type="text"
-                            placeholder="Search startup, VC or thesis..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="bg-slate-900/80 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-52"
-                        />
+                {/* Quick Search Bar depending on active tab */}
+                {(activeTab === 'startups' || activeTab === 'investors') && (
+                    <div className="hidden sm:flex items-center gap-2">
+                        <div className="relative">
+                            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                                type="text"
+                                placeholder={activeTab === 'startups' ? 'Quick search startups...' : 'Quick search investors...'}
+                                value={activeTab === 'startups' ? startupSearch : investorSearch}
+                                onChange={(e) => {
+                                    if (activeTab === 'startups') {
+                                        setStartupSearch(e.target.value);
+                                        setStartupPage(1);
+                                    } else {
+                                        setInvestorSearch(e.target.value);
+                                        setInvestorPage(1);
+                                    }
+                                }}
+                                className="bg-slate-900/80 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-52 shadow-inner"
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
 
             {/* AnimatePresence for Page / Tab Transitions */}
@@ -504,8 +664,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                                             <div
                                                 className={`space-y-2.5 ${showAllSectors
-                                                        ? 'max-h-64 overflow-y-auto pr-2 custom-scrollbar'
-                                                        : ''
+                                                    ? 'max-h-64 overflow-y-auto pr-2 custom-scrollbar'
+                                                    : ''
                                                     }`}
                                             >
                                                 {itemsToRender.map(([sector, count], idx) => {
@@ -735,27 +895,95 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.3 }}
-                        className="glass-panel rounded-2xl border border-slate-800 overflow-hidden"
+                        className="glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-xl"
                     >
-                        <div className="p-4 border-b border-slate-800 flex items-center justify-between gap-4">
-                            <h3 className="text-sm font-bold text-white">
-                                DAVAS Participating Startups ({filteredStartups.length})
-                            </h3>
-                            {/* Sector Dropdown */}
-                            <select
-                                value={selectedSectorFilter}
-                                onChange={(e) => setSelectedSectorFilter(e.target.value)}
-                                className="bg-slate-900 border border-slate-800 text-xs text-slate-300 rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500"
-                            >
-                                {sectors.map((sec) => (
-                                    <option key={sec} value={sec}>{sec}</option>
-                                ))}
-                            </select>
+                        {/* Table Header: Search & Filter Toolbar */}
+                        <div className="p-4 sm:p-5 border-b border-slate-800 bg-slate-900/60 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                        <Building2 className="w-4 h-4" />
+                                    </div>
+                                    <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                                        DAVAS Participating Startups
+                                    </h3>
+                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                                        {filteredStartups.length} {filteredStartups.length !== startups.length ? `/ ${startups.length}` : 'Total'}
+                                    </span>
+                                </div>
+                                <p className="text-xs text-slate-400 mt-1">
+                                    Vetted startups pitching for Seed & Series A capital at DAVAS 2026 Summit
+                                </p>
+                            </div>
+
+                            {/* Search and Sector Filter Controls */}
+                            <div className="flex flex-wrap items-center gap-2.5">
+                                {/* Search Box */}
+                                <div className="relative min-w-[200px] flex-1 sm:flex-initial">
+                                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                    <input
+                                        type="text"
+                                        value={startupSearch}
+                                        onChange={(e) => {
+                                            setStartupSearch(e.target.value);
+                                            setStartupPage(1);
+                                        }}
+                                        placeholder="Search name, founder, stage..."
+                                        className="w-full pl-8 pr-8 py-2 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors shadow-inner"
+                                    />
+                                    {startupSearch && (
+                                        <button
+                                            onClick={() => {
+                                                setStartupSearch('');
+                                                setStartupPage(1);
+                                            }}
+                                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded-full cursor-pointer"
+                                            title="Clear search"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    )}
+                                </div>
+
+                                {/* Sector Dropdown */}
+                                <div className="relative">
+                                    <select
+                                        value={startupSector}
+                                        onChange={(e) => {
+                                            setStartupSector(e.target.value);
+                                            setStartupPage(1);
+                                        }}
+                                        className="bg-slate-950/80 border border-slate-800 text-xs text-slate-200 rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:border-indigo-500 cursor-pointer appearance-none shadow-inner"
+                                    >
+                                        <option value="All">All Sectors ({startups.length})</option>
+                                        {startupSectors.filter((sec) => sec !== 'All').map((sec) => (
+                                            <option key={sec} value={sec}>{sec}</option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                </div>
+
+                                {/* Reset Filters */}
+                                {(startupSearch || startupSector !== 'All') && (
+                                    <button
+                                        onClick={() => {
+                                            setStartupSearch('');
+                                            setStartupSector('All');
+                                            setStartupPage(1);
+                                        }}
+                                        className="px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1 border border-slate-700 transition-all cursor-pointer shadow-sm"
+                                    >
+                                        <RefreshCw className="w-3 h-3" />
+                                        <span>Reset</span>
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
+                        {/* Table Content */}
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-xs text-slate-300">
-                                <thead className="bg-slate-900/80 text-slate-400 uppercase font-semibold text-[10px] border-b border-slate-800">
+                                <thead className="bg-slate-900/90 text-slate-400 uppercase font-semibold text-[10px] border-b border-slate-800">
                                     <tr>
                                         <th className="py-3 px-4">Startup & Founder</th>
                                         <th className="py-3 px-4">Sector</th>
@@ -766,19 +994,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     </tr>
                                 </thead>
                                 <motion.tbody
+                                    key={`startups-page-${startupPage}-${startupSector}-${startupSearch}`}
                                     variants={containerVariants}
                                     initial="hidden"
                                     animate="visible"
                                     className="divide-y divide-slate-800/60"
                                 >
-                                    {filteredStartups.length === 0 ? (
+                                    {paginatedStartups.length === 0 ? (
                                         <tr>
-                                            <td colSpan={6} className="py-8 text-center text-slate-400 text-xs">
-                                                No startups found matching your filter. Data will populate automatically from Google Sheets.
+                                            <td colSpan={6} className="py-12 text-center text-slate-400 text-xs">
+                                                <div className="flex flex-col items-center justify-center gap-2">
+                                                    <Building2 className="w-8 h-8 text-slate-600" />
+                                                    <p className="font-semibold text-slate-300">No startups found matching your filter</p>
+                                                    <p className="text-[11px] text-slate-500">Try adjusting your search query or sector filter</p>
+                                                </div>
                                             </td>
                                         </tr>
                                     ) : (
-                                        filteredStartups.map((s) => (
+                                        paginatedStartups.map((s) => (
                                             <motion.tr
                                                 key={s.id}
                                                 variants={itemVariants}
@@ -786,33 +1019,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                             >
                                                 <td className="py-3 px-4">
                                                     <div className="flex items-center gap-3">
-                                                        <img src={s.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80'} alt={s.name} className="w-9 h-9 rounded-xl object-cover border border-slate-700" />
-                                                        <div>
-                                                            <div className="font-bold text-white text-sm">{s.name}</div>
-                                                            <div className="text-[11px] text-slate-400">{s.founderName} {s.founderTitle ? `(${s.founderTitle})` : ''}</div>
+                                                        <img src={s.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80'} alt={s.name} className="w-9 h-9 rounded-xl object-cover border border-slate-700 shrink-0" />
+                                                        <div className="min-w-0">
+                                                            <div className="font-bold text-white text-sm truncate">{s.name}</div>
+                                                            <div className="text-[11px] text-slate-400 truncate">{s.founderName} {s.founderTitle ? `(${s.founderTitle})` : ''}</div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="py-3 px-4">
-                                                    <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                                                    <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 whitespace-nowrap">
                                                         {s.sector || 'General Tech'}
                                                     </span>
                                                 </td>
-                                                <td className="py-3 px-4 font-semibold text-cyan-300">{s.stage || 'Seed'}</td>
-                                                <td className="py-3 px-4">
+                                                <td className="py-3 px-4 font-semibold text-cyan-300 whitespace-nowrap">{s.stage || 'Seed'}</td>
+                                                <td className="py-3 px-4 whitespace-nowrap">
                                                     <span className="font-bold text-emerald-400">{s.targetAsk || 'TBD'}</span>
                                                     <div className="text-[10px] text-slate-500">Val: {s.valuation || 'TBD'}</div>
                                                 </td>
-                                                <td className="py-3 px-4">
+                                                <td className="py-3 px-4 whitespace-nowrap">
                                                     <div className="text-slate-200 font-medium">{s.metrics?.mrr || s.metrics?.arr || 'N/A'}</div>
                                                     <div className="text-[10px] text-emerald-400">{s.metrics?.growthRate || ''}</div>
                                                 </td>
-                                                <td className="py-3 px-4">
+                                                <td className="py-3 px-4 whitespace-nowrap">
                                                     <motion.button
                                                         whileHover={{ scale: 1.05 }}
                                                         whileTap={{ scale: 0.95 }}
                                                         onClick={onRunMatchmaking}
-                                                        className="px-3 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition-all cursor-pointer"
+                                                        className="px-3 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition-all cursor-pointer shadow-sm"
                                                     >
                                                         Match VC
                                                     </motion.button>
@@ -823,6 +1056,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 </motion.tbody>
                             </table>
                         </div>
+
+                        {/* Pagination Navigation Footer */}
+                        {renderPagination(startupPage, startupTotalPages, filteredStartups.length, setStartupPage)}
                     </motion.div>
                 )}
 
@@ -834,17 +1070,97 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.3 }}
-                        className="glass-panel rounded-2xl border border-slate-800 overflow-hidden"
+                        className="glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-xl"
                     >
-                        <div className="p-4 border-b border-slate-800">
-                            <h3 className="text-sm font-bold text-white">
-                                DAVAS Attending VCs & Angel Investors ({filteredInvestors.length})
-                            </h3>
+                        {/* Table Header: Search & Filter Toolbar */}
+                        <div className="p-4 sm:p-5 border-b border-slate-800 bg-slate-900/60 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                        <Users className="w-4 h-4" />
+                                    </div>
+                                    <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                                        DAVAS Attending VCs & Angel Investors
+                                    </h3>
+                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                                        {filteredInvestors.length} {filteredInvestors.length !== investors.length ? `/ ${investors.length}` : 'Total'}
+                                    </span>
+                                </div>
+                                <p className="text-xs text-slate-400 mt-1">
+                                    Institutional funds, venture partners, and angel investors ready for 1:1 speed matching
+                                </p>
+                            </div>
+
+                            {/* Search and Mandate Filter Controls */}
+                            <div className="flex flex-wrap items-center gap-2.5">
+                                {/* Search Box */}
+                                <div className="relative min-w-[200px] flex-1 sm:flex-initial">
+                                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                    <input
+                                        type="text"
+                                        value={investorSearch}
+                                        onChange={(e) => {
+                                            setInvestorSearch(e.target.value);
+                                            setInvestorPage(1);
+                                        }}
+                                        placeholder="Search name, fund, thesis..."
+                                        className="w-full pl-8 pr-8 py-2 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors shadow-inner"
+                                    />
+                                    {investorSearch && (
+                                        <button
+                                            onClick={() => {
+                                                setInvestorSearch('');
+                                                setInvestorPage(1);
+                                            }}
+                                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded-full cursor-pointer"
+                                            title="Clear search"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    )}
+                                </div>
+
+                                {/* Mandate / Sector Dropdown */}
+                                {investorSectors.length > 1 && (
+                                    <div className="relative">
+                                        <select
+                                            value={investorSector}
+                                            onChange={(e) => {
+                                                setInvestorSector(e.target.value);
+                                                setInvestorPage(1);
+                                            }}
+                                            className="bg-slate-950/80 border border-slate-800 text-xs text-slate-200 rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:border-emerald-500 cursor-pointer appearance-none shadow-inner"
+                                        >
+                                            <option value="All">All Mandates ({investors.length})</option>
+                                            {investorSectors.filter((sec) => sec !== 'All').map((sec) => (
+                                                <option key={sec} value={sec}>{sec}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                    </div>
+                                )}
+
+                                {/* Reset Filters */}
+                                {(investorSearch || investorSector !== 'All') && (
+                                    <button
+                                        onClick={() => {
+                                            setInvestorSearch('');
+                                            setInvestorSector('All');
+                                            setInvestorPage(1);
+                                        }}
+                                        className="px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1 border border-slate-700 transition-all cursor-pointer shadow-sm"
+                                    >
+                                        <RefreshCw className="w-3 h-3" />
+                                        <span>Reset</span>
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
+                        {/* Table Content */}
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-xs text-slate-300">
-                                <thead className="bg-slate-900/80 text-slate-400 uppercase font-semibold text-[10px] border-b border-slate-800">
+                                <thead className="bg-slate-900/90 text-slate-400 uppercase font-semibold text-[10px] border-b border-slate-800">
                                     <tr>
                                         <th className="py-3 px-4">Investor Representative</th>
                                         <th className="py-3 px-4">Firm / Fund</th>
@@ -854,19 +1170,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     </tr>
                                 </thead>
                                 <motion.tbody
+                                    key={`investors-page-${investorPage}-${investorSector}-${investorSearch}`}
                                     variants={containerVariants}
                                     initial="hidden"
                                     animate="visible"
                                     className="divide-y divide-slate-800/60"
                                 >
-                                    {filteredInvestors.length === 0 ? (
+                                    {paginatedInvestors.length === 0 ? (
                                         <tr>
-                                            <td colSpan={5} className="py-8 text-center text-slate-400 text-xs">
-                                                No investors found matching your search. Data will populate automatically from Google Sheets.
+                                            <td colSpan={5} className="py-12 text-center text-slate-400 text-xs">
+                                                <div className="flex flex-col items-center justify-center gap-2">
+                                                    <Users className="w-8 h-8 text-slate-600" />
+                                                    <p className="font-semibold text-slate-300">No investors found matching your search</p>
+                                                    <p className="text-[11px] text-slate-500">Try adjusting your search query or mandate filter</p>
+                                                </div>
                                             </td>
                                         </tr>
                                     ) : (
-                                        filteredInvestors.map((inv) => {
+                                        paginatedInvestors.map((inv) => {
                                             const sectorsList = Array.isArray(inv.targetSectors)
                                                 ? inv.targetSectors
                                                 : typeof inv.targetSectors === 'string'
@@ -884,28 +1205,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                                             <img
                                                                 src={inv.avatar || 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80'}
                                                                 alt={inv.name}
-                                                                className="w-9 h-9 rounded-full object-cover border border-slate-700"
+                                                                className="w-9 h-9 rounded-full object-cover border border-slate-700 shrink-0"
                                                             />
-                                                            <div>
-                                                                <div className="font-bold text-white text-sm">{inv.name}</div>
-                                                                <div className="text-[11px] text-slate-400">{inv.role || 'Partner'}</div>
+                                                            <div className="min-w-0">
+                                                                <div className="font-bold text-white text-sm truncate">{inv.name}</div>
+                                                                <div className="text-[11px] text-slate-400 truncate">{inv.role || 'Partner'}</div>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="py-3 px-4">
+                                                    <td className="py-3 px-4 whitespace-nowrap">
                                                         <span className="font-bold text-purple-300 text-sm">{inv.firm}</span>
                                                         <div className="text-[10px] text-slate-500">{inv.country || 'Vietnam'}</div>
                                                     </td>
                                                     <td className="py-3 px-4">
                                                         <div className="flex flex-wrap gap-1 max-w-xs">
                                                             {sectorsList.map((sec, i) => (
-                                                                <span key={i} className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300">
+                                                                <span key={i} className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 border border-slate-700/60">
                                                                     {sec}
                                                                 </span>
                                                             ))}
                                                         </div>
                                                     </td>
-                                                    <td className="py-3 px-4 font-mono font-bold text-emerald-400">
+                                                    <td className="py-3 px-4 font-mono font-bold text-emerald-400 whitespace-nowrap">
                                                         {inv.ticketSizeRange || '$50k - $250k'}
                                                     </td>
                                                     <td className="py-3 px-4 text-slate-400 text-[11px] max-w-sm line-clamp-2">
@@ -918,6 +1239,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 </motion.tbody>
                             </table>
                         </div>
+
+                        {/* Pagination Navigation Footer */}
+                        {renderPagination(investorPage, investorTotalPages, filteredInvestors.length, setInvestorPage)}
                     </motion.div>
                 )}
             </AnimatePresence>

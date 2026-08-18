@@ -1,12 +1,12 @@
 import React from 'react';
-import { LayoutDashboard, UserCheck, Calendar, Sparkles, Building2, TrendingUp, HelpCircle } from 'lucide-react';
+import { LayoutDashboard, UserCheck, Sparkles, Building2, TrendingUp } from 'lucide-react';
 
 interface SidebarProps {
     activeView: 'admin' | 'participant';
     setActiveView: (view: 'admin' | 'participant') => void;
     activeAdminTab: 'overview' | 'startups' | 'investors' | 'matches';
     setActiveAdminTab: (tab: 'overview' | 'startups' | 'investors' | 'matches') => void;
-    onRunMatchmaking: () => void;
+    onRunMatchmaking?: () => void;
     startupsCount: number;
     investorsCount: number;
     matchesCount: number;
@@ -133,23 +133,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                     </div>
                 )}
-            </div>
-
-            {/* AI Trigger Card */}
-            <div className="p-3.5 rounded-2xl glass-panel-glow text-center flex flex-col gap-2">
-                <div className="w-8 h-8 mx-auto rounded-full bg-purple-500/20 flex items-center justify-center text-purple-300">
-                    <Sparkles className="w-4 h-4 text-purple-400" />
-                </div>
-                <h4 className="text-xs font-bold text-white">Smart Match Engine</h4>
-                <p className="text-[11px] text-slate-400 leading-tight">
-                    Evaluate compatibility using Gemini 3.6 Flash VC criteria.
-                </p>
-                <button
-                    onClick={onRunMatchmaking}
-                    className="mt-1 w-full py-2 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 border border-purple-400/30 transition-all active:scale-95"
-                >
-                    ✨ Run AI Matchmaking
-                </button>
             </div>
         </aside>
     );
