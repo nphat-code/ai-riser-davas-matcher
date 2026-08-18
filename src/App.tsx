@@ -163,8 +163,138 @@ export default function App() {
         fetchData();
     }, []);
 
-    // Handler: Run AI Matchmaking
-    const handleRunMatchmaking = async () => {
+    // Helper to extract clean sector tokens for semantic matching
+    const extractSectorTokens = (text: string): string[] => {
+        return (text || '')
+            .toLowerCase()
+            .replace(/[&,/\-_()]/g, ' ')
+            .split(/\s+/)
+            .map((t) => t.trim())
+            .filter((t) => t.length > 1 && !['and', 'the', 'for', 'in', 'of', 'with', 'or', 'tech'].includes(t));
+    };
+
+    // Helper to calculate similarity score between startup and investor sectors
+    const calculateSectorScore = (startupSector: string, investorSectors: string[], startupTags: string[] = []): number => {
+        const normStartupSector = (startupSector || '').toLowerCase().trim();
+        const startupTokens = new Set([
+            ...extractSectorTokens(normStartupSector),
+            ...startupTags.flatMap(extractSectorTokens),
+        ]);
+
+        let bestScore = 0;
+
+        for (const invSec of investorSectors) {
+            const normInvSec = (invSec || '').toLowerCase().trim();
+            if (!normInvSec) continue;
+
+            // Direct exact match
+            if (normStartupSector === normInvSec) {
+                return 100;
+            }
+
+            // Substring containment
+            if (normStartupSector.includes(normInvSec) || normInvSec.includes(normStartupSector)) {
+                bestScore = Math.max(bestScore, 85);
+            }
+
+            // Token overlap
+            const invTokens = extractSectorTokens(normInvSec);
+            let matchedTokens = 0;
+            for (const token of invTokens) {
+                if (startupTokens.has(token)) {
+                    matchedTokens++;
+                } else {
+                    for (const sToken of startupTokens) {
+                        if (sToken.includes(token) || token.includes(sToken)) {
+                            matchedTokens += 0.6;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (invTokens.length > 0 && matchedTokens > 0) {
+                const ratio = matchedTokens / Math.max(1, Math.min(startupTokens.size, invTokens.length));
+                const tokenScore = Math.min(80, Math.round(ratio * 75) + 20);
+                bestScore = Math.max(bestScore, tokenScore);
+            }
+        }
+
+        return bestScore;
+    };
+
+    // Find the best-fit investor for a selected startup
+    const findBestFitInvestor = (
+        startup: Startup,
+        allInvestors: Investor[],
+        existingMatches: MatchPair[]
+    ): Investor => {
+        if (allInvestors.length <= 1) return allInvestors[0];
+
+        const scored = allInvestors.map((investor) => {
+            let score = 0;
+
+            // 1. Sector Alignment (Highest Weight)
+            const sectorScore = calculateSectorScore(
+                startup.sector,
+                investor.targetSectors || [],
+                startup.keyTags || []
+            );
+            score += sectorScore * 1.5;
+
+            // Check investment philosophy keywords
+            if (investor.investmentPhilosophy) {
+                const philTokens = extractSectorTokens(investor.investmentPhilosophy);
+                const startupTokens = extractSectorTokens(startup.sector);
+                for (const t of startupTokens) {
+                    if (philTokens.includes(t)) {
+                        score += 15;
+                        break;
+                    }
+                }
+            }
+
+            // 2. Stage Alignment
+            const preferredStages = investor.preferredStages || [];
+            const startupStage = (startup.stage || '').toLowerCase();
+            const hasStageMatch = preferredStages.some((st) => {
+                const normSt = st.toLowerCase();
+                return normSt.includes(startupStage) || startupStage.includes(normSt);
+            });
+            if (hasStageMatch) {
+                score += 25;
+            }
+
+            // 3. Duplicate Pairing Penalty (avoid pairing the same startup and investor twice if alternatives exist)
+            const alreadyPaired = existingMatches.some(
+                (m) =>
+                    (m.startupId === startup.id && m.investorId === investor.id) ||
+                    (m.startup?.name === startup.name && m.investor?.firm === investor.firm)
+            );
+            if (alreadyPaired) {
+                score -= 60;
+            }
+
+            // 4. Meeting Load Balancing
+            const totalInvestorMeetings = existingMatches.filter(
+                (m) => m.investorId === investor.id || m.investor?.firm === investor.firm
+            ).length;
+            score -= totalInvestorMeetings * 5;
+
+            return { investor, score, sectorScore };
+        });
+
+        // Sort descending by score
+        scored.sort((a, b) => b.score - a.score);
+
+        // Pick among the highest scoring candidates
+        const topScore = scored[0].score;
+        const topCandidates = scored.filter((s) => s.score >= topScore - 5);
+        return topCandidates[Math.floor(Math.random() * topCandidates.length)].investor;
+    };
+
+    // Handler: Run Best-Fit Smart Matchmaking
+    const handleRunMatchmaking = async (targetStartup?: Startup) => {
         if (startups.length === 0 || investors.length === 0) {
             showToast('⚠️ No startups or investors available. Please ensure data is loaded.');
             return;
@@ -173,15 +303,38 @@ export default function App() {
         setIsMatchmakingLoading(true);
 
         try {
-            const randomStartup = startups[Math.floor(Math.random() * startups.length)];
-            const randomInvestor = investors[Math.floor(Math.random() * investors.length)];
+            // 1. Choose Startup: Use targetStartup if provided; otherwise pick an unmatched startup
+            let chosenStartup: Startup;
+            if (targetStartup) {
+                chosenStartup = targetStartup;
+            } else {
+                const matchedStartupIds = new Set(matches.map((m) => m.startupId || m.startup?.id || m.startup?.name));
+                const unmatchedStartups = startups.filter((s) => !matchedStartupIds.has(s.id) && !matchedStartupIds.has(s.name));
 
+                if (unmatchedStartups.length > 0) {
+                    chosenStartup = unmatchedStartups[Math.floor(Math.random() * unmatchedStartups.length)];
+                } else {
+                    // If all have matches, pick startup with the least meetings
+                    const matchCounts: Record<string, number> = {};
+                    matches.forEach((m) => {
+                        const id = m.startupId || m.startup?.id || m.startup?.name;
+                        if (id) matchCounts[id] = (matchCounts[id] || 0) + 1;
+                    });
+                    const sorted = [...startups].sort((a, b) => (matchCounts[a.id] || 0) - (matchCounts[b.id] || 0));
+                    chosenStartup = sorted[0];
+                }
+            }
+
+            // 2. Choose Best-Fit Investor matching sector, stage & thesis
+            const bestInvestor = findBestFitInvestor(chosenStartup, investors, matches);
+
+            // 3. Send high-synergy pair to Gemini AI evaluation endpoint
             const res = await fetch('/api/matchmaking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    startup: randomStartup,
-                    investor: randomInvestor,
+                    startup: chosenStartup,
+                    investor: bestInvestor,
                 }),
             });
 
@@ -189,10 +342,10 @@ export default function App() {
 
             const newPair: MatchPair = {
                 id: `mp-${Date.now()}`,
-                startupId: randomStartup.id,
-                investorId: randomInvestor.id,
-                startup: randomStartup,
-                investor: randomInvestor,
+                startupId: chosenStartup.id,
+                investorId: bestInvestor.id,
+                startup: chosenStartup,
+                investor: bestInvestor,
                 status: 'Scheduled',
                 recommendedTable: `Table ${String.fromCharCode(65 + Math.floor(Math.random() * 4))}${Math.floor(Math.random() * 5) + 1}`,
                 analysis: {
@@ -215,7 +368,7 @@ export default function App() {
 
             // Automatically inspect the newly generated AI match
             setInspectPair(newPair);
-            showToast(`✨ AI Match Generated! Compatibility Score: ${newPair.analysis.matching_score}%`);
+            showToast(`✨ Smart Match: ${chosenStartup.name} matched with ${bestInvestor.firm} (${newPair.analysis.matching_score}% Fit)`);
         } catch (err) {
             console.error('Matchmaking error:', err);
             showToast('⚠️ AI Matchmaking evaluation completed with standard criteria.');

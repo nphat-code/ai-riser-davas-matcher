@@ -39,7 +39,13 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
 - Nút "Generate Smart Schedule" gọi API POST `/api/schedule` để đẩy webhook sang Apps Script.
 - Tự động hóa gửi email và đặt lịch 1:1 trên Google Calendar bằng Apps Script cho từng cặp Match.
 
-**6. Giai đoạn 6: Đóng gói và Triển khai (Cloud Run)**
+**6. Giai đoạn 6: Thuật toán Best-Fit Smart Matchmaking & Dữ liệu Chuẩn hóa (Đã hoàn thành)**
+- **Semantic Sector & Stage Scoring:** Thuật toán bóc tách từ khóa (tokenization), so khớp ngữ nghĩa ngành nghề và vòng gọi vốn.
+- **Tối ưu hóa đa tiêu chí:** Tích hợp trọng số khẩu vị đầu tư (Thesis), phạt chống trùng lặp cặp match (`-60pts`) và cơ chế cân bằng tải (`Load Balancing`) phân bổ đều 31 VCs.
+- **Chuẩn hóa 31 Hồ sơ Nhà đầu tư:** Cập nhật 31 câu Investment Thesis độc bản, chuẩn văn phong VC quốc tế và khớp 100% với ngành quan tâm trong `davas_investors.csv`.
+- **UI/UX Phân trang & Tìm kiếm:** Tích hợp bộ lọc ngành và phân trang (8 items/trang) cho 62 Startups và 31 Investors, kèm nút "Match VC" trực tiếp trên từng dòng.
+
+**7. Giai đoạn 7: Đóng gói và Triển khai (Cloud Run)**
 - Đã có file `Dockerfile` chuẩn bị cho việc đẩy lên Google Cloud Run.
 - Cần public dự án và test thử.
 

@@ -29,7 +29,7 @@ interface AdminDashboardProps {
     matches: MatchPair[];
     activeTab: 'overview' | 'startups' | 'investors' | 'matches';
     setActiveTab: (tab: 'overview' | 'startups' | 'investors' | 'matches') => void;
-    onRunMatchmaking: () => void;
+    onRunMatchmaking: (targetStartup?: Startup) => void;
     onGenerateSchedule: () => void;
     isMatchmakingLoading: boolean;
     isScheduleLoading: boolean;
@@ -1044,8 +1044,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                                     <motion.button
                                                         whileHover={{ scale: 1.05 }}
                                                         whileTap={{ scale: 0.95 }}
-                                                        onClick={onRunMatchmaking}
-                                                        className="px-3 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition-all cursor-pointer shadow-sm"
+                                                        onClick={() => onRunMatchmaking(s)}
+                                                        disabled={isMatchmakingLoading}
+                                                        className="px-3 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition-all cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
                                                         Match VC
                                                     </motion.button>
