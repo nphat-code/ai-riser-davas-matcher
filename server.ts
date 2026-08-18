@@ -280,7 +280,7 @@ app.post("/api/matches", async (req, res) => {
   }
 });
 
-// Google Calendar & Schedule Trigger Endpoint
+// Google Calendar & Schedule Trigger / Update Endpoint
 app.post("/api/schedule", async (req, res) => {
   try {
     const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL;
@@ -290,10 +290,22 @@ app.post("/api/schedule", async (req, res) => {
       });
     }
 
-    const payload = {
-      action: "trigger_schedule",
-      ...req.body,
-    };
+    const { schedule, ...rest } = req.body;
+
+    const payload = schedule
+      ? {
+        action: "update_schedule",
+        schedule: schedule.map((slot: any) => ({
+          startupName: slot.startupName || slot.startup?.name || "",
+          investorFirm: slot.investorFirm || slot.investor?.firm || "",
+          time: slot.time || "",
+          table: slot.table || slot.assignedTable || "",
+        })),
+      }
+      : {
+        action: "trigger_schedule",
+        ...rest,
+      };
 
     const response = await fetch(sheetsApiUrl, {
       method: "POST",
@@ -304,9 +316,9 @@ app.post("/api/schedule", async (req, res) => {
     const data = await response.json().catch(() => ({ status: "ok" }));
     return res.json(data);
   } catch (error: any) {
-    console.error("Google Sheets trigger_schedule error:", error);
+    console.error("Google Sheets schedule error:", error);
     return res.status(500).json({
-      error: error.message || "Failed to trigger schedule on Google Apps Script",
+      error: error.message || "Failed to update/trigger schedule on Google Apps Script",
     });
   }
 });

@@ -526,6 +526,22 @@ export default function App() {
 
             showToast(`📅 Smart Schedule Generated! ${optimizedSlots.length} 1:1 meetings assigned with zero collisions.`);
 
+            // Send optimized schedule batch to Google Sheets to update Meeting_Time_Slot & Assigned_Table
+            const schedulePayload = optimizedSlots.map((slot) => ({
+                startupName: slot.startup.name,
+                investorFirm: slot.investor.firm,
+                time: slot.time,
+                table: slot.table,
+            }));
+
+            await fetch('/api/schedule', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ schedule: schedulePayload }),
+            }).catch((err) => {
+                console.warn('Failed to sync schedule to Google Sheets:', err);
+            });
+
             // Sync top slots to Google Calendar / Apps Script webhook (limit to top 3 slots)
             const slotsToSync = optimizedSlots.slice(0, 3);
             if (slotsToSync.length > 0) {
