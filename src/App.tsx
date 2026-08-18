@@ -293,8 +293,20 @@ export default function App() {
         return topCandidates[Math.floor(Math.random() * topCandidates.length)].investor;
     };
 
+    // Helper to validate if an argument is a true Startup object and not a React Event
+    const isStartupObject = (obj: any): obj is Startup => {
+        return (
+            obj !== null &&
+            typeof obj === 'object' &&
+            !('nativeEvent' in obj) &&
+            !('bubbles' in obj) &&
+            typeof obj.name === 'string' &&
+            typeof obj.sector === 'string'
+        );
+    };
+
     // Handler: Run Best-Fit Smart Matchmaking
-    const handleRunMatchmaking = async (targetStartup?: Startup) => {
+    const handleRunMatchmaking = async (targetStartup?: Startup | unknown) => {
         if (startups.length === 0 || investors.length === 0) {
             showToast('⚠️ No startups or investors available. Please ensure data is loaded.');
             return;
@@ -303,9 +315,9 @@ export default function App() {
         setIsMatchmakingLoading(true);
 
         try {
-            // 1. Choose Startup: Use targetStartup if provided; otherwise pick an unmatched startup
+            // 1. Choose Startup: Use targetStartup if it is a valid Startup object; otherwise pick an unmatched startup
             let chosenStartup: Startup;
-            if (targetStartup) {
+            if (isStartupObject(targetStartup)) {
                 chosenStartup = targetStartup;
             } else {
                 const matchedStartupIds = new Set(matches.map((m) => m.startupId || m.startup?.id || m.startup?.name));
