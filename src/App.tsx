@@ -5,31 +5,36 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { ParticipantPortal } from './components/ParticipantPortal';
 import { AIMatchModal } from './components/AIMatchModal';
 import { FollowUpModal } from './components/FollowUpModal';
-import {
-    MOCK_STARTUPS,
-    MOCK_INVESTORS,
-    INITIAL_EVENT_STATS,
-    SAMPLE_MATCH_PAIRS,
-    INITIAL_MEETING_SLOTS,
-} from './data/mockData';
 import { Startup, Investor, MatchPair, MeetingSlot, EventStats } from './types';
 import { generateSmartSchedule } from './utils/scheduler';
-import { Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+
+const INITIAL_STATS: EventStats = {
+    totalStartups: 0,
+    totalInvestors: 0,
+    scheduledMeetings: 0,
+    avgMatchScore: 0,
+    dealSuccessRate: 88.5,
+    topSector: 'Tech & AI',
+};
 
 export default function App() {
     const [activeView, setActiveView] = useState<'admin' | 'participant'>('admin');
     const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'startups' | 'investors' | 'matches'>('overview');
     const [isMobileFrame, setIsMobileFrame] = useState<boolean>(false);
 
-    // Core Data States
-    const [stats, setStats] = useState<EventStats>(INITIAL_EVENT_STATS);
-    const [startups, setStartups] = useState<Startup[]>(MOCK_STARTUPS);
-    const [investors, setInvestors] = useState<Investor[]>(MOCK_INVESTORS);
-    const [matches, setMatches] = useState<MatchPair[]>(SAMPLE_MATCH_PAIRS);
-    const [scheduleSlots, setScheduleSlots] = useState<MeetingSlot[]>(INITIAL_MEETING_SLOTS);
+    // Core Data States (100% real API data)
+    const [stats, setStats] = useState<EventStats>(INITIAL_STATS);
+    const [startups, setStartups] = useState<Startup[]>([]);
+    const [investors, setInvestors] = useState<Investor[]>([]);
+    const [matches, setMatches] = useState<MatchPair[]>([]);
+    const [scheduleSlots, setScheduleSlots] = useState<MeetingSlot[]>([]);
+    const [selectedInvestorId, setSelectedInvestorId] = useState<string>('');
 
-    // Selected Current Investor for Participant Portal demo
-    const [currentInvestor] = useState<Investor>(MOCK_INVESTORS[0]); // CyberAgent Capital (Kenji Suzuki)
+    // Selected Current Investor for Participant Portal
+    const currentInvestor: Investor | null =
+        investors.find((i) => i.id === selectedInvestorId) ||
+        (investors.length > 0 ? investors[0] : null);
 
     // Loading States
     const [isMatchmakingLoading, setIsMatchmakingLoading] = useState(false);
@@ -160,6 +165,11 @@ export default function App() {
 
     // Handler: Run AI Matchmaking
     const handleRunMatchmaking = async () => {
+        if (startups.length === 0 || investors.length === 0) {
+            showToast('⚠️ No startups or investors available. Please ensure data is loaded.');
+            return;
+        }
+
         setIsMatchmakingLoading(true);
 
         try {
@@ -216,6 +226,11 @@ export default function App() {
 
     // Handler: Generate Smart Schedule using Greedy + Priority Algorithm
     const handleGenerateSchedule = async () => {
+        if (matches.length === 0) {
+            showToast('⚠️ Please run AI Matchmaking first before generating schedule.');
+            return;
+        }
+
         setIsScheduleLoading(true);
 
         try {
