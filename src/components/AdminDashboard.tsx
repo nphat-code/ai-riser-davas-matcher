@@ -9,6 +9,8 @@ import {
     TrendingUp,
     ArrowUpRight,
     ChevronRight,
+    ChevronDown,
+    ChevronUp,
     Search,
     RefreshCw,
     Zap,
@@ -80,8 +82,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedSectorFilter, setSelectedSectorFilter] = useState('All');
+    const [showAllSectors, setShowAllSectors] = useState(false);
 
-    const sectors = ['All', 'EdTech & AI', 'AgriTech & Climate', 'FinTech', 'HealthTech & AI', 'CleanTech & Hardware'];
+    const availableSectors = ['All', ...Array.from(new Set(startups.map((s) => s.sector).filter(Boolean)))];
+    const sectors = availableSectors.length > 1 ? availableSectors : ['All', 'EdTech & AI', 'AgriTech & Climate', 'FinTech', 'HealthTech & AI', 'CleanTech & Hardware'];
 
     const filteredStartups = (startups || []).filter((s) => {
         if (!s) return false;
@@ -159,7 +163,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 ) : (
                                     <>
                                         <Sparkles className="w-4 h-4 text-yellow-300 group-hover:rotate-12 transition-transform" />
-                                        <span className="text-sm">✨ Run AI Matchmaking</span>
+                                        <span className="text-sm">Run AI Matchmaking</span>
                                     </>
                                 )}
                             </div>
@@ -185,7 +189,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 ) : (
                                     <>
                                         <Calendar className="w-4 h-4 text-cyan-400" />
-                                        <span className="text-sm">📅 Generate Smart Schedule</span>
+                                        <span className="text-sm">Generate Smart Schedule</span>
                                     </>
                                 )}
                             </div>
@@ -422,46 +426,120 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                             {/* Sector Breakdown Bars */}
                             <div>
-                                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-                                    Deal Flow Density by Industry Sector ({startups.length} Startups)
-                                </h4>
-                                <div className="space-y-3">
-                                    {(() => {
-                                        if (startups.length === 0) {
-                                            return (
+                                {(() => {
+                                    if (startups.length === 0) {
+                                        return (
+                                            <div>
+                                                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                                                    Deal Flow Density by Industry Sector (0 Startups)
+                                                </h4>
                                                 <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 text-center text-xs text-slate-400">
                                                     No startups loaded yet. Data will appear once fetched from Google Sheets API.
                                                 </div>
-                                            );
-                                        }
-                                        const sectorCounts: Record<string, number> = {};
-                                        startups.forEach((s) => {
-                                            const sec = s.sector || 'General Tech';
-                                            sectorCounts[sec] = (sectorCounts[sec] || 0) + 1;
-                                        });
-                                        const colorPalette = ['bg-purple-500', 'bg-blue-500', 'bg-emerald-500', 'bg-yellow-500', 'bg-cyan-500', 'bg-indigo-500'];
-                                        return Object.entries(sectorCounts).map(([sector, count], idx) => {
-                                            const percent = Math.round((count / startups.length) * 100);
-                                            const color = colorPalette[idx % colorPalette.length];
-                                            return (
-                                                <div key={sector} className="space-y-1">
-                                                    <div className="flex justify-between text-xs text-slate-300">
-                                                        <span className="font-medium">{sector}</span>
-                                                        <span className="text-slate-400">{count} Startup{count > 1 ? 's' : ''} ({percent}%)</span>
-                                                    </div>
-                                                    <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
-                                                        <motion.div
-                                                            initial={{ width: 0 }}
-                                                            animate={{ width: `${percent}%` }}
-                                                            transition={{ duration: 0.8, delay: idx * 0.1 }}
-                                                            className={`h-full ${color} rounded-full`}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            );
-                                        });
-                                    })()}
-                                </div>
+                                            </div>
+                                        );
+                                    }
+
+                                    const sectorCounts: Record<string, number> = {};
+                                    startups.forEach((s) => {
+                                        const sec = (s.sector || 'General Tech').trim();
+                                        sectorCounts[sec] = (sectorCounts[sec] || 0) + 1;
+                                    });
+
+                                    // Sort sectors descending by startup count
+                                    const sortedSectors = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]);
+                                    const totalUniqueSectors = sortedSectors.length;
+                                    const colorPalette = [
+                                        'bg-purple-500',
+                                        'bg-cyan-500',
+                                        'bg-emerald-500',
+                                        'bg-blue-500',
+                                        'bg-yellow-500',
+                                        'bg-indigo-500',
+                                        'bg-rose-500',
+                                        'bg-amber-500',
+                                        'bg-teal-500',
+                                    ];
+
+                                    // Top 5 sectors vs Remaining
+                                    const topCount = 5;
+                                    const topSectors = sortedSectors.slice(0, topCount);
+                                    const remainingSectors = sortedSectors.slice(topCount);
+                                    const remainingStartupsCount = remainingSectors.reduce((acc, curr) => acc + curr[1], 0);
+
+                                    const itemsToRender = showAllSectors
+                                        ? sortedSectors
+                                        : [
+                                            ...topSectors,
+                                            ...(remainingSectors.length > 0
+                                                ? [
+                                                    [
+                                                        `Other Sectors (${remainingSectors.length} categories)`,
+                                                        remainingStartupsCount,
+                                                    ] as [string, number],
+                                                ]
+                                                : []),
+                                        ];
+
+                                    return (
+                                        <div className="space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                                    Deal Flow Density by Industry Sector ({startups.length} Startups • {totalUniqueSectors} Sectors)
+                                                </h4>
+                                                {totalUniqueSectors > topCount && (
+                                                    <button
+                                                        onClick={() => setShowAllSectors(!showAllSectors)}
+                                                        className="px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] font-semibold flex items-center gap-1 transition-all cursor-pointer"
+                                                    >
+                                                        <span>{showAllSectors ? 'Show Top 5' : `View All (${totalUniqueSectors})`}</span>
+                                                        {showAllSectors ? (
+                                                            <ChevronUp className="w-3.5 h-3.5" />
+                                                        ) : (
+                                                            <ChevronDown className="w-3.5 h-3.5" />
+                                                        )}
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            <div
+                                                className={`space-y-2.5 ${showAllSectors
+                                                        ? 'max-h-64 overflow-y-auto pr-2 custom-scrollbar'
+                                                        : ''
+                                                    }`}
+                                            >
+                                                {itemsToRender.map(([sector, count], idx) => {
+                                                    const percent = Math.round((count / startups.length) * 100);
+                                                    const isOther = sector.startsWith('Other Sectors');
+                                                    const color = isOther
+                                                        ? 'bg-slate-500'
+                                                        : colorPalette[idx % colorPalette.length];
+
+                                                    return (
+                                                        <div key={sector} className="space-y-1">
+                                                            <div className="flex justify-between text-xs text-slate-300">
+                                                                <span className={`font-medium truncate max-w-[220px] sm:max-w-xs ${isOther ? 'text-slate-400 italic' : ''}`}>
+                                                                    {sector}
+                                                                </span>
+                                                                <span className="text-slate-400 text-[11px] shrink-0 ml-2 font-mono">
+                                                                    {count} Startup{count > 1 ? 's' : ''} ({percent}%)
+                                                                </span>
+                                                            </div>
+                                                            <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden border border-slate-800/50">
+                                                                <motion.div
+                                                                    initial={{ width: 0 }}
+                                                                    animate={{ width: `${Math.max(percent, 2)}%` }}
+                                                                    transition={{ duration: 0.6, delay: Math.min(idx * 0.05, 0.4) }}
+                                                                    className={`h-full ${color} rounded-full`}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         </div>
 
