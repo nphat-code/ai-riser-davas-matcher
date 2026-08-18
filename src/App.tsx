@@ -641,8 +641,13 @@ export default function App() {
                         />
                     ) : (
                         <ParticipantPortal
-                            scheduleSlots={scheduleSlots}
+                            scheduleSlots={scheduleSlots.filter(
+                                (slot) => slot.investor.id === currentInvestor?.id || slot.investor.firm === currentInvestor?.firm
+                            )}
                             currentInvestor={currentInvestor}
+                            investors={investors}
+                            selectedInvestorId={selectedInvestorId}
+                            setSelectedInvestorId={setSelectedInvestorId}
                             onOpenFollowUpModal={(slot) => setFollowUpSlot(slot)}
                         />
                     )}

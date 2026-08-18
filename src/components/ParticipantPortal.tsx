@@ -8,13 +8,19 @@ import {
     FileText,
     CheckCircle2,
     ChevronRight,
-    Info
+    Info,
+    Users,
+    ChevronDown
 } from 'lucide-react';
 import { MeetingSlot, Investor } from '../types';
 
 interface ParticipantPortalProps {
     scheduleSlots: MeetingSlot[];
     currentInvestor: Investor | null;
+    investors?: Investor[];
+    selectedInvestorId?: string;
+    setSelectedInvestorId?: (id: string) => void;
+    onSelectInvestorId?: (id: string) => void;
     onOpenFollowUpModal: (slot: MeetingSlot) => void;
 }
 
@@ -46,9 +52,18 @@ const timelineItemVariants = {
 export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
     scheduleSlots,
     currentInvestor,
+    investors = [],
+    selectedInvestorId,
+    setSelectedInvestorId,
+    onSelectInvestorId,
     onOpenFollowUpModal,
 }) => {
     const [activeFilter, setActiveFilter] = useState<'All' | 'Upcoming' | 'Completed'>('All');
+
+    const handleInvestorChange = (newId: string) => {
+        if (setSelectedInvestorId) setSelectedInvestorId(newId);
+        if (onSelectInvestorId) onSelectInvestorId(newId);
+    };
 
     const filteredSlots = scheduleSlots.filter((slot) => {
         if (activeFilter === 'Upcoming') return slot.status === 'Upcoming' || slot.status === 'In Progress';
@@ -70,9 +85,39 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                 initial={{ opacity: 0, y: -15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="glass-panel p-5 rounded-3xl border border-cyan-500/30 relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950"
+                className="glass-panel p-5 rounded-3xl border border-cyan-500/30 relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950 shadow-xl"
             >
                 <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
+
+                {/* Investor Persona Switcher Dropdown */}
+                {investors.length > 0 && (
+                    <div className="mb-4 pb-3.5 border-b border-slate-800/90 flex flex-col gap-1.5 relative z-10">
+                        <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400">
+                            <span className="flex items-center gap-1.5 text-cyan-400">
+                                <Users className="w-3.5 h-3.5" />
+                                <span>Investor Persona Switcher</span>
+                            </span>
+                            <span className="text-[10px] text-slate-500 font-mono">
+                                {investors.length} VCs
+                            </span>
+                        </div>
+                        <div className="relative">
+                            <select
+                                id="investor-persona-switcher"
+                                value={selectedInvestorId || currentInvestor?.id || ''}
+                                onChange={(e) => handleInvestorChange(e.target.value)}
+                                className="w-full bg-slate-950/90 text-cyan-200 text-xs font-semibold rounded-xl border border-cyan-500/30 px-3 py-2 pr-8 focus:outline-none focus:ring-1 focus:ring-cyan-400 cursor-pointer truncate appearance-none hover:border-cyan-400/60 transition-all shadow-inner"
+                            >
+                                {investors.map((inv) => (
+                                    <option key={inv.id} value={inv.id} className="bg-slate-900 text-slate-100 py-1.5">
+                                        {inv.firm} - {inv.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <ChevronDown className="w-4 h-4 text-cyan-400/80 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+                    </div>
+                )}
 
                 {/* Welcome Investor Header */}
                 <div className="flex items-center gap-3">
@@ -85,7 +130,7 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                         <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-950" />
                     </div>
 
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                             <span className="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 text-[10px] font-bold uppercase tracking-wider border border-cyan-500/30">
                                 DAVAS Delegate
@@ -95,10 +140,10 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                 Live Summit
                             </span>
                         </div>
-                        <h2 className="text-lg font-extrabold text-white tracking-tight mt-0.5">
+                        <h2 className="text-lg font-extrabold text-white tracking-tight mt-0.5 truncate">
                             Welcome, {investorFirm}
                         </h2>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-400 truncate">
                             {investorName} • {investorRole}
                         </p>
                     </div>
