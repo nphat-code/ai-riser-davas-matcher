@@ -75,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({
                         className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 transition-all duration-300 shadow-md shadow-indigo-500/20 active:scale-95 cursor-pointer border border-cyan-400/30"
                     >
                         <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-spin" style={{ animationDuration: '4s' }} />
-                        <span>✨ Match Engine</span>
+                        <span>Match Engine</span>
                     </button>
                 </div>
             </div>

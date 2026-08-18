@@ -97,7 +97,10 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
                 {/* Input Notes Area */}
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
-                        <span>📝 VC Meeting Notes & Observations</span>
+                        <span className="flex items-center gap-1.5">
+                            <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                            VC Meeting Notes & Observations
+                        </span>
                         <span className="text-[10px] text-slate-500 font-normal">Type or dictate bullet points</span>
                     </label>
                     <textarea
@@ -127,7 +130,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
                         ) : (
                             <>
                                 <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
-                                <span>✨ Generate AI Follow-up & Email Draft</span>
+                                <span>Generate AI Follow-up & Email Draft</span>
                             </>
                         )}
                     </div>
