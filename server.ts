@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = 3000;
 
 app.use(express.json() as any);
 
@@ -230,6 +230,56 @@ app.get("/api/data", async (_req, res) => {
   }
 });
 
+// Save Match to Google Sheets Endpoint
+app.post("/api/matches", async (req, res) => {
+  try {
+    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL;
+    if (!sheetsApiUrl) {
+      return res.status(500).json({
+        error: "GOOGLE_SHEETS_API_URL environment variable is not configured",
+      });
+    }
+
+    const { startup, investor, analysis, recommendedTable, id } = req.body;
+
+    if (!startup || !investor || !analysis) {
+      return res.status(400).json({ error: "Missing required match fields" });
+    }
+
+    const payload = {
+      action: "save_match",
+      id: id || `mp-${Date.now()}`,
+      startupName: startup.name,
+      founderName: startup.founderName || "",
+      startupEmail: startup.id || "",
+      startupSector: startup.sector || "",
+      startupStage: startup.stage || "",
+      targetAsk: startup.targetAsk || "",
+      investorFirm: investor.firm || "",
+      investorName: investor.name || "",
+      investorEmail: investor.id || "",
+      score: analysis.matching_score || 0,
+      reason: analysis.reason || "",
+      iceBreakers: analysis.ice_breakers || [],
+      table: recommendedTable || "Table A1",
+    };
+
+    const response = await fetch(sheetsApiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => ({ status: "ok" }));
+    return res.json(data);
+  } catch (error: any) {
+    console.error("Google Sheets save_match error:", error);
+    return res.status(500).json({
+      error: error.message || "Failed to save match to Google Sheets",
+    });
+  }
+});
+
 // Google Calendar & Schedule Trigger Endpoint
 app.post("/api/schedule", async (req, res) => {
   try {
@@ -278,9 +328,25 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`DavaSync Full-Stack Server running on http://0.0.0.0:${PORT}`);
   });
+
+  server.on("error", (err: any) => {
+    if (err.code === "EADDRINUSE") {
+      console.error(`Port ${PORT} is already in use.`);
+    } else {
+      console.error("Server error:", err);
+    }
+  });
+
+  const shutdown = () => {
+    server.close(() => {
+      process.exit(0);
+    });
+  };
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
 }
 
 startServer();

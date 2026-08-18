@@ -7,8 +7,36 @@ interface AIMatchModalProps {
     onClose: () => void;
 }
 
+const getScoreEvaluation = (score: number) => {
+    if (score >= 80) {
+        return {
+            label: 'High Conviction Meeting',
+            badgeClass: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+        };
+    }
+    if (score >= 60) {
+        return {
+            label: 'Moderate Synergy Meeting',
+            badgeClass: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20',
+        };
+    }
+    if (score >= 40) {
+        return {
+            label: 'Exploratory Meeting',
+            badgeClass: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+        };
+    }
+    return {
+        label: 'Low Alignment Meeting',
+        badgeClass: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
+    };
+};
+
 export const AIMatchModal: React.FC<AIMatchModalProps> = ({ pair, onClose }) => {
     if (!pair) return null;
+
+    const score = Number(pair.analysis.matching_score) || 0;
+    const evaluation = getScoreEvaluation(score);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
@@ -63,11 +91,11 @@ export const AIMatchModal: React.FC<AIMatchModalProps> = ({ pair, onClose }) => 
                 <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-900/40 via-indigo-900/40 to-slate-900 border border-purple-500/40 flex items-center justify-between">
                     <div>
                         <div className="text-xs font-semibold text-purple-300">Overall Matching Compatibility</div>
-                        <div className="text-3xl font-black text-white">{pair.analysis.matching_score} / 100</div>
+                        <div className="text-3xl font-black text-white">{score} / 100</div>
                     </div>
                     <div className="text-right">
-                        <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                            High Conviction Meeting
+                        <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full border ${evaluation.badgeClass}`}>
+                            {evaluation.label}
                         </span>
                         <div className="text-[11px] text-slate-400 mt-1">Recommended Location: {pair.recommendedTable || 'Table A1'}</div>
                     </div>

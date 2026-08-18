@@ -80,8 +80,9 @@ export default function App() {
                 }
                 const data = await res.json();
 
+                let sanitizedStartups: Startup[] = [];
                 if (data.startups && Array.isArray(data.startups) && data.startups.length > 0) {
-                    const sanitizedStartups: Startup[] = data.startups.map((s: any, idx: number) => {
+                    sanitizedStartups = data.startups.map((s: any, idx: number) => {
                         const name = s["Startup Name"] || s.name || `Startup ${idx + 1}`;
                         const sector = s["Primary Industry"] || s.sector || 'General Tech';
                         const stage = s["Current Funding Stage"] || s.stage || 'Seed';
@@ -97,6 +98,8 @@ export default function App() {
                             stage,
                             targetAsk,
                             valuation: s.valuation || 'TBD',
+                            location: s.location || 'Vietnam',
+                            avatar: s.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(founderName)}&background=random`,
                             description: s.description || summaryDesc,
                             tagline: s.tagline || summaryDesc,
                             logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`,
@@ -104,9 +107,9 @@ export default function App() {
                             founderTitle: 'Founder & CEO',
                             metrics: {
                                 mrr: s.metrics?.mrr || s.mrr || 'TBD',
+                                arr: s.metrics?.arr || s.arr || 'TBD',
                                 growthRate: s.metrics?.growthRate || s.growthRate || 'N/A',
-                                teamSize: s.metrics?.teamSize || s.teamSize || 8,
-                                patentCount: s.metrics?.patentCount || s.patentCount || 0,
+                                usersCount: s.metrics?.usersCount || s.usersCount || '10K+',
                             },
                             keyTags: sector.split(',').map((t: string) => t.trim()).filter(Boolean),
                         };
@@ -114,8 +117,9 @@ export default function App() {
                     setStartups(sanitizedStartups);
                 }
 
+                let sanitizedInvestors: Investor[] = [];
                 if (data.investors && Array.isArray(data.investors) && data.investors.length > 0) {
-                    const sanitizedInvestors: Investor[] = data.investors.map((i: any, idx: number) => {
+                    sanitizedInvestors = data.investors.map((i: any, idx: number) => {
                         const name = i["Representative Name"] || i.name || `Investor ${idx + 1}`;
                         const firm = i["Investor or Fund Name"] || i.firm || 'Venture Capital';
                         const rawSectors = i["Interested Industries"] || i.targetSectors || 'EdTech & AI, FinTech';
@@ -141,19 +145,116 @@ export default function App() {
                                     : ['Seed', 'Pre-Series A'],
                             ticketSizeRange,
                             investmentPhilosophy,
+                            totalDeals: Number(i.totalDeals || 12),
                             avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`,
                         };
                     });
                     setInvestors(sanitizedInvestors);
                 }
 
-                if (data.startups || data.investors) {
-                    setStats((prev) => ({
-                        ...prev,
-                        totalStartups: (data.startups && Array.isArray(data.startups)) ? data.startups.length : prev.totalStartups,
-                        totalInvestors: (data.investors && Array.isArray(data.investors)) ? data.investors.length : prev.totalInvestors,
-                    }));
-                    showToast('📊 Loaded live data from Google Sheets API');
+                // Load existing matches from Google Sheets if available
+                if (data.matches && Array.isArray(data.matches) && data.matches.length > 0) {
+                    const loadedMatches: MatchPair[] = data.matches.map((m: any, idx: number) => {
+                        const startupName = m.startupName || m["Startup Name"] || `Startup ${idx + 1}`;
+                        const startupEmail = m.startupEmail || m["Startup Email"] || m["Email Address"] || `startup-${idx + 1}`;
+                        const startupSector = m.startupSector || m["Startup Sector"] || m["Primary Industry"] || 'General Tech';
+                        const startupStage = m.startupStage || m["Startup Stage"] || m["Current Funding Stage"] || 'Seed';
+                        const targetAsk = m.targetAsk || m["Target Ask"] || '$500K';
+                        const founderName = m.founderName || m["Founder Name"] || 'Founder';
+
+                        const matchedStartup: Startup = sanitizedStartups.find(
+                            (s) => s.id === startupEmail || s.name === startupName
+                        ) || {
+                            id: startupEmail,
+                            name: startupName,
+                            sector: startupSector,
+                            stage: startupStage,
+                            targetAsk,
+                            valuation: 'TBD',
+                            location: 'Vietnam',
+                            avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(founderName)}&background=random`,
+                            description: `A promising ${startupStage} startup in ${startupSector}`,
+                            tagline: `A promising ${startupStage} startup in ${startupSector}`,
+                            logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(startupName)}&background=random`,
+                            founderName,
+                            founderTitle: 'Founder & CEO',
+                            metrics: { mrr: 'TBD', arr: 'TBD', growthRate: 'N/A', usersCount: '10K+' },
+                            keyTags: startupSector.split(',').map((t: string) => t.trim()).filter(Boolean),
+                        };
+
+                        const investorFirm = m.investorFirm || m["Investor Firm"] || m["Investor or Fund Name"] || 'Venture Capital';
+                        const investorName = m.investorName || m["Investor Name"] || m["Representative Name"] || 'Investor';
+                        const investorEmail = m.investorEmail || m["Investor Email"] || `investor-${idx + 1}`;
+
+                        const matchedInvestor: Investor = sanitizedInvestors.find(
+                            (i) => i.id === investorEmail || i.firm === investorFirm
+                        ) || {
+                            id: investorEmail,
+                            name: investorName,
+                            firm: investorFirm,
+                            role: 'Investment Partner',
+                            country: 'Vietnam',
+                            targetSectors: [startupSector],
+                            preferredStages: [startupStage],
+                            ticketSizeRange: '$100K - $1M',
+                            investmentPhilosophy: 'Active tech investor seeking high-growth ventures in SEA.',
+                            totalDeals: 12,
+                            avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(investorName)}&background=random`,
+                        };
+
+                        const rawIce = m.iceBreakers || m.ice_breakers || m["Ice Breakers"];
+                        const iceBreakers = Array.isArray(rawIce)
+                            ? rawIce
+                            : typeof rawIce === 'string'
+                                ? rawIce.split('\n').filter(Boolean)
+                                : [
+                                    'What are your primary go-to-market drivers?',
+                                    'How do you plan to leverage our VC network?',
+                                    'What unit economics benchmarks do you aim for post-round?',
+                                ];
+
+                        const score = Number(m.score || m.matching_score || m["Score"] || 90);
+                        const reason = m.reason || m["Reason"] || 'Strong strategic alignment for DAVAS 2026 1:1 Summit.';
+                        const recommendedTable = m.table || m.recommendedTable || m["Table"] || `Table A${(idx % 5) + 1}`;
+
+                        return {
+                            id: m.id || m["ID"] || `mp-sheet-${idx + 1}`,
+                            startupId: matchedStartup.id,
+                            investorId: matchedInvestor.id,
+                            startup: matchedStartup,
+                            investor: matchedInvestor,
+                            status: 'Scheduled',
+                            recommendedTable,
+                            analysis: {
+                                matching_score: score,
+                                reason,
+                                ice_breakers: iceBreakers,
+                            },
+                        };
+                    });
+
+                    setMatches(loadedMatches);
+                }
+
+                if (data.startups || data.investors || data.matches) {
+                    setStats((prev) => {
+                        const totalScheduled = (data.matches && Array.isArray(data.matches)) ? data.matches.length : prev.scheduledMeetings;
+                        const avgScore = (data.matches && Array.isArray(data.matches) && data.matches.length > 0)
+                            ? Math.round(
+                                (data.matches.reduce((acc: number, curr: any) => acc + Number(curr.score || curr.matching_score || 90), 0) /
+                                    data.matches.length) * 10
+                            ) / 10
+                            : prev.avgMatchScore;
+
+                        return {
+                            ...prev,
+                            totalStartups: (data.startups && Array.isArray(data.startups)) ? data.startups.length : prev.totalStartups,
+                            totalInvestors: (data.investors && Array.isArray(data.investors)) ? data.investors.length : prev.totalInvestors,
+                            scheduledMeetings: totalScheduled,
+                            avgMatchScore: avgScore,
+                        };
+                    });
+                    showToast('📊 Loaded live data & matches from Google Sheets API');
                 }
             } catch (err) {
                 console.warn('Could not load live Google Sheets data, using default fallback data:', err);
@@ -381,6 +482,21 @@ export default function App() {
             // Automatically inspect the newly generated AI match
             setInspectPair(newPair);
             showToast(`✨ Smart Match: ${chosenStartup.name} matched with ${bestInvestor.firm} (${newPair.analysis.matching_score}% Fit)`);
+
+            // Save match to Google Sheets in background
+            fetch('/api/matches', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    startup: chosenStartup,
+                    investor: bestInvestor,
+                    analysis,
+                    recommendedTable: newPair.recommendedTable,
+                    id: newPair.id,
+                }),
+            }).catch((syncErr) => {
+                console.warn('Failed to sync match to Google Sheets:', syncErr);
+            });
         } catch (err) {
             console.error('Matchmaking error:', err);
             showToast('⚠️ AI Matchmaking evaluation completed with standard criteria.');
