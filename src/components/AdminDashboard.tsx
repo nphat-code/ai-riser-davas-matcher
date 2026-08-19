@@ -421,9 +421,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <Sparkles className="w-4 h-4" />
                         </div>
                     </div>
-                    <div className="text-2xl font-black text-white">{stats.avgMatchScore}%</div>
+                    <div className="text-2xl font-black text-white">
+                        {stats.scheduledMeetings === 0 || stats.avgMatchScore === 0 ? '--' : `${stats.avgMatchScore}%`}
+                    </div>
                     <p className="text-[11px] text-yellow-400 font-medium mt-1.5">
-                        Gemini Flash Criteria
+                        {stats.scheduledMeetings === 0 || stats.avgMatchScore === 0 ? 'Awaiting Match Execution' : 'Gemini Flash Criteria'}
                     </p>
                 </motion.div>
 
@@ -447,15 +449,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </motion.div>
 
             {/* Main Tabs Navigation */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3 w-full">
+                <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-1 w-full">
                     <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('overview')}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'overview'
+                        className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'overview'
                             ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
-                            : 'text-slate-400 hover:text-white'
+                            : 'text-slate-400 hover:text-white bg-slate-900/40 hover:bg-slate-800/80 border border-transparent hover:border-slate-800'
                             }`}
                     >
                         📊 Analytics & Deal Flow
@@ -465,9 +467,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('matches')}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'matches'
+                        className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'matches'
                             ? 'bg-purple-950/80 text-purple-300 border border-purple-500/40 shadow-md shadow-purple-500/10'
-                            : 'text-slate-400 hover:text-white'
+                            : 'text-slate-400 hover:text-white bg-slate-900/40 hover:bg-slate-800/80 border border-transparent hover:border-slate-800'
                             }`}
                     >
                         ✨ AI Match Pairings ({matches.length})
@@ -477,9 +479,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('startups')}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'startups'
+                        className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'startups'
                             ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
-                            : 'text-slate-400 hover:text-white'
+                            : 'text-slate-400 hover:text-white bg-slate-900/40 hover:bg-slate-800/80 border border-transparent hover:border-slate-800'
                             }`}
                     >
                         🚀 Startups ({startups.length})
@@ -489,38 +491,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('investors')}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'investors'
+                        className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'investors'
                             ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
-                            : 'text-slate-400 hover:text-white'
+                            : 'text-slate-400 hover:text-white bg-slate-900/40 hover:bg-slate-800/80 border border-transparent hover:border-slate-800'
                             }`}
                     >
                         💼 VCs & Angels ({investors.length})
                     </motion.button>
                 </div>
-
-                {/* Quick Search Bar depending on active tab */}
-                {(activeTab === 'startups' || activeTab === 'investors') && (
-                    <div className="hidden sm:flex items-center gap-2">
-                        <div className="relative">
-                            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            <input
-                                type="text"
-                                placeholder={activeTab === 'startups' ? 'Quick search startups...' : 'Quick search investors...'}
-                                value={activeTab === 'startups' ? startupSearch : investorSearch}
-                                onChange={(e) => {
-                                    if (activeTab === 'startups') {
-                                        setStartupSearch(e.target.value);
-                                        setStartupPage(1);
-                                    } else {
-                                        setInvestorSearch(e.target.value);
-                                        setInvestorPage(1);
-                                    }
-                                }}
-                                className="bg-slate-900/80 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-52 shadow-inner"
-                            />
-                        </div>
-                    </div>
-                )}
             </div>
 
             {/* AnimatePresence for Page / Tab Transitions */}
@@ -547,9 +525,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                         Real-time conversion rate from 1:1 business matching to term sheets issued at DAVAS
                                     </p>
                                 </div>
-                                <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                                    +14.2% vs DAVAS 2025
-                                </span>
                             </div>
 
                             {/* Progress Bar & Success Gauge */}
@@ -955,7 +930,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                         }}
                                         className="bg-slate-950/80 border border-slate-800 text-xs text-slate-200 rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:border-indigo-500 cursor-pointer appearance-none shadow-inner"
                                     >
-                                        <option value="All">All Sectors ({startups.length})</option>
+                                        <option value="All">All Sectors ({startups.length} Startups)</option>
                                         {startupSectors.filter((sec) => sec !== 'All').map((sec) => (
                                             <option key={sec} value={sec}>{sec}</option>
                                         ))}
@@ -1132,7 +1107,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                             }}
                                             className="bg-slate-950/80 border border-slate-800 text-xs text-slate-200 rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:border-emerald-500 cursor-pointer appearance-none shadow-inner"
                                         >
-                                            <option value="All">All Mandates ({investors.length})</option>
+                                            <option value="All">All Sectors ({investors.length} VCs)</option>
                                             {investorSectors.filter((sec) => sec !== 'All').map((sec) => (
                                                 <option key={sec} value={sec}>{sec}</option>
                                             ))}

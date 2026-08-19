@@ -18,7 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
     return (
         <header className="sticky top-0 z-40 w-full glass-panel border-b border-slate-800 px-4 lg:px-8 py-3">
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
                 {/* Brand & DAVAS Title */}
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-gradient-davas p-0.5 shadow-lg shadow-indigo-500/20 flex items-center justify-center">

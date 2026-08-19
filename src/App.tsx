@@ -626,7 +626,7 @@ export default function App() {
             />
 
             {/* Main Content Layout */}
-            <div className="flex-1 max-w-7xl w-full mx-auto flex flex-col lg:flex-row">
+            <div className="flex-1 max-w-[1600px] w-full mx-auto flex flex-col lg:flex-row">
                 {/* Sidebar Navigation */}
                 <Sidebar
                     activeView={activeView}
