@@ -99,7 +99,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const [showAllSectors, setShowAllSectors] = useState(false);
 
     // Dynamic Sectors list for Startups
-    const startupSectors = ['All', ...Array.from(new Set(startups.map((s) => s.sector).filter(Boolean))).sort()];
+    const allStartupSectors = new Set<string>();
+    startups.forEach((s) => {
+        if (s.sector) {
+            s.sector.split(',').forEach((sec) => {
+                const trimmed = sec.trim();
+                if (trimmed) allStartupSectors.add(trimmed);
+            });
+        }
+    });
+    const startupSectors = ['All', ...Array.from(allStartupSectors).sort()];
 
     // Dynamic Sectors list for Investors
     const allInvestorSectors = new Set<string>();
@@ -132,7 +141,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             sStage.toLowerCase().includes(query) ||
             sAsk.toLowerCase().includes(query);
 
-        const matchesSector = startupSector === 'All' || s.sector === startupSector;
+        const matchesSector =
+            startupSector === 'All' ||
+            (s.sector && s.sector.toLowerCase().split(',').map((x) => x.trim()).includes(startupSector.toLowerCase()));
         return matchesSearch && matchesSector;
     });
 
@@ -577,8 +588,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                                     const sectorCounts: Record<string, number> = {};
                                     startups.forEach((s) => {
-                                        const sec = (s.sector || 'General Tech').trim();
-                                        sectorCounts[sec] = (sectorCounts[sec] || 0) + 1;
+                                        const rawSector = s.sector || 'General Tech';
+                                        const secList = rawSector.split(',').map((sec) => sec.trim()).filter(Boolean);
+                                        if (secList.length === 0) secList.push('General Tech');
+                                        secList.forEach((sec) => {
+                                            sectorCounts[sec] = (sectorCounts[sec] || 0) + 1;
+                                        });
                                     });
 
                                     // Sort sectors descending by startup count
@@ -688,7 +703,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     <h3 className="text-base font-bold text-white">AI Matchmaking Logic</h3>
                                 </div>
                                 <p className="text-xs text-slate-300 leading-relaxed">
-                                    DavaSync evaluates 4 core investment pillars with Gemini 3.6 Flash:
+                                    DavaSync evaluates 4 core investment pillars with Google AI Gemini:
                                 </p>
 
                                 <ul className="mt-4 space-y-2.5 text-xs text-slate-400">

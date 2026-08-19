@@ -122,14 +122,24 @@ export default function App() {
                     sanitizedInvestors = data.investors.map((i: any, idx: number) => {
                         const name = i["Representative Name"] || i.name || `Investor ${idx + 1}`;
                         const firm = i["Investor or Fund Name"] || i.firm || 'Venture Capital';
-                        const rawSectors = i["Interested Industries"] || i.targetSectors || 'EdTech & AI, FinTech';
+                        const rawSectors =
+                            i["Investment Sectors of Interest"] ||
+                            i["Investment_Sectors_of_Interest"] ||
+                            i["Interested Industries"] ||
+                            i.targetSectors ||
+                            'EdTech & AI, FinTech';
                         const targetSectors = (typeof rawSectors === 'string' ? rawSectors : String(rawSectors))
                             .split(',')
                             .map((t: string) => t.trim())
                             .filter(Boolean);
                         const maxTicket = i["Maximum Ticket Size (USD)"];
                         const ticketSizeRange = maxTicket ? `Up to ${formatCurrency(maxTicket)}` : (i.ticketSizeRange || '$100K - $500K');
-                        const investmentPhilosophy = i["Investment Philosophy and matching criteria"] || i.investmentPhilosophy || 'Active tech investor seeking high-growth ventures in SEA.';
+                        const investmentPhilosophy =
+                            i["Investment Philosophy / Thesis"] ||
+                            i["Investment_Philosophy_Thesis"] ||
+                            i["Investment Philosophy and matching criteria"] ||
+                            i.investmentPhilosophy ||
+                            'Active tech investor seeking high-growth ventures in SEA.';
 
                         return {
                             id: i["Email Address"] || i.id || `investor-${idx + 1}`,
