@@ -78,6 +78,11 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
         currentInvestor?.avatar ||
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80';
 
+    const avgInvestorScore =
+        scheduleSlots.length > 0
+            ? Math.round(scheduleSlots.reduce((acc, s) => acc + (s.matchScore || 90), 0) / scheduleSlots.length)
+            : 0;
+
     return (
         <div className="max-w-md mx-auto min-h-screen pb-20 space-y-5 px-2 sm:px-0">
             {/* Mobile Device Frame Header Accent */}
@@ -170,7 +175,9 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                         className="bg-slate-950/60 p-2 rounded-xl border border-slate-800"
                     >
                         <div className="text-[10px] text-slate-400 uppercase font-bold">Avg AI Match</div>
-                        <div className="text-base font-black text-yellow-400">95%</div>
+                        <div className="text-base font-black text-yellow-400">
+                            {scheduleSlots.length > 0 ? `${avgInvestorScore}%` : '--'}
+                        </div>
                     </motion.div>
                 </div>
             </motion.div>

@@ -191,6 +191,40 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         investorPage * ITEMS_PER_PAGE
     );
 
+    // Calculate total funding ask from matched pairs dynamically
+    const totalMatchFundingNumber = (matches || []).reduce((total, m) => {
+        const askStr = m.startup?.targetAsk || '';
+        const cleanStr = askStr.replace(/,/g, '').trim();
+        const numMatch = cleanStr.match(/([\d.]+)\s*([KkMmBb])?/);
+        if (!numMatch) return total;
+
+        let val = parseFloat(numMatch[1]);
+        if (isNaN(val)) return total;
+
+        const unit = numMatch[2]?.toUpperCase();
+        if (unit === 'K') val *= 1_000;
+        else if (unit === 'M') val *= 1_000_000;
+        else if (unit === 'B') val *= 1_000_000_000;
+        else if (val < 1000) {
+            val *= 1_000;
+        }
+        return total + val;
+    }, 0);
+
+    const formattedMatchFunding = (() => {
+        if (!matches || matches.length === 0 || totalMatchFundingNumber === 0) return '$0 Total';
+        if (totalMatchFundingNumber >= 1_000_000_000) {
+            return `$${(totalMatchFundingNumber / 1_000_000_000).toFixed(1)}B Total`;
+        }
+        if (totalMatchFundingNumber >= 1_000_000) {
+            return `$${(totalMatchFundingNumber / 1_000_000).toFixed(1)}M Total`;
+        }
+        if (totalMatchFundingNumber >= 1_000) {
+            return `$${(totalMatchFundingNumber / 1_000).toFixed(0)}K Total`;
+        }
+        return `$${totalMatchFundingNumber.toLocaleString()} Total`;
+    })();
+
     // Reusable Pagination Controller
     const renderPagination = (
         currentPage: number,
@@ -452,9 +486,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <TrendingUp className="w-4 h-4" />
                         </div>
                     </div>
-                    <div className="text-2xl font-black text-gradient">{stats.dealSuccessRate}%</div>
+                    <div className="text-2xl font-black text-gradient">
+                        {!stats.dealSuccessRate || stats.dealSuccessRate === 0 ? '--' : `${stats.dealSuccessRate}%`}
+                    </div>
                     <p className="text-[11px] text-indigo-300 font-medium mt-1.5">
-                        Post-Event Term Sheets
+                        {!stats.dealSuccessRate || stats.dealSuccessRate === 0 ? 'Awaiting Post-Meeting Feedback' : 'Post-Event Term Sheets'}
                     </p>
                 </motion.div>
             </motion.div>
@@ -542,12 +578,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <div className="space-y-4 bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
                                 <div className="flex items-center justify-between text-xs">
                                     <span className="font-semibold text-slate-300">Overall Matching-to-Term Sheet Velocity</span>
-                                    <span className="font-mono font-bold text-cyan-400">{stats.dealSuccessRate}% Target Achieved</span>
+                                    <span className="font-mono font-bold text-cyan-400">
+                                        {!stats.dealSuccessRate || stats.dealSuccessRate === 0
+                                            ? 'Awaiting Post-Meeting Feedback'
+                                            : `${stats.dealSuccessRate}% Target Achieved`}
+                                    </span>
                                 </div>
                                 <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
                                     <motion.div
                                         initial={{ width: 0 }}
-                                        animate={{ width: `${stats.dealSuccessRate}%` }}
+                                        animate={{ width: `${stats.dealSuccessRate || 0}%` }}
                                         transition={{ duration: 1, ease: 'easeOut' }}
                                         className="h-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 rounded-full shadow-lg shadow-cyan-500/50"
                                     />
@@ -565,7 +605,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     </div>
                                     <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
                                         <div className="text-[11px] text-slate-400">Term Sheets Target</div>
-                                        <div className="text-lg font-bold text-emerald-400 mt-0.5">$18.4M Total</div>
+                                        <div className="text-lg font-bold text-emerald-400 mt-0.5">{formattedMatchFunding}</div>
                                     </div>
                                 </div>
                             </div>

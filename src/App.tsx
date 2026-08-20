@@ -14,7 +14,7 @@ const INITIAL_STATS: EventStats = {
     totalInvestors: 0,
     scheduledMeetings: 0,
     avgMatchScore: 0,
-    dealSuccessRate: 88.5,
+    dealSuccessRate: 0,
     topSector: 'Tech & AI',
 };
 
@@ -274,6 +274,21 @@ export default function App() {
         fetchData();
     }, []);
 
+    // Update dynamic deal success rate whenever schedule slots or notes change
+    useEffect(() => {
+        const completedMeetingsWithNotes = scheduleSlots.filter((s) => s.notes && s.notes.trim().length > 0);
+        const dynamicDealRate =
+            scheduleSlots.length > 0 && completedMeetingsWithNotes.length > 0
+                ? Math.round((completedMeetingsWithNotes.length / scheduleSlots.length) * 1000) / 10
+                : 0;
+
+        setStats((prev) => ({
+            ...prev,
+            dealSuccessRate: dynamicDealRate,
+            scheduledMeetings: scheduleSlots.length > 0 ? scheduleSlots.length : prev.scheduledMeetings,
+        }));
+    }, [scheduleSlots]);
+
     // Helper to extract clean sector tokens for semantic matching
     const extractSectorTokens = (text: string): string[] => {
         return (text || '')
@@ -482,12 +497,16 @@ export default function App() {
                 },
             };
 
-            setMatches((prev) => [newPair, ...prev]);
-            setStats((prev) => ({
-                ...prev,
-                scheduledMeetings: prev.scheduledMeetings + 1,
-                avgMatchScore: Math.round(((prev.avgMatchScore + (analysis.matching_score || 95)) / 2) * 10) / 10,
-            }));
+            setMatches((prev) => {
+                const updated = [newPair, ...prev];
+                const totalScore = updated.reduce((sum, m) => sum + (m.analysis?.matching_score || 0), 0);
+                const newAvg = updated.length > 0 ? Math.round((totalScore / updated.length) * 10) / 10 : 0;
+                setStats((prevStats) => ({
+                    ...prevStats,
+                    avgMatchScore: newAvg,
+                }));
+                return updated;
+            });
 
             // Automatically inspect the newly generated AI match
             setInspectPair(newPair);
