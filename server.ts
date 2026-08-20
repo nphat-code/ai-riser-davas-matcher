@@ -83,7 +83,7 @@ Analyze the match quality between this Startup and Investor for DAVAS 2026.
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         systemInstruction:
@@ -166,7 +166,7 @@ Generate a polished follow-up package for the VC to send to the startup after th
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         systemInstruction:

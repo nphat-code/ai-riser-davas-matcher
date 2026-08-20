@@ -588,7 +588,7 @@ export default function App() {
                     })
                 );
 
-                showToast('Đã đồng bộ lịch lên Google Calendar thành công!');
+                showToast('📅 Successfully synced schedule to Google Calendar & Sheets!');
             }
         } catch (err) {
             console.error('Smart scheduling failed:', err);
