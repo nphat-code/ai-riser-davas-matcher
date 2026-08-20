@@ -244,6 +244,35 @@ export default function App() {
                     });
 
                     setMatches(loadedMatches);
+
+                    // Khôi phục scheduleSlots cho Participant Portal từ Google Sheets
+                    const hydratedSlots: MeetingSlot[] = data.matches
+                        .filter((m: any) => m.Meeting_Time_Slot && m.Meeting_Time_Slot !== 'Pending Schedule')
+                        .map((m: any, idx: number) => {
+                            const correspondingPair = loadedMatches[idx];
+                            const time = m.Meeting_Time_Slot || m["Meeting_Time_Slot"] || '09:00 - 09:30 AM';
+                            const table = m.Assigned_Table || m["Assigned_Table"] || 'Table A1';
+                            const notes = m.Investor_Notes || m["Investor_Notes"] || '';
+                            const score = Number(m.AI_Match_Score || m["AI_Match_Score"] || 90);
+
+                            return {
+                                id: `slot-hydrated-${idx + 1}-${m.Match_ID || idx}`,
+                                time,
+                                table,
+                                startup: correspondingPair.startup,
+                                investor: correspondingPair.investor,
+                                status: notes ? ('Completed' as const) : (idx === 0 ? ('In Progress' as const) : ('Upcoming' as const)),
+                                matchScore: score,
+                                notes,
+                            };
+                        });
+
+                    if (hydratedSlots.length > 0) {
+                        setScheduleSlots(hydratedSlots);
+                    } else if (loadedMatches.length > 0) {
+                        // Nếu chưa lưu giờ cố định, tự động xếp lịch thông minh từ các cặp đã match
+                        setScheduleSlots(generateSmartSchedule(loadedMatches));
+                    }
                 }
 
                 if (data.startups || data.investors || data.matches) {
