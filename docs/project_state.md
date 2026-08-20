@@ -50,6 +50,10 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
   - Tích hợp "Investor Persona Switcher" trong Participant Portal cho phép chuyển đổi và kiểm tra lịch riêng biệt của 31 VCs.
 - **Đồng bộ Lịch Trình & Cập nhật Hai Chiều với Google Sheets:**
   - Đồng bộ `save_match` và `update_schedule` vào tab `Matches` trên Google Sheets.
+- **Hệ thống Chỉ số Đo lường Động học (100% Dynamic Post-Event Analytics):**
+  - "Avg AI Match Score": Tính trung bình cộng chuẩn xác theo danh sách các cặp đấu thực tế.
+  - "Deal Success Rate": Tự động theo dõi dựa trên các cuộc họp đã diễn ra và có ghi chú tích cực từ VC (hiển thị `--` khi chưa có phản hồi).
+  - "Term Sheets Target": Tính tổng giá trị deal gọi vốn (Pipeline Funding Value) thực tế từ các startup được ghép cặp.
 
 **7. Giai đoạn 7: Đóng gói và Triển khai (Cloud Run)**
 - Đã có file `Dockerfile` chuẩn bị cho việc đẩy lên Google Cloud Run.
