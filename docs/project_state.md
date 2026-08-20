@@ -49,7 +49,8 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
   - Tích hợp bộ lọc ngành và phân trang (8 items/trang) cho 62 Startups và 31 Investors, kèm nút "Match VC" trực tiếp trên từng dòng.
   - Tích hợp "Investor Persona Switcher" trong Participant Portal cho phép chuyển đổi và kiểm tra lịch riêng biệt của 31 VCs.
 - **Đồng bộ Lịch Trình & Cập nhật Hai Chiều với Google Sheets:**
-  - Đồng bộ `save_match` và `update_schedule` vào tab `Matches` trên Google Sheets.
+  - Đồng bộ `save_match`, `update_schedule` và `save_followup` vào tab `Matches` trên Google Sheets (cột T: Investor_Notes, cột U: AI_Followup_Draft, cột V: Deal_Outcome).
+  - Tự động hydrate (khôi phục) toàn bộ nội dung ghi chú và bản thảo email khi F5 tải lại trang.
 - **Hệ thống Chỉ số Đo lường Động học (100% Dynamic Post-Event Analytics):**
   - "Avg AI Match Score": Tính trung bình cộng chuẩn xác theo danh sách các cặp đấu thực tế.
   - "Deal Success Rate": Tự động theo dõi dựa trên các cuộc họp đã diễn ra và có ghi chú tích cực từ VC (hiển thị `--` khi chưa có phản hồi).
