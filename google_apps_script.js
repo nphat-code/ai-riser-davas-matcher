@@ -96,6 +96,38 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
 
+    // -----------------------------------------------------------------------
+    // ACTION 4: LƯU GHI CHÚ CUỘC GẶP & BẢN NHÁP EMAIL AI VÀO GOOGLE SHEETS
+    // -----------------------------------------------------------------------
+    if (action === "save_followup") {
+      let sheet = ss.getSheetByName("Matches");
+      if (sheet) {
+        const values = sheet.getDataRange().getValues();
+        for (let i = 1; i < values.length; i++) {
+          const rowStartup = values[i][2]; // Startup_Name (Cột C)
+          const rowInvestor = values[i][8]; // Investor_Firm (Cột I)
+          if (rowStartup === data.startupName && rowInvestor === data.investorFirm) {
+            sheet.getRange(i + 1, 19).setValue("Completed"); // Cột 19 (S): Meeting_Status
+            sheet.getRange(i + 1, 20).setValue(data.notes || ""); // Cột 20 (T): Investor_Notes
+            
+            let draftText = "";
+            if (data.followUpGenerated) {
+              const subj = data.followUpGenerated.emailSubject || "";
+              const body = data.followUpGenerated.emailBody || "";
+              draftText = "Subject: " + subj + "\n\n" + body;
+            } else {
+              draftText = data.notes || "";
+            }
+            sheet.getRange(i + 1, 21).setValue(draftText); // Cột 21 (U): AI_Followup_Draft
+            sheet.getRange(i + 1, 22).setValue("Due Diligence / Follow-up Active"); // Cột 22 (V): Deal_Outcome
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Follow-up saved to Google Sheets" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Hành động không hợp lệ" }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
