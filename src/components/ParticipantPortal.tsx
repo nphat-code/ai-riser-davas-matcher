@@ -284,6 +284,12 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                         </div>
 
                                         <div className="flex items-center gap-2">
+                                            {(slot.notes || slot.followUpGenerated) && (
+                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                                                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                                    Notes Logged
+                                                </span>
+                                            )}
                                             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1">
                                                 <MapPin className="w-3 h-3" />
                                                 {slot.table}
@@ -324,18 +330,24 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                     </div>
 
                                     {/* Generated AI Followup summary pill if present */}
-                                    {slot.followUpGenerated && (
+                                    {(slot.notes || slot.followUpGenerated) && (
                                         <div className="mt-3 p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-xs space-y-1">
                                             <div className="flex items-center justify-between text-purple-300 font-semibold text-[11px]">
                                                 <span className="flex items-center gap-1">
                                                     <Sparkles className="w-3 h-3 text-yellow-400" />
-                                                    AI Follow-up Draft Ready
+                                                    {slot.followUpGenerated ? 'AI Follow-up Draft Ready' : 'Meeting Notes Saved'}
                                                 </span>
                                                 <span className="text-[10px] text-emerald-400 font-mono">Logged</span>
                                             </div>
-                                            <p className="text-[11px] text-slate-300 line-clamp-2 italic">
-                                                "{slot.followUpGenerated.emailSubject}"
-                                            </p>
+                                            {slot.followUpGenerated ? (
+                                                <p className="text-[11px] text-slate-300 line-clamp-2 italic">
+                                                    "{slot.followUpGenerated.emailSubject}"
+                                                </p>
+                                            ) : slot.notes ? (
+                                                <p className="text-[11px] text-slate-300 line-clamp-2 italic">
+                                                    "{slot.notes}"
+                                                </p>
+                                            ) : null}
                                         </div>
                                     )}
 
@@ -349,7 +361,7 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                         >
                                             <FileText className="w-4 h-4 text-cyan-200" />
                                             <span>
-                                                {slot.followUpGenerated ? 'View / Edit AI Follow-up Draft' : 'Add Notes & AI Follow-up'}
+                                                {(slot.notes || slot.followUpGenerated) ? 'View / Edit Notes & AI Draft' : 'Add Notes & AI Follow-up'}
                                             </span>
                                             <ChevronRight className="w-4 h-4 ml-auto text-cyan-200" />
                                         </motion.button>

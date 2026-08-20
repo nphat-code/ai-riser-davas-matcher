@@ -255,6 +255,18 @@ export default function App() {
                             const notes = m.Investor_Notes || m["Investor_Notes"] || '';
                             const score = Number(m.AI_Match_Score || m["AI_Match_Score"] || 90);
 
+                            const rawDraft = m.AI_Followup_Draft || m["AI_Followup_Draft"] || '';
+                            let followUpGenerated = undefined;
+                            if (rawDraft) {
+                                const subjectMatch = rawDraft.match(/Subject:\s*(.*)/);
+                                followUpGenerated = {
+                                    emailSubject: subjectMatch ? subjectMatch[1] : 'DAVAS 2026 Follow-up Draft',
+                                    emailBody: rawDraft.replace(/Subject:\s*.*?\n\n?/, '').trim() || rawDraft,
+                                    keyTakeaways: [notes || 'Meeting notes recorded.'],
+                                    actionItems: ['Follow up with founder on next steps.'],
+                                };
+                            }
+
                             return {
                                 id: `slot-hydrated-${idx + 1}-${m.Match_ID || idx}`,
                                 time,
@@ -264,6 +276,7 @@ export default function App() {
                                 status: notes ? ('Completed' as const) : (idx === 0 ? ('In Progress' as const) : ('Upcoming' as const)),
                                 matchScore: score,
                                 notes,
+                                followUpGenerated,
                             };
                         });
 
