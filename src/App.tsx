@@ -661,6 +661,23 @@ export default function App() {
                 return slot;
             })
         );
+
+        const targetSlot = scheduleSlots.find((s) => s.id === slotId);
+        if (targetSlot) {
+            fetch('/api/followup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    startupName: targetSlot.startup.name,
+                    investorFirm: targetSlot.investor.firm,
+                    notes,
+                    followUpGenerated: generatedResult,
+                }),
+            }).catch((err) => {
+                console.warn('Failed to sync follow-up to Google Sheets:', err);
+            });
+        }
+
         showToast('✅ Meeting notes and AI Follow-up draft saved to your schedule.');
     };
 

@@ -83,7 +83,7 @@ Analyze the match quality between this Startup and Investor for DAVAS 2026.
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction:
@@ -166,7 +166,7 @@ Generate a polished follow-up package for the VC to send to the startup after th
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction:
@@ -320,6 +320,34 @@ app.post("/api/schedule", async (req, res) => {
     return res.status(500).json({
       error: error.message || "Failed to update/trigger schedule on Google Apps Script",
     });
+  }
+});
+
+// Save Follow-up & Meeting Notes to Google Sheets
+app.post("/api/followup", async (req, res) => {
+  try {
+    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL;
+    if (!sheetsApiUrl) {
+      return res.status(500).json({ error: "GOOGLE_SHEETS_API_URL not configured" });
+    }
+    const { startupName, investorFirm, notes, followUpGenerated } = req.body;
+    const payload = {
+      action: "save_followup",
+      startupName,
+      investorFirm,
+      notes,
+      followUpGenerated,
+    };
+    const response = await fetch(sheetsApiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json().catch(() => ({ status: "ok" }));
+    return res.json(data);
+  } catch (err: any) {
+    console.error("Save follow-up error:", err);
+    return res.status(500).json({ error: err.message });
   }
 });
 
