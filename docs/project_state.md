@@ -55,6 +55,7 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
   - **Tối ưu hóa Siêu tốc Google Apps Script (Google CacheService):** Tích hợp bộ nhớ đệm RAM `CacheService.getScriptCache()` với thời lượng 1 giờ (3600s), giảm thời gian phản hồi từ 4s xuống còn 0.2s, tự động làm mới cache (cache invalidation) khi có Match mới, Ghi chú mới hoặc Cập nhật lịch trình.
   - **Server Pre-warming & In-Memory Caching (Tải tức thì 0.01s):** Tự động gửi request ngầm nạp dữ liệu từ Google Sheets ngay khi Server khởi động, lưu RAM 60s để triệt tiêu độ trễ Cold Start.
   - **Quy trình Điều phối 2 Bước Chuẩn hóa (2-Phase Matchmaking Workflow):** Khi vừa Match ban đầu, cặp đấu ở trạng thái `Pending Schedule` / `Table TBD`. Chỉ khi bấm "Generate Smart Schedule", hệ thống mới chính thức phân bổ ca họp, số bàn chính thức và chuyển sang `Scheduled`.
+  - **Quy chuẩn Cấu trúc Email 4 Đoạn (Executive VC Follow-up Structure):** Khóa cứng System Instruction và JSON schema của Gemini để 100% bản thảo email sinh ra đều tuân thủ cấu trúc 4 đoạn chuẩn mực (Opening -> Traction & Alignment -> Next Steps & CTA -> Sign-off).
   - **Thuật toán Xếp lịch Tăng dần & Khóa Cố định (Slot-Locking Incremental Scheduler):** Khóa cứng giờ họp, số bàn, ghi chú và trạng thái của các cuộc hẹn đã chốt lịch, chỉ phân bổ khung giờ và bàn còn trống cho các cặp mới mà không làm xáo trộn lịch cũ.
 - **Hệ thống Chỉ số Đo lường Động học (100% Dynamic Post-Event Analytics):**
   - "Avg AI Match Score": Tính trung bình cộng chuẩn xác theo danh sách các cặp đấu thực tế.
