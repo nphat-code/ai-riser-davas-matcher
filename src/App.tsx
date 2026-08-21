@@ -21,7 +21,7 @@ const INITIAL_STATS: EventStats = {
 
 export default function App() {
     const [activeView, setActiveView] = useState<'admin' | 'participant'>('admin');
-    const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'startups' | 'investors' | 'matches'>('overview');
+    const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'startups' | 'investors' | 'matches' | 'tables'>('overview');
     const [isMobileFrame, setIsMobileFrame] = useState<boolean>(false);
 
     // Core Data States (Initialized with DAVAS 2026 dataset, dynamically updated from Sheets API)
@@ -829,6 +829,7 @@ export default function App() {
                             startups={startups}
                             investors={investors}
                             matches={matches}
+                            scheduleSlots={scheduleSlots}
                             activeTab={activeAdminTab}
                             setActiveTab={setActiveAdminTab}
                             onRunMatchmaking={handleRunMatchmaking}

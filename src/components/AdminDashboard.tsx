@@ -18,17 +18,25 @@ import {
     RefreshCw,
     Zap,
     HelpCircle,
-    FileText
+    FileText,
+    Grid,
+    Clock,
+    ShieldCheck,
+    Layers,
+    MapPin,
+    Radio
 } from 'lucide-react';
-import { Startup, Investor, MatchPair, EventStats } from '../types';
+import { Startup, Investor, MatchPair, MeetingSlot, EventStats } from '../types';
+import { DEFAULT_TIME_SLOTS } from '../utils/scheduler';
 
 interface AdminDashboardProps {
     stats: EventStats;
     startups: Startup[];
     investors: Investor[];
     matches: MatchPair[];
-    activeTab: 'overview' | 'startups' | 'investors' | 'matches';
-    setActiveTab: (tab: 'overview' | 'startups' | 'investors' | 'matches') => void;
+    scheduleSlots?: MeetingSlot[];
+    activeTab: 'overview' | 'startups' | 'investors' | 'matches' | 'tables';
+    setActiveTab: (tab: 'overview' | 'startups' | 'investors' | 'matches' | 'tables') => void;
     onRunMatchmaking: (targetStartup?: Startup) => void;
     onGenerateSchedule: () => void;
     isMatchmakingLoading: boolean;
@@ -70,11 +78,53 @@ const statCardVariants = {
     },
 };
 
+const SUMMIT_TIME_SLOTS = DEFAULT_TIME_SLOTS;
+
+const SUMMIT_ZONES = [
+    {
+        id: 'zone-a',
+        name: 'Zone A',
+        subtitle: 'Alpha Suite (HealthTech & AI Focus)',
+        tables: ['Table A1', 'Table A2', 'Table A3'],
+        accentBorder: 'border-cyan-500/30',
+        badgeBg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
+        zoneColor: 'text-cyan-400',
+    },
+    {
+        id: 'zone-b',
+        name: 'Zone B',
+        subtitle: 'Beta Suite (FinTech & Enterprise SaaS)',
+        tables: ['Table B1', 'Table B2', 'Table B3'],
+        accentBorder: 'border-indigo-500/30',
+        badgeBg: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30',
+        zoneColor: 'text-indigo-400',
+    },
+    {
+        id: 'zone-c',
+        name: 'Zone C',
+        subtitle: 'Gamma Suite (GreenTech & Impact Climate)',
+        tables: ['Table C1', 'Table C2', 'Table C3'],
+        accentBorder: 'border-emerald-500/30',
+        badgeBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+        zoneColor: 'text-emerald-400',
+    },
+    {
+        id: 'zone-d',
+        name: 'Zone D',
+        subtitle: 'Delta Suite (AgriTech, IoT & Hardware)',
+        tables: ['Table D1', 'Table D2', 'Table D3'],
+        accentBorder: 'border-amber-500/30',
+        badgeBg: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+        zoneColor: 'text-amber-400',
+    },
+];
+
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     stats,
     startups,
     investors,
     matches,
+    scheduleSlots = [],
     activeTab,
     setActiveTab,
     onRunMatchmaking,
@@ -84,6 +134,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     onInspectMatch,
 }) => {
     const ITEMS_PER_PAGE = 8;
+
+    // Summit Tables Tab States
+    const [selectedTableTimeSlot, setSelectedTableTimeSlot] = useState<string>(SUMMIT_TIME_SLOTS[0]);
 
     // Startup Tab States
     const [startupSearch, setStartupSearch] = useState('');
@@ -544,6 +597,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             }`}
                     >
                         💼 VCs & Angels ({investors.length})
+                    </motion.button>
+
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setActiveTab('tables')}
+                        className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'tables'
+                            ? 'bg-cyan-950/90 text-cyan-300 border border-cyan-500/40 shadow-md shadow-cyan-500/10'
+                            : 'text-slate-400 hover:text-white bg-slate-900/40 hover:bg-slate-800/80 border border-transparent hover:border-slate-800'
+                            }`}
+                    >
+                        🏛️ Summit Tables (12)
                     </motion.button>
                 </div>
             </div>
@@ -1273,6 +1338,385 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                         {/* Pagination Navigation Footer */}
                         {renderPagination(investorPage, investorTotalPages, filteredInvestors.length, setInvestorPage)}
+                    </motion.div>
+                )}
+
+                {/* TAB 5: SUMMIT TABLES (12 TABLES ACROSS 4 ZONES) */}
+                {activeTab === 'tables' && (
+                    <motion.div
+                        key="tables"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-6"
+                    >
+                        {/* Occupancy Rate & Telemetry Banner */}
+                        <div className="glass-panel p-6 rounded-3xl border border-cyan-500/20 relative overflow-hidden bg-gradient-to-r from-slate-900/90 via-indigo-950/40 to-slate-900/90">
+                            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-1.5">
+                                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 flex items-center gap-1.5">
+                                            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                                            Live Floor Plan Telemetry
+                                        </span>
+                                        <span className="text-xs text-slate-400 font-mono">
+                                            Furama Resort Danang • Grand Ballroom
+                                        </span>
+                                    </div>
+                                    <h3 className="text-xl lg:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                                        <span>DAVAS 2026 Summit Tables</span>
+                                        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
+                                            12 Tables / 4 Zones
+                                        </span>
+                                    </h3>
+                                    <p className="text-xs text-slate-400 mt-1 max-w-2xl">
+                                        Track 1:1 business matching sessions in real-time, monitor table utilization across 8 session slots, and ensure seamless investor-startup interactions.
+                                    </p>
+                                </div>
+
+                                {/* Slot Occupancy Gauge */}
+                                {(() => {
+                                    const occupiedInCurrentSlot = SUMMIT_ZONES.flatMap((z) => z.tables).filter((tableId) =>
+                                        scheduleSlots.some((s) => s.table === tableId && s.time === selectedTableTimeSlot)
+                                    ).length;
+                                    const occupancyRate = Math.round((occupiedInCurrentSlot / 12) * 100);
+
+                                    return (
+                                        <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center gap-5 shrink-0">
+                                            {/* Circular / Progress Metric */}
+                                            <div className="text-center sm:text-left">
+                                                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                                    Slot Occupancy Rate
+                                                </div>
+                                                <div className="text-2xl lg:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400 font-mono mt-0.5">
+                                                    {occupancyRate}%
+                                                </div>
+                                                <div className="text-[11px] text-slate-400 font-medium">
+                                                    <span className="text-white font-bold">{occupiedInCurrentSlot}</span> of 12 Tables Booked
+                                                </div>
+                                            </div>
+
+                                            {/* Visual Progress Bar */}
+                                            <div className="w-full sm:w-36 space-y-1.5">
+                                                <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                                                    <motion.div
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${occupancyRate}%` }}
+                                                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                                                        className={`h-full rounded-full ${occupancyRate >= 80
+                                                                ? 'bg-gradient-to-r from-emerald-500 to-cyan-400'
+                                                                : occupancyRate > 0
+                                                                    ? 'bg-gradient-to-r from-indigo-500 to-cyan-400'
+                                                                    : 'bg-slate-800'
+                                                            }`}
+                                                    />
+                                                </div>
+                                                <div className="flex items-center justify-between text-[10px] text-slate-500">
+                                                    <span>0%</span>
+                                                    <span>{12 - occupiedInCurrentSlot} Available</span>
+                                                    <span>100%</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Action to Auto Schedule if empty */}
+                                            {scheduleSlots.length === 0 && (
+                                                <button
+                                                    onClick={onGenerateSchedule}
+                                                    disabled={isScheduleLoading}
+                                                    className="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all cursor-pointer shadow-md shadow-indigo-600/20 whitespace-nowrap"
+                                                >
+                                                    ⚡ Generate Schedule
+                                                </button>
+                                            )}
+                                        </div>
+                                    );
+                                })()}
+                            </div>
+                        </div>
+
+                        {/* Time Slot Filter Selector (8 Ca họp trong ngày) */}
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
+                                    <Clock className="w-4 h-4 text-cyan-400" />
+                                    <span>Select Time Slot (8 Daily Sessions)</span>
+                                </div>
+                                <div className="text-xs text-slate-400">
+                                    Viewing: <span className="font-bold text-cyan-300">{selectedTableTimeSlot}</span>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+                                {SUMMIT_TIME_SLOTS.map((slotTime, idx) => {
+                                    const isSelected = selectedTableTimeSlot === slotTime;
+                                    const occupiedCount = SUMMIT_ZONES.flatMap((z) => z.tables).filter((tableId) =>
+                                        scheduleSlots.some((s) => s.table === tableId && s.time === slotTime)
+                                    ).length;
+
+                                    return (
+                                        <button
+                                            key={slotTime}
+                                            onClick={() => setSelectedTableTimeSlot(slotTime)}
+                                            className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${isSelected
+                                                    ? 'bg-gradient-to-b from-indigo-950/90 to-slate-900 border-cyan-400 shadow-lg shadow-cyan-500/10 ring-1 ring-cyan-400/40'
+                                                    : 'bg-slate-900/60 border-slate-800/80 hover:bg-slate-800/60 hover:border-slate-700 text-slate-400'
+                                                }`}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <span className={`text-[10px] font-bold uppercase tracking-wider ${isSelected ? 'text-cyan-400' : 'text-slate-500'}`}>
+                                                    Ca {idx + 1}
+                                                </span>
+                                                <span
+                                                    className={`px-1.5 py-0.5 rounded text-[9px] font-bold font-mono ${occupiedCount === 12
+                                                            ? 'bg-emerald-500/20 text-emerald-300'
+                                                            : occupiedCount > 0
+                                                                ? 'bg-indigo-500/20 text-indigo-300'
+                                                                : 'bg-slate-800 text-slate-500'
+                                                        }`}
+                                                >
+                                                    {occupiedCount}/12
+                                                </span>
+                                            </div>
+                                            <div className={`text-xs font-semibold truncate ${isSelected ? 'text-white font-bold' : 'text-slate-300'}`}>
+                                                {slotTime.split(' - ')[0]}
+                                            </div>
+                                            <div className="text-[10px] text-slate-500 truncate">
+                                                {slotTime.split(' - ')[1]}
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* 4 Zones Grid (Zone A -> Zone D) */}
+                        <div className="space-y-6">
+                            {SUMMIT_ZONES.map((zone) => {
+                                const zoneMeetings = zone.tables.map((tableId) => {
+                                    return {
+                                        tableId,
+                                        meeting: scheduleSlots.find((s) => s.table === tableId && s.time === selectedTableTimeSlot),
+                                    };
+                                });
+
+                                const zoneOccupiedCount = zoneMeetings.filter((zm) => zm.meeting).length;
+
+                                return (
+                                    <div
+                                        key={zone.id}
+                                        className="glass-panel p-5 rounded-3xl border border-slate-800/90 space-y-4"
+                                    >
+                                        {/* Zone Header */}
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800/80">
+                                            <div className="flex items-center gap-3">
+                                                <span className={`px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider border ${zone.badgeBg}`}>
+                                                    {zone.name}
+                                                </span>
+                                                <div>
+                                                    <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                                                        <span>{zone.subtitle}</span>
+                                                    </h4>
+                                                    <p className="text-[11px] text-slate-400">
+                                                        Tables: {zone.tables.join(', ')}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-2 text-xs">
+                                                <span className="text-slate-400 font-medium">Zone Status:</span>
+                                                <span
+                                                    className={`px-2.5 py-0.5 rounded-full font-bold font-mono text-xs ${zoneOccupiedCount === 3
+                                                            ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                                                            : zoneOccupiedCount > 0
+                                                                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                                                                : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                                        }`}
+                                                >
+                                                    {zoneOccupiedCount}/3 Tables Occupied
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Zone Tables (3 Tables per Zone) */}
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            {zoneMeetings.map(({ tableId, meeting }) => {
+                                                if (meeting) {
+                                                    // OCCUPIED TABLE CARD
+                                                    const pair = matches.find(
+                                                        (m) =>
+                                                            (m.startup.id === meeting.startup.id && m.investor.id === meeting.investor.id) ||
+                                                            (m.startup.name === meeting.startup.name && m.investor.firm === meeting.investor.firm)
+                                                    );
+
+                                                    return (
+                                                        <motion.div
+                                                            key={tableId}
+                                                            whileHover={{ y: -3 }}
+                                                            className="p-4 rounded-2xl bg-gradient-to-b from-slate-900/90 to-indigo-950/30 border border-indigo-500/30 shadow-lg shadow-indigo-500/5 flex flex-col justify-between gap-4 transition-all"
+                                                        >
+                                                            {/* Card Top */}
+                                                            <div>
+                                                                <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-3">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping" />
+                                                                        <span className="font-extrabold text-white text-sm tracking-tight">
+                                                                            {tableId}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex items-center gap-1.5">
+                                                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                                                                            {meeting.matchScore || 95}% Match
+                                                                        </span>
+                                                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${meeting.status === 'Completed'
+                                                                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                                                                : meeting.status === 'In Progress'
+                                                                                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                                                                    : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                                                                            }`}>
+                                                                            {meeting.status || 'Upcoming'}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Startup Row */}
+                                                                <div className="space-y-3">
+                                                                    <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                                                                        <img
+                                                                            src={meeting.startup.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80'}
+                                                                            alt={meeting.startup.name}
+                                                                            className="w-9 h-9 rounded-xl object-cover border border-slate-700 shrink-0"
+                                                                        />
+                                                                        <div className="min-w-0 flex-1">
+                                                                            <div className="flex items-center justify-between">
+                                                                                <div className="font-bold text-white text-xs truncate">
+                                                                                    {meeting.startup.name}
+                                                                                </div>
+                                                                                <span className="text-[10px] font-mono font-bold text-cyan-400 shrink-0">
+                                                                                    {meeting.startup.targetAsk || 'Seed'}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div className="text-[11px] text-slate-400 truncate">
+                                                                                {meeting.startup.founderName || 'Founder'} • {meeting.startup.sector}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    {/* Investor Row */}
+                                                                    <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                                                                        <img
+                                                                            src={meeting.investor.avatar || 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80'}
+                                                                            alt={meeting.investor.name}
+                                                                            className="w-9 h-9 rounded-full object-cover border border-slate-700 shrink-0"
+                                                                        />
+                                                                        <div className="min-w-0 flex-1">
+                                                                            <div className="flex items-center justify-between">
+                                                                                <div className="font-bold text-purple-300 text-xs truncate">
+                                                                                    {meeting.investor.firm}
+                                                                                </div>
+                                                                                <span className="text-[10px] font-mono font-bold text-emerald-400 shrink-0">
+                                                                                    {meeting.investor.ticketSizeRange || '$50k+'}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div className="text-[11px] text-slate-400 truncate">
+                                                                                {meeting.investor.name} ({meeting.investor.role || 'Partner'})
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    {/* Notes / Topics Preview */}
+                                                                    {(meeting.notes || (meeting.aiSuggestedTopics && meeting.aiSuggestedTopics.length > 0)) && (
+                                                                        <div className="p-2 rounded-lg bg-slate-900/60 border border-slate-800 text-[11px] text-slate-300">
+                                                                            <span className="font-bold text-indigo-400 mr-1">Focus:</span>
+                                                                            <span className="line-clamp-2">
+                                                                                {meeting.notes || meeting.aiSuggestedTopics?.[0]}
+                                                                            </span>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Card Bottom Button */}
+                                                            <button
+                                                                onClick={() => {
+                                                                    if (pair) {
+                                                                        onInspectMatch(pair);
+                                                                    } else {
+                                                                        onInspectMatch({
+                                                                            id: meeting.id,
+                                                                            startupId: meeting.startup.id,
+                                                                            investorId: meeting.investor.id,
+                                                                            startup: meeting.startup,
+                                                                            investor: meeting.investor,
+                                                                            status: (meeting.status as any) || 'Scheduled',
+                                                                            recommendedTable: meeting.table,
+                                                                            analysis: {
+                                                                                matching_score: meeting.matchScore || 95,
+                                                                                reason: `Scheduled 1:1 business meeting at ${meeting.table} (${meeting.time}).`,
+                                                                                ice_breakers: meeting.aiSuggestedTopics || [
+                                                                                    'What are your primary go-to-market drivers?',
+                                                                                    'How do you plan to leverage our VC network?',
+                                                                                    'What unit economics benchmarks do you aim for post-round?'
+                                                                                ],
+                                                                            },
+                                                                        });
+                                                                    }
+                                                                }}
+                                                                className="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-semibold border border-slate-700/60 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                                            >
+                                                                <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                                                                <span>Inspect Meeting Details</span>
+                                                            </button>
+                                                        </motion.div>
+                                                    );
+                                                } else {
+                                                    // AVAILABLE TABLE CARD
+                                                    return (
+                                                        <div
+                                                            key={tableId}
+                                                            className="p-4 rounded-2xl bg-slate-900/40 border border-dashed border-emerald-500/30 flex flex-col justify-between gap-4 transition-all hover:bg-slate-900/60 hover:border-emerald-500/50"
+                                                        >
+                                                            <div>
+                                                                <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-3">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                                                                        <span className="font-extrabold text-slate-200 text-sm tracking-tight">
+                                                                            {tableId}
+                                                                        </span>
+                                                                    </div>
+                                                                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                                                                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                                                        Available Table
+                                                                    </span>
+                                                                </div>
+
+                                                                <div className="py-6 flex flex-col items-center justify-center text-center space-y-2">
+                                                                    <div className="p-3 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                                                        <Grid className="w-6 h-6" />
+                                                                    </div>
+                                                                    <div className="text-xs font-bold text-slate-300">
+                                                                        Open for 1:1 Matching
+                                                                    </div>
+                                                                    <p className="text-[11px] text-slate-500 max-w-[200px]">
+                                                                        No session scheduled at {selectedTableTimeSlot.split(' - ')[0]}. Ready for booking.
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="pt-2 border-t border-slate-800/60 text-center">
+                                                                <span className="text-[10px] text-slate-500 font-mono">
+                                                                    Status: Standby / Unoccupied
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                }
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

@@ -1,11 +1,11 @@
 import React from 'react';
-import { LayoutDashboard, UserCheck, Sparkles, Building2, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, UserCheck, Sparkles, Building2, TrendingUp, Grid } from 'lucide-react';
 
 interface SidebarProps {
     activeView: 'admin' | 'participant';
     setActiveView: (view: 'admin' | 'participant') => void;
-    activeAdminTab: 'overview' | 'startups' | 'investors' | 'matches';
-    setActiveAdminTab: (tab: 'overview' | 'startups' | 'investors' | 'matches') => void;
+    activeAdminTab: 'overview' | 'startups' | 'investors' | 'matches' | 'tables';
+    setActiveAdminTab: (tab: 'overview' | 'startups' | 'investors' | 'matches' | 'tables') => void;
     onRunMatchmaking?: () => void;
     startupsCount: number;
     investorsCount: number;
@@ -129,6 +129,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             >
                                 <Sparkles className="w-4 h-4 text-yellow-400" />
                                 <span>AI Matches ({matchesCount})</span>
+                            </button>
+
+                            <button
+                                onClick={() => setActiveAdminTab('tables')}
+                                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${activeAdminTab === 'tables'
+                                        ? 'bg-cyan-950/80 text-cyan-300 font-semibold border border-cyan-500/30'
+                                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
+                                    }`}
+                            >
+                                <Grid className="w-4 h-4 text-cyan-400" />
+                                <span>Summit Tables (12)</span>
                             </button>
                         </div>
                     </div>
