@@ -55,11 +55,10 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
   - **Tối ưu hóa Siêu tốc Google Apps Script (Google CacheService):** Tích hợp bộ nhớ đệm RAM `CacheService.getScriptCache()` với thời lượng 1 giờ (3600s), giảm thời gian phản hồi từ 4s xuống còn 0.2s, tự động làm mới cache (cache invalidation) khi có Match mới, Ghi chú mới hoặc Cập nhật lịch trình.
   - **Server Pre-warming & In-Memory Caching (Tải tức thì 0.01s):** Tự động gửi request ngầm nạp dữ liệu từ Google Sheets ngay khi Server khởi động, lưu RAM 60s để triệt tiêu độ trễ Cold Start.
   - **Quy trình Điều phối 2 Bước Chuẩn hóa (2-Phase Matchmaking Workflow):** Khi vừa Match ban đầu, cặp đấu ở trạng thái `Pending Schedule` / `Table TBD`. Chỉ khi bấm "Generate Smart Schedule", hệ thống mới chính thức phân bổ ca họp, số bàn chính thức và chuyển sang `Scheduled`.
-  - **Lịch trình Thượng đỉnh 3 Ngày & Trợ lý Gợi ý AI (3-Day Official Summit Agenda & AI Concierge):**
-    * **Day 1 (Aug 11):** Giao hữu DAVAS Champion Golf, Web3 Builders' Summit, Pre-DAVAS Market Access Workshop.
-    * **Day 2 (Aug 12):** Lễ Khai mạc Chính thức, Triển lãm Tech Expo (50+ Booths), Tọa đàm VC Outlook & Ký kết MOU, Diễn đàn AI & Bán dẫn, Tọa đàm FinTech & Web3/Green.
-    * **Day 3 (Aug 13):** Đấu trường Startup Pitching Arena (Top 20), Phiên đàm phán 1:1 chuyên sâu tại 12 Summit Tables, Lễ Bế mạc & Tiệc Gala Dinner.
-    * **AI Workshop Recommendation Engine:** Tự động đối chiếu ngành và khẩu vị đầu tư của đại biểu để gắn huy hiệu phát sáng `✨ AI Recommended for You` cho các phiên hội thảo phù hợp nhất.
+  - **Cổng Thông Tin Đại Biểu 2 Chiều (2-Way Dual Persona Portal - 31 Investors 🤝 62 Startups):** 
+    * Cho phép chuyển đổi linh hoạt giữa góc nhìn **`💼 Investor (31)`** và **`🚀 Startup (62)`**.
+    * Khi ở vai trò **Startup Founder**: Tự động hiển thị thẻ hồ sơ Quỹ VC đối tác (Tên Quỹ, Đại diện, Ticket Size, Bàn họp), xem Ice-breakers chuẩn bị trước cuộc gặp, và nhận gợi ý Workshop Day 1 & Day 2 theo đúng ngành nghề của Startup.
+    * Khi ở vai trò **Investor**: Xem danh sách Startups gặp trong ngày, xem chỉ số kinh doanh, ghi chép `Investor Notes` và tạo Email Follow-up tự động.
   - **Thuật toán Xếp lịch Tăng dần & Khóa Cố định (Slot-Locking Incremental Scheduler):** Khóa cứng giờ họp, số bàn, ghi chú và trạng thái của các cuộc hẹn đã chốt lịch, chỉ phân bổ khung giờ và bàn còn trống cho các cặp mới mà không làm xáo trộn lịch cũ.
 - **Hệ thống Chỉ số Đo lường Động học (100% Dynamic Post-Event Analytics):**
   - "Avg AI Match Score": Tính trung bình cộng chuẩn xác theo danh sách các cặp đấu thực tế.
