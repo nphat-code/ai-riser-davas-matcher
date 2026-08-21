@@ -601,7 +601,7 @@ export default function App() {
                 startup: chosenStartup,
                 investor: bestInvestor,
                 status: 'Scheduled',
-                recommendedTable: `Table ${String.fromCharCode(65 + Math.floor(Math.random() * 4))}${Math.floor(Math.random() * 5) + 1}`,
+                recommendedTable: `Table ${String.fromCharCode(65 + Math.floor(Math.random() * 4))}${Math.floor(Math.random() * 3) + 1}`,
                 analysis: {
                     matching_score: analysis.matching_score || 95,
                     reason: analysis.reason || 'Strong synergy across sector targets and stage funding.',
