@@ -206,13 +206,35 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
         currentInvestor?.avatar ||
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80';
 
-    // Extract investor sector keywords for AI Recommended badge matching
-    const investorSectors = (currentInvestor?.sectors || []).map((s) => s.toLowerCase());
+    // Extract investor sector keywords and investment philosophy for AI Recommended badge matching
+    const investorSectors = (currentInvestor?.targetSectors || (currentInvestor as any)?.sectors || []).map((s: string) => s.toLowerCase());
+    const investmentPhilosophy = (currentInvestor?.investmentPhilosophy || '').toLowerCase();
 
     const isEventAIRecommended = (tags: string[], title: string, desc: string) => {
-        if (investorSectors.length === 0) return false;
+        if (!currentInvestor) return false;
         const combinedContent = `${tags.join(' ')} ${title} ${desc}`.toLowerCase();
-        return investorSectors.some((sec) => combinedContent.includes(sec) || (sec.includes('ai') && combinedContent.includes('ai')) || (sec.includes('fintech') && combinedContent.includes('fintech')));
+
+        // Match against target sectors with smart keyword mapping
+        const sectorMatch = investorSectors.some((sec: string) => {
+            const cleanSec = sec.trim().toLowerCase();
+            if (!cleanSec) return false;
+            return (
+                combinedContent.includes(cleanSec) ||
+                (cleanSec.includes('ai') && combinedContent.includes('ai')) ||
+                (cleanSec.includes('deeptech') && (combinedContent.includes('deeptech') || combinedContent.includes('semiconductor'))) ||
+                (cleanSec.includes('fintech') && combinedContent.includes('fintech')) ||
+                (cleanSec.includes('blockchain') && (combinedContent.includes('web3') || combinedContent.includes('blockchain') || combinedContent.includes('rwa'))) ||
+                (cleanSec.includes('cleantech') && (combinedContent.includes('green') || combinedContent.includes('cleantech') || combinedContent.includes('sustainability'))) ||
+                (cleanSec.includes('hardware') && (combinedContent.includes('semiconductor') || combinedContent.includes('hardware'))) ||
+                (cleanSec.includes('saas') && combinedContent.includes('market access'))
+            );
+        });
+
+        // Match against investment philosophy
+        const philosophyMatch = ['web3', 'ai', 'deeptech', 'fintech', 'semiconductor', 'sustainability', 'green', 'golf', 'vip vc']
+            .some(kw => investmentPhilosophy.includes(kw) && combinedContent.includes(kw));
+
+        return sectorMatch || philosophyMatch;
     };
 
     const avgInvestorScore =
