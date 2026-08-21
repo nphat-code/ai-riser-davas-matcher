@@ -51,6 +51,7 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
 - **Đồng bộ Lịch Trình & Cập nhật Hai Chiều với Google Sheets:**
   - Đồng bộ `save_match`, `update_schedule` và `save_followup` vào tab `Matches` trên Google Sheets (cột T: Investor_Notes, cột U: AI_Followup_Draft, cột V: Deal_Outcome).
   - Tự động hydrate (khôi phục) toàn bộ nội dung ghi chú và bản thảo email khi F5 tải lại trang.
+  - **Thuật toán Xếp lịch Tăng dần & Khóa Cố định (Slot-Locking Incremental Scheduler):** Khóa cứng giờ họp, số bàn, ghi chú và trạng thái của các cuộc hẹn đã chốt lịch, chỉ phân bổ khung giờ và bàn còn trống cho các cặp mới mà không làm xáo trộn lịch cũ.
 - **Hệ thống Chỉ số Đo lường Động học (100% Dynamic Post-Event Analytics):**
   - "Avg AI Match Score": Tính trung bình cộng chuẩn xác theo danh sách các cặp đấu thực tế.
   - "Deal Success Rate": Tự động theo dõi dựa trên các cuộc họp đã diễn ra và có ghi chú tích cực từ VC (hiển thị `--` khi chưa có phản hồi).
