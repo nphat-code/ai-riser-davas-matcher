@@ -27,40 +27,34 @@ export const DEFAULT_TABLES: string[] = [
 ];
 
 /**
- * Smart Scheduler Algorithm (Greedy + Priority Queue approach)
+ * Smart Scheduler Algorithm (Greedy + Priority Queue approach with Slot Locking)
  * 
  * Objectives:
- * 1. Prioritize high-compatibility matches (sorted by matching_score DESC).
- * 2. Assign optimal time slots and summit tables while strictly preventing:
+ * 1. Lock in existing scheduled slots (preserving their time, table, notes, status, etc.).
+ * 2. Mark existing time slots, tables, startups, and investors as busy/occupied.
+ * 3. Prioritize high-compatibility matches (sorted by matching_score DESC) for remaining unassigned pairs.
+ * 4. Assign optimal time slots and summit tables while strictly preventing:
  *    - Startup double-booking (no startup in 2 meetings at the same time).
  *    - Investor double-booking (no investor in 2 meetings at the same time).
  *    - Table collision (no table hosting multiple meetings in the same slot).
  * 
  * @param matches Array of potential match pairs
+ * @param existingSlots Array of already scheduled MeetingSlot[] to preserve and lock
  * @param timeSlots Array of event time slot strings
  * @param tables Array of available summit tables
  * @returns Scheduled MeetingSlot[]
  */
 export function generateSmartSchedule(
     matches: MatchPair[],
+    existingSlots: MeetingSlot[] = [],
     timeSlots: string[] = DEFAULT_TIME_SLOTS,
     tables: string[] = DEFAULT_TABLES
 ): MeetingSlot[] {
-    if (!matches || matches.length === 0) {
+    if ((!matches || matches.length === 0) && (!existingSlots || existingSlots.length === 0)) {
         return [];
     }
 
-    // Step 1: Priority Sorting (High matching score pairs scheduled first)
-    const sortedMatches = [...matches].sort((a, b) => {
-        const scoreA = a.analysis?.matching_score ?? 0;
-        const scoreB = b.analysis?.matching_score ?? 0;
-        if (scoreB !== scoreA) {
-            return scoreB - scoreA; // Descending
-        }
-        return a.id.localeCompare(b.id);
-    });
-
-    // Step 2: Initialize Availability Trackers for each Time Slot
+    // Step 1: Initialize Availability Trackers for each Time Slot
     const busyStartupsBySlot = new Map<string, Set<string>>();
     const busyInvestorsBySlot = new Map<string, Set<string>>();
     const occupiedTablesBySlot = new Map<string, Set<string>>();
@@ -72,11 +66,82 @@ export function generateSmartSchedule(
     });
 
     const scheduledSlots: MeetingSlot[] = [];
+    const alreadyScheduledPairKeys = new Set<string>();
 
-    // Step 3: Greedy Allocation Loop
+    // Step 2: Lock in existing scheduled slots and mark participants/tables as busy
+    if (existingSlots && existingSlots.length > 0) {
+        for (const slot of existingSlots) {
+            if (!slot.startup || !slot.investor) continue;
+
+            const startupId = slot.startup.id;
+            const startupName = slot.startup.name;
+            const investorId = slot.investor.id;
+            const investorFirm = slot.investor.firm;
+
+            // Retain existing meeting slot
+            scheduledSlots.push(slot);
+
+            // Record key to skip re-allocating this match pair
+            if (startupId && investorId) {
+                alreadyScheduledPairKeys.add(`${startupId}___${investorId}`);
+            }
+            if (startupName && investorFirm) {
+                alreadyScheduledPairKeys.add(`${startupName}___${investorFirm}`);
+            }
+
+            // Mark availability
+            const timeSlot = slot.time;
+            if (!busyStartupsBySlot.has(timeSlot)) {
+                busyStartupsBySlot.set(timeSlot, new Set<string>());
+            }
+            if (!busyInvestorsBySlot.has(timeSlot)) {
+                busyInvestorsBySlot.set(timeSlot, new Set<string>());
+            }
+            if (!occupiedTablesBySlot.has(timeSlot)) {
+                occupiedTablesBySlot.set(timeSlot, new Set<string>());
+            }
+
+            const busyStartups = busyStartupsBySlot.get(timeSlot)!;
+            const busyInvestors = busyInvestorsBySlot.get(timeSlot)!;
+            const occupiedTables = occupiedTablesBySlot.get(timeSlot)!;
+
+            if (startupId) busyStartups.add(startupId);
+            if (startupName) busyStartups.add(startupName);
+            if (investorId) busyInvestors.add(investorId);
+            if (investorFirm) busyInvestors.add(investorFirm);
+            if (slot.table) occupiedTables.add(slot.table);
+        }
+    }
+
+    // Step 3: Filter unassigned matches that are not yet in existing slots
+    const unassignedMatches = (matches || []).filter((pair) => {
+        const startupId = pair.startupId || pair.startup?.id;
+        const startupName = pair.startup?.name;
+        const investorId = pair.investorId || pair.investor?.id;
+        const investorFirm = pair.investor?.firm;
+
+        const hasIdMatch = startupId && investorId && alreadyScheduledPairKeys.has(`${startupId}___${investorId}`);
+        const hasNameMatch = startupName && investorFirm && alreadyScheduledPairKeys.has(`${startupName}___${investorFirm}`);
+
+        return !hasIdMatch && !hasNameMatch;
+    });
+
+    // Step 4: Priority Sorting for unassigned matches (High matching score first)
+    const sortedMatches = [...unassignedMatches].sort((a, b) => {
+        const scoreA = a.analysis?.matching_score ?? 0;
+        const scoreB = b.analysis?.matching_score ?? 0;
+        if (scoreB !== scoreA) {
+            return scoreB - scoreA; // Descending
+        }
+        return a.id.localeCompare(b.id);
+    });
+
+    // Step 5: Greedy Allocation Loop for unassigned pairs
     for (const pair of sortedMatches) {
         const startupId = pair.startupId || pair.startup?.id;
+        const startupName = pair.startup?.name;
         const investorId = pair.investorId || pair.investor?.id;
+        const investorFirm = pair.investor?.firm;
 
         if (!startupId || !investorId || !pair.startup || !pair.investor) {
             continue;
@@ -92,12 +157,12 @@ export function generateSmartSchedule(
             const occupiedTables = occupiedTablesBySlot.get(timeSlot)!;
 
             // Constraint 1: Startup must be free in this timeSlot
-            if (busyStartups.has(startupId)) {
+            if (busyStartups.has(startupId) || (startupName && busyStartups.has(startupName))) {
                 continue;
             }
 
             // Constraint 2: Investor must be free in this timeSlot
-            if (busyInvestors.has(investorId)) {
+            if (busyInvestors.has(investorId) || (investorFirm && busyInvestors.has(investorFirm))) {
                 continue;
             }
 
@@ -119,7 +184,9 @@ export function generateSmartSchedule(
 
             // All constraints satisfied -> Book the meeting slot
             busyStartups.add(startupId);
+            if (startupName) busyStartups.add(startupName);
             busyInvestors.add(investorId);
+            if (investorFirm) busyInvestors.add(investorFirm);
             occupiedTables.add(chosenTable);
 
             scheduledSlots.push({
@@ -142,13 +209,15 @@ export function generateSmartSchedule(
         }
     }
 
-    // Sort schedule chronologically by timeslot order, then table
+    // Step 6: Sort schedule chronologically by timeslot order, then table
     scheduledSlots.sort((a, b) => {
         const timeIndexA = timeSlots.indexOf(a.time);
         const timeIndexB = timeSlots.indexOf(b.time);
-        if (timeIndexA !== timeIndexB) {
+        if (timeIndexA !== -1 && timeIndexB !== -1 && timeIndexA !== timeIndexB) {
             return timeIndexA - timeIndexB;
         }
+        if (timeIndexA === -1 && timeIndexB !== -1) return 1;
+        if (timeIndexA !== -1 && timeIndexB === -1) return -1;
         return a.table.localeCompare(b.table);
     });
 

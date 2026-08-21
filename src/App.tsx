@@ -660,8 +660,8 @@ export default function App() {
         setIsScheduleLoading(true);
 
         try {
-            // Execute smart scheduling algorithm
-            const optimizedSlots = generateSmartSchedule(matches);
+            // Execute smart scheduling algorithm with slot locking
+            const optimizedSlots = generateSmartSchedule(matches, scheduleSlots);
 
             setScheduleSlots(optimizedSlots);
             setStats((prev) => ({
