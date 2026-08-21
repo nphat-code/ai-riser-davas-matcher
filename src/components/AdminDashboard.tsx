@@ -566,18 +566,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => setActiveTab('matches')}
-                        className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'matches'
-                            ? 'bg-purple-950/80 text-purple-300 border border-purple-500/40 shadow-md shadow-purple-500/10'
-                            : 'text-slate-400 hover:text-white bg-slate-900/40 hover:bg-slate-800/80 border border-transparent hover:border-slate-800'
-                            }`}
-                    >
-                        ✨ Match Pairings ({matches.length})
-                    </motion.button>
-
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.95 }}
                         onClick={() => setActiveTab('startups')}
                         className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'startups'
                             ? 'bg-slate-800 text-white border border-slate-700 shadow-md'
@@ -597,6 +585,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             }`}
                     >
                         💼 VCs & Angels ({investors.length})
+                    </motion.button>
+
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setActiveTab('matches')}
+                        className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === 'matches'
+                            ? 'bg-purple-950/80 text-purple-300 border border-purple-500/40 shadow-md shadow-purple-500/10'
+                            : 'text-slate-400 hover:text-white bg-slate-900/40 hover:bg-slate-800/80 border border-transparent hover:border-slate-800'
+                            }`}
+                    >
+                        ✨ Match Pairings ({matches.length})
                     </motion.button>
 
                     <motion.button
