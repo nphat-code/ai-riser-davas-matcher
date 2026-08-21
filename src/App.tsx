@@ -7,11 +7,12 @@ import { AIMatchModal } from './components/AIMatchModal';
 import { FollowUpModal } from './components/FollowUpModal';
 import { Startup, Investor, MatchPair, MeetingSlot, EventStats } from './types';
 import { generateSmartSchedule } from './utils/scheduler';
+import { FALLBACK_STARTUPS, FALLBACK_INVESTORS } from './data/davasData';
 import { CheckCircle2 } from 'lucide-react';
 
 const INITIAL_STATS: EventStats = {
-    totalStartups: 0,
-    totalInvestors: 0,
+    totalStartups: FALLBACK_STARTUPS.length,
+    totalInvestors: FALLBACK_INVESTORS.length,
     scheduledMeetings: 0,
     avgMatchScore: 0,
     dealSuccessRate: 0,
@@ -23,10 +24,10 @@ export default function App() {
     const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'startups' | 'investors' | 'matches'>('overview');
     const [isMobileFrame, setIsMobileFrame] = useState<boolean>(false);
 
-    // Core Data States (100% real API data)
+    // Core Data States (Initialized with DAVAS 2026 dataset, dynamically updated from Sheets API)
     const [stats, setStats] = useState<EventStats>(INITIAL_STATS);
-    const [startups, setStartups] = useState<Startup[]>([]);
-    const [investors, setInvestors] = useState<Investor[]>([]);
+    const [startups, setStartups] = useState<Startup[]>(FALLBACK_STARTUPS);
+    const [investors, setInvestors] = useState<Investor[]>(FALLBACK_INVESTORS);
     const [matches, setMatches] = useState<MatchPair[]>([]);
     const [scheduleSlots, setScheduleSlots] = useState<MeetingSlot[]>([]);
     const [selectedInvestorId, setSelectedInvestorId] = useState<string>('');
@@ -350,45 +351,56 @@ export default function App() {
         ]);
 
         let bestScore = 0;
+        let matchingSectorCount = 0;
 
         for (const invSec of investorSectors) {
             const normInvSec = (invSec || '').toLowerCase().trim();
             if (!normInvSec) continue;
 
+            let currentSecScore = 0;
+
             // Direct exact match
             if (normStartupSector === normInvSec) {
-                return 100;
-            }
-
-            // Substring containment
-            if (normStartupSector.includes(normInvSec) || normInvSec.includes(normStartupSector)) {
-                bestScore = Math.max(bestScore, 85);
-            }
-
-            // Token overlap
-            const invTokens = extractSectorTokens(normInvSec);
-            let matchedTokens = 0;
-            for (const token of invTokens) {
-                if (startupTokens.has(token)) {
-                    matchedTokens++;
-                } else {
-                    for (const sToken of startupTokens) {
-                        if (sToken.includes(token) || token.includes(sToken)) {
-                            matchedTokens += 0.6;
-                            break;
+                currentSecScore = 100;
+            } else if (normStartupSector.includes(normInvSec) || normInvSec.includes(normStartupSector)) {
+                // Substring containment
+                currentSecScore = 85;
+            } else {
+                // Token overlap
+                const invTokens = extractSectorTokens(normInvSec);
+                let matchedTokens = 0;
+                for (const token of invTokens) {
+                    if (startupTokens.has(token)) {
+                        matchedTokens++;
+                    } else {
+                        for (const sToken of startupTokens) {
+                            if (sToken.includes(token) || token.includes(sToken)) {
+                                matchedTokens += 0.6;
+                                break;
+                            }
                         }
                     }
                 }
+
+                if (invTokens.length > 0 && matchedTokens > 0) {
+                    const ratio = matchedTokens / Math.max(1, Math.min(startupTokens.size, invTokens.length));
+                    currentSecScore = Math.min(80, Math.round(ratio * 75) + 20);
+                }
             }
 
-            if (invTokens.length > 0 && matchedTokens > 0) {
-                const ratio = matchedTokens / Math.max(1, Math.min(startupTokens.size, invTokens.length));
-                const tokenScore = Math.min(80, Math.round(ratio * 75) + 20);
-                bestScore = Math.max(bestScore, tokenScore);
+            if (currentSecScore >= 50) {
+                matchingSectorCount++;
             }
+            bestScore = Math.max(bestScore, currentSecScore);
         }
 
-        return bestScore;
+        let finalScore = bestScore;
+        // Multi-sector overlap bonus: nếu Quỹ trùng từ 2 ngành trở lên, cộng thưởng lớn
+        if (matchingSectorCount >= 2) {
+            finalScore += (matchingSectorCount - 1) * 35;
+        }
+
+        return finalScore;
     };
 
     // Helper to parse funding strings into numeric USD values
@@ -449,15 +461,31 @@ export default function App() {
             );
             score += sectorScore * 1.5;
 
-            // Check investment philosophy keywords
+            // Check investment philosophy keywords with deep semantic scanning against sector, tags & description
             if (investor.investmentPhilosophy) {
                 const philTokens = extractSectorTokens(investor.investmentPhilosophy);
-                const startupTokens = extractSectorTokens(startup.sector);
-                for (const t of startupTokens) {
-                    if (philTokens.includes(t)) {
-                        score += 15;
-                        break;
+                const startupAllTokens = new Set([
+                    ...extractSectorTokens(startup.sector),
+                    ...(startup.keyTags || []).flatMap(extractSectorTokens),
+                    ...extractSectorTokens(startup.description || ''),
+                ]);
+
+                let matchedPhilCount = 0;
+                for (const pt of philTokens) {
+                    if (startupAllTokens.has(pt)) {
+                        matchedPhilCount++;
+                    } else {
+                        for (const st of startupAllTokens) {
+                            if (st.includes(pt) || pt.includes(st)) {
+                                matchedPhilCount += 0.5;
+                                break;
+                            }
+                        }
                     }
+                }
+
+                if (matchedPhilCount > 0) {
+                    score += Math.min(30, Math.round(matchedPhilCount * 10) + 10);
                 }
             }
 

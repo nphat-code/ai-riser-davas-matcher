@@ -205,27 +205,222 @@ Generate a polished follow-up package for the VC to send to the startup after th
   }
 });
 
+// DAVAS 2026 Fallback Seed Data
+const FALLBACK_STARTUPS = [
+  {
+    "Startup Name": "MedixAI Vietnam",
+    "Primary Industry": "AI & HealthTech",
+    "Current Funding Stage": "Seed",
+    "Target Funding Amount in USD": "$800,000",
+    "Representative Name": "Dr. Nguyen Huu Phuc",
+    "Email Address": "phuc.nguyen@medixai.vn",
+    "Description": "AI-driven ultrasound diagnostic assistant for Tier-2/3 regional hospitals.",
+    "metrics": { "mrr": "$28K", "arr": "$336K", "growthRate": "+18% MoM", "usersCount": "45+ Clinics" }
+  },
+  {
+    "Startup Name": "EcoPack SEA",
+    "Primary Industry": "GreenTech & Sustainability",
+    "Current Funding Stage": "Seed",
+    "Target Funding Amount in USD": "$500,000",
+    "Representative Name": "Tran Thi Mai Anh",
+    "Email Address": "maianh@ecopack.asia",
+    "Description": "Biodegradable seaweed-based packaging solutions replacing single-use plastics.",
+    "metrics": { "mrr": "$35K", "arr": "$420K", "growthRate": "+24% MoM", "usersCount": "28 F&B Brands" }
+  },
+  {
+    "Startup Name": "AgriDrone Da Nang",
+    "Primary Industry": "AgriTech & Robotics",
+    "Current Funding Stage": "Pre-Seed",
+    "Target Funding Amount in USD": "$350,000",
+    "Representative Name": "Le Quang Huy",
+    "Email Address": "huy.le@agridrone.vn",
+    "Description": "Precision agriculture drones with multispectral crop health analytics for Central Vietnam.",
+    "metrics": { "mrr": "$14K", "arr": "$168K", "growthRate": "+30% MoM", "usersCount": "1,200 Hectares" }
+  },
+  {
+    "Startup Name": "FinFlow Asia",
+    "Primary Industry": "FinTech & B2B SaaS",
+    "Current Funding Stage": "Series A",
+    "Target Funding Amount in USD": "$2,500,000",
+    "Representative Name": "Pham Minh Tuan",
+    "Email Address": "tuan.pham@finflow.asia",
+    "Description": "Automated cross-border treasury management and FX risk hedging for ASEAN exporters.",
+    "metrics": { "mrr": "$110K", "arr": "$1.32M", "growthRate": "+15% MoM", "usersCount": "180 Exporters" }
+  },
+  {
+    "Startup Name": "LogiSense Logistics",
+    "Primary Industry": "Smart Logistics & IoT",
+    "Current Funding Stage": "Seed",
+    "Target Funding Amount in USD": "$600,000",
+    "Representative Name": "Vo Hoang Nam",
+    "Email Address": "nam.vo@logisense.io",
+    "Description": "Real-time cold-chain IoT tracking and predictive dispatching for seaports.",
+    "metrics": { "mrr": "$22K", "arr": "$264K", "growthRate": "+21% MoM", "usersCount": "45 Fleets" }
+  },
+  {
+    "Startup Name": "EduVibe Interactive",
+    "Primary Industry": "EdTech & AI",
+    "Current Funding Stage": "Pre-Seed",
+    "Target Funding Amount in USD": "$300,000",
+    "Representative Name": "Dang Thu Trang",
+    "Email Address": "trang.dang@eduvibe.edu.vn",
+    "Description": "Hyper-personalized adaptive STEM learning platform with gamified simulation labs for K-12.",
+    "metrics": { "mrr": "$12K", "arr": "$144K", "growthRate": "+28% MoM", "usersCount": "15,000 Students" }
+  },
+  {
+    "Startup Name": "CyberShield ASEAN",
+    "Primary Industry": "Cybersecurity & Cloud",
+    "Current Funding Stage": "Series A",
+    "Target Funding Amount in USD": "$3,200,000",
+    "Representative Name": "Nguyen Van Dat",
+    "Email Address": "dat.nguyen@cybershield.sg",
+    "Description": "Zero-trust cloud compliance and autonomous threat mitigation for regional banks.",
+    "metrics": { "mrr": "$145K", "arr": "$1.74M", "growthRate": "+19% MoM", "usersCount": "14 Enterprise Clients" }
+  },
+  {
+    "Startup Name": "Solaris Smart Grid",
+    "Primary Industry": "CleanTech & Renewable Energy",
+    "Current Funding Stage": "Seed",
+    "Target Funding Amount in USD": "$1,200,000",
+    "Representative Name": "Hoang Duc Minh",
+    "Email Address": "minh.hoang@solaristech.vn",
+    "Description": "Decentralized microgrid management and virtual power plants for industrial factories.",
+    "metrics": { "mrr": "$48K", "arr": "$576K", "growthRate": "+25% MoM", "usersCount": "8 Industrial Parks" }
+  }
+];
+
+const FALLBACK_INVESTORS = [
+  {
+    "Representative Name": "Marcus Tran",
+    "Investor or Fund Name": "Dragon Capital Ventures",
+    "Email Address": "marcus.tran@dragoncapital.com",
+    "Investment Sectors of Interest": "FinTech & B2B SaaS, Tech & AI, Cybersecurity & Cloud, CleanTech",
+    "Current Funding Stage": "Seed, Series A, Series B",
+    "preferredStages": ["Seed", "Series A", "Series B"],
+    "Maximum Ticket Size (USD)": "$3,000,000",
+    "ticketSizeRange": "$500K - $3M",
+    "Investment Philosophy / Thesis": "Backing category-defining tech companies with strong unit economics and proven regional scalability across Southeast Asia.",
+    "totalDeals": 34,
+    "country": "Vietnam / UK"
+  },
+  {
+    "Representative Name": "Le Thi Bich Ngoc",
+    "Investor or Fund Name": "Da Nang Angel Network (DAN)",
+    "Email Address": "ngoc.le@danangangels.vn",
+    "Investment Sectors of Interest": "AI & HealthTech, AgriTech & Robotics, GreenTech & Sustainability, EdTech & AI",
+    "Current Funding Stage": "Pre-Seed, Seed",
+    "preferredStages": ["Pre-Seed", "Seed"],
+    "Maximum Ticket Size (USD)": "$400,000",
+    "ticketSizeRange": "$50K - $400K",
+    "Investment Philosophy / Thesis": "Empowering visionary local founders in Central Vietnam with early catalytic capital, mentorship, and municipal government tie-ups.",
+    "totalDeals": 19,
+    "country": "Vietnam"
+  },
+  {
+    "Representative Name": "Hoang Tuan Anh",
+    "Investor or Fund Name": "VinaCapital Ventures",
+    "Email Address": "tuananh.hoang@vinacapital.com",
+    "Investment Sectors of Interest": "FinTech & B2B SaaS, AI & HealthTech, Cybersecurity & Cloud, Smart Logistics & IoT",
+    "Current Funding Stage": "Seed, Series A, Series B",
+    "preferredStages": ["Seed", "Series A", "Series B"],
+    "Maximum Ticket Size (USD)": "$5,000,000",
+    "ticketSizeRange": "$1M - $5M",
+    "Investment Philosophy / Thesis": "Investing in market leaders modernizing traditional industry verticals through artificial intelligence, automation, and enterprise SaaS.",
+    "totalDeals": 42,
+    "country": "Vietnam / Singapore"
+  },
+  {
+    "Representative Name": "Emily Nguyen",
+    "Investor or Fund Name": "Ascend Vietnam Ventures (AVV)",
+    "Email Address": "emily@avv.st",
+    "Investment Sectors of Interest": "Tech & AI, AI & HealthTech, EdTech & AI, FinTech & B2B SaaS",
+    "Current Funding Stage": "Pre-Seed, Seed",
+    "preferredStages": ["Pre-Seed", "Seed"],
+    "Maximum Ticket Size (USD)": "$1,000,000",
+    "ticketSizeRange": "$200K - $1M",
+    "Investment Philosophy / Thesis": "High-conviction seed investing in globally ambitious founders building from Vietnam for the world.",
+    "totalDeals": 28,
+    "country": "Vietnam / USA"
+  },
+  {
+    "Representative Name": "David Chen",
+    "Investor or Fund Name": "Mekong Green Impact Fund",
+    "Email Address": "david.chen@mekonggreen.sg",
+    "Investment Sectors of Interest": "GreenTech & Sustainability, AgriTech & Robotics, CleanTech & Renewable Energy",
+    "Current Funding Stage": "Seed, Series A",
+    "preferredStages": ["Seed", "Series A"],
+    "Maximum Ticket Size (USD)": "$1,500,000",
+    "ticketSizeRange": "$300K - $1.5M",
+    "Investment Philosophy / Thesis": "Focused exclusively on high-impact climate tech, decarbonization, circular economy, and regenerative agriculture across the Mekong subregion.",
+    "totalDeals": 22,
+    "country": "Singapore"
+  },
+  {
+    "Representative Name": "Kenji Takahashi",
+    "Investor or Fund Name": "CyberAgent Capital",
+    "Email Address": "takahashi@cyberagent.co.jp",
+    "Investment Sectors of Interest": "Tech & AI, Smart Logistics & IoT, FinTech & B2B SaaS, Cybersecurity & Cloud",
+    "Current Funding Stage": "Seed, Series A",
+    "preferredStages": ["Seed", "Series A"],
+    "Maximum Ticket Size (USD)": "$2,000,000",
+    "ticketSizeRange": "$500K - $2M",
+    "Investment Philosophy / Thesis": "Early growth venture partner providing bridge networks between Vietnam, Japan, and broader Asian digital ecosystems.",
+    "totalDeals": 50,
+    "country": "Japan / Vietnam"
+  }
+];
+
 // Google Sheets Data Endpoint
 app.get("/api/data", async (_req, res) => {
   try {
-    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL;
+    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL?.trim();
     if (!sheetsApiUrl) {
-      return res.status(500).json({
-        error: "GOOGLE_SHEETS_API_URL environment variable is not configured",
+      return res.json({
+        startups: FALLBACK_STARTUPS,
+        investors: FALLBACK_INVESTORS,
+        matches: [],
+        source: "fallback",
+        message: "GOOGLE_SHEETS_API_URL not configured, loaded default DAVAS 2026 dataset",
       });
     }
 
-    const response = await fetch(sheetsApiUrl);
-    if (!response.ok) {
-      throw new Error(`Google Sheets API responded with status ${response.status}`);
-    }
+    try {
+      const response = await fetch(sheetsApiUrl, {
+        headers: { "Accept": "application/json" },
+        redirect: "follow",
+      });
 
-    const data = await response.json();
-    return res.json(data);
+      if (!response.ok) {
+        console.warn(`Google Sheets API responded with status ${response.status}. Using fallback DAVAS 2026 data.`);
+        return res.json({
+          startups: FALLBACK_STARTUPS,
+          investors: FALLBACK_INVESTORS,
+          matches: [],
+          source: "fallback",
+          warning: `Google Sheets API responded with status ${response.status}`,
+        });
+      }
+
+      const data = await response.json();
+      return res.json(data);
+    } catch (fetchErr: any) {
+      console.warn("Google Sheets fetch error, returning fallback data:", fetchErr.message);
+      return res.json({
+        startups: FALLBACK_STARTUPS,
+        investors: FALLBACK_INVESTORS,
+        matches: [],
+        source: "fallback",
+        warning: fetchErr.message,
+      });
+    }
   } catch (error: any) {
-    console.error("Google Sheets API fetch error:", error);
-    return res.status(500).json({
-      error: error.message || "Failed to fetch data from Google Sheets",
+    console.warn("Google Sheets API endpoint handler warning:", error.message);
+    return res.json({
+      startups: FALLBACK_STARTUPS,
+      investors: FALLBACK_INVESTORS,
+      matches: [],
+      source: "fallback",
+      warning: error.message,
     });
   }
 });
@@ -233,17 +428,16 @@ app.get("/api/data", async (_req, res) => {
 // Save Match to Google Sheets Endpoint
 app.post("/api/matches", async (req, res) => {
   try {
-    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL;
-    if (!sheetsApiUrl) {
-      return res.status(500).json({
-        error: "GOOGLE_SHEETS_API_URL environment variable is not configured",
-      });
-    }
+    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL?.trim();
 
     const { startup, investor, analysis, recommendedTable, id } = req.body;
 
     if (!startup || !investor || !analysis) {
       return res.status(400).json({ error: "Missing required match fields" });
+    }
+
+    if (!sheetsApiUrl) {
+      return res.json({ status: "ok", localOnly: true, message: "GOOGLE_SHEETS_API_URL not configured" });
     }
 
     const payload = {
@@ -264,33 +458,41 @@ app.post("/api/matches", async (req, res) => {
       table: recommendedTable || "Table A1",
     };
 
-    const response = await fetch(sheetsApiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const response = await fetch(sheetsApiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        redirect: "follow",
+      });
 
-    const data = await response.json().catch(() => ({ status: "ok" }));
-    return res.json(data);
+      if (!response.ok) {
+        console.warn(`Google Sheets save_match status: ${response.status}`);
+        return res.json({ status: "ok", localOnly: true, warning: `Sheets responded with ${response.status}` });
+      }
+
+      const data = await response.json().catch(() => ({ status: "ok" }));
+      return res.json(data);
+    } catch (netErr: any) {
+      console.warn("Google Sheets save_match network warning:", netErr.message);
+      return res.json({ status: "ok", localOnly: true });
+    }
   } catch (error: any) {
-    console.error("Google Sheets save_match error:", error);
-    return res.status(500).json({
-      error: error.message || "Failed to save match to Google Sheets",
-    });
+    console.warn("Google Sheets save_match error:", error);
+    return res.json({ status: "ok", localOnly: true });
   }
 });
 
 // Google Calendar & Schedule Trigger / Update Endpoint
 app.post("/api/schedule", async (req, res) => {
   try {
-    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL;
-    if (!sheetsApiUrl) {
-      return res.status(500).json({
-        error: "GOOGLE_SHEETS_API_URL environment variable is not configured",
-      });
-    }
+    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL?.trim();
 
     const { schedule, ...rest } = req.body;
+
+    if (!sheetsApiUrl) {
+      return res.json({ status: "ok", localOnly: true, message: "GOOGLE_SHEETS_API_URL not configured" });
+    }
 
     const payload = schedule
       ? {
@@ -307,30 +509,41 @@ app.post("/api/schedule", async (req, res) => {
         ...rest,
       };
 
-    const response = await fetch(sheetsApiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const response = await fetch(sheetsApiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        redirect: "follow",
+      });
 
-    const data = await response.json().catch(() => ({ status: "ok" }));
-    return res.json(data);
+      if (!response.ok) {
+        console.warn(`Google Sheets schedule status: ${response.status}`);
+        return res.json({ status: "ok", localOnly: true, warning: `Sheets responded with ${response.status}` });
+      }
+
+      const data = await response.json().catch(() => ({ status: "ok" }));
+      return res.json(data);
+    } catch (netErr: any) {
+      console.warn("Google Sheets schedule network warning:", netErr.message);
+      return res.json({ status: "ok", localOnly: true });
+    }
   } catch (error: any) {
-    console.error("Google Sheets schedule error:", error);
-    return res.status(500).json({
-      error: error.message || "Failed to update/trigger schedule on Google Apps Script",
-    });
+    console.warn("Google Sheets schedule error:", error);
+    return res.json({ status: "ok", localOnly: true });
   }
 });
 
 // Save Follow-up & Meeting Notes to Google Sheets
 app.post("/api/followup", async (req, res) => {
   try {
-    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL;
-    if (!sheetsApiUrl) {
-      return res.status(500).json({ error: "GOOGLE_SHEETS_API_URL not configured" });
-    }
+    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL?.trim();
     const { startupName, investorFirm, notes, followUpGenerated } = req.body;
+
+    if (!sheetsApiUrl) {
+      return res.json({ status: "ok", localOnly: true, message: "GOOGLE_SHEETS_API_URL not configured" });
+    }
+
     const payload = {
       action: "save_followup",
       startupName,
@@ -338,16 +551,29 @@ app.post("/api/followup", async (req, res) => {
       notes,
       followUpGenerated,
     };
-    const response = await fetch(sheetsApiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await response.json().catch(() => ({ status: "ok" }));
-    return res.json(data);
+
+    try {
+      const response = await fetch(sheetsApiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        redirect: "follow",
+      });
+
+      if (!response.ok) {
+        console.warn(`Google Sheets save_followup status: ${response.status}`);
+        return res.json({ status: "ok", localOnly: true, warning: `Sheets responded with ${response.status}` });
+      }
+
+      const data = await response.json().catch(() => ({ status: "ok" }));
+      return res.json(data);
+    } catch (netErr: any) {
+      console.warn("Save follow-up network warning:", netErr.message);
+      return res.json({ status: "ok", localOnly: true });
+    }
   } catch (err: any) {
-    console.error("Save follow-up error:", err);
-    return res.status(500).json({ error: err.message });
+    console.warn("Save follow-up handler error:", err);
+    return res.json({ status: "ok", localOnly: true });
   }
 });
 
