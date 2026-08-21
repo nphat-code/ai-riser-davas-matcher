@@ -350,7 +350,7 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                             <span>DAVAS 2026 Official Agenda</span>
                         </h3>
                         <p className="text-[11px] text-slate-400">
-                            3-Day Schedule & AI Concierge Recommendations
+                            3-Day Official Schedule & Curated Sessions
                         </p>
                     </div>
                     <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/40 px-2 py-1 rounded-lg border border-cyan-500/30 font-bold">
@@ -452,7 +452,7 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                             {recommended && (
                                                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0 flex items-center gap-1">
                                                     <Sparkles className="w-2.5 h-2.5 text-yellow-400" />
-                                                    AI Recommended
+                                                    Recommended for You
                                                 </span>
                                             )}
                                         </div>
@@ -527,7 +527,7 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                             {recommended && (
                                                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0 flex items-center gap-1">
                                                     <Sparkles className="w-2.5 h-2.5 text-yellow-400" />
-                                                    AI Recommended
+                                                    Recommended for You
                                                 </span>
                                             )}
                                         </div>
