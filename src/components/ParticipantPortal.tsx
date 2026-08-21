@@ -13,17 +13,25 @@ import {
     ChevronDown,
     Compass,
     Mic,
-    Utensils
+    Utensils,
+    Briefcase,
+    Rocket,
+    Building2,
+    DollarSign
 } from 'lucide-react';
-import { MeetingSlot, Investor } from '../types';
+import { MeetingSlot, Investor, Startup } from '../types';
 
 interface ParticipantPortalProps {
     scheduleSlots: MeetingSlot[];
-    currentInvestor: Investor | null;
+    currentInvestor?: Investor | null;
     investors?: Investor[];
     selectedInvestorId?: string;
     setSelectedInvestorId?: (id: string) => void;
     onSelectInvestorId?: (id: string) => void;
+    startups?: Startup[];
+    selectedStartupId?: string;
+    setSelectedStartupId?: (id: string) => void;
+    onSelectStartupId?: (id: string) => void;
     onOpenFollowUpModal: (slot: MeetingSlot) => void;
 }
 
@@ -68,7 +76,7 @@ const SUMMIT_3DAY_AGENDA: {
             location: 'Hall B • Furama Resort',
             title: 'Pre-DAVAS Market Access Workshop',
             description: 'Hands-on strategy session for high-growth startups targeting cross-border expansion across SEA, Japan, Korea, and North American markets.',
-            tags: ['Startups', 'Growth', 'Global Markets'],
+            tags: ['Startups', 'Growth', 'Global Markets', 'SaaS'],
             type: 'workshop',
         },
     ],
@@ -88,7 +96,7 @@ const SUMMIT_3DAY_AGENDA: {
             location: 'Exhibition Plaza',
             title: 'Tech Exhibition & Startup Showcase (50+ Booths)',
             description: 'Interactive demo zone featuring 50+ cutting-edge startups across AI, Semiconductors, FinTech, GreenTech, and Smart City hardware.',
-            tags: ['Demo', 'Tech Showcase', 'Exhibition'],
+            tags: ['Demo', 'Tech Showcase', 'Exhibition', 'Startups'],
             type: 'showcase',
         },
         {
@@ -115,7 +123,7 @@ const SUMMIT_3DAY_AGENDA: {
             location: 'Hall B',
             title: 'FinTech, Web3 & Green Capital Transition',
             description: 'Exploring ESG compliance, carbon credit trading infrastructure, climate-tech funding instruments, and future open banking rails.',
-            tags: ['FinTech', 'Cleantech', 'Sustainability'],
+            tags: ['FinTech', 'Cleantech', 'Sustainability', 'Green'],
             type: 'summit',
         },
     ],
@@ -182,64 +190,133 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
     selectedInvestorId,
     setSelectedInvestorId,
     onSelectInvestorId,
+    startups = [],
+    selectedStartupId,
+    setSelectedStartupId,
+    onSelectStartupId,
     onOpenFollowUpModal,
 }) => {
+    // Delegate Persona Role State ('investor' vs 'startup')
+    const [personaRole, setPersonaRole] = useState<'investor' | 'startup'>('investor');
+
     // Day Selector (Default to Day 3 for immediate 1:1 Speed Matching view)
     const [selectedDay, setSelectedDay] = useState<'day1' | 'day2' | 'day3'>('day3');
     const [activeFilter, setActiveFilter] = useState<'All' | 'Upcoming' | 'Completed'>('All');
+
+    // Active Investor / Startup Resolution
+    const activeInvestor: Investor | null =
+        investors.find((i) => i.id === selectedInvestorId) ||
+        currentInvestor ||
+        (investors.length > 0 ? investors[0] : null);
+
+    const activeStartup: Startup | null =
+        startups.find((s) => s.id === selectedStartupId) ||
+        (startups.length > 0 ? startups[0] : null);
 
     const handleInvestorChange = (newId: string) => {
         if (setSelectedInvestorId) setSelectedInvestorId(newId);
         if (onSelectInvestorId) onSelectInvestorId(newId);
     };
 
-    const filteredSlots = scheduleSlots.filter((slot) => {
+    const handleStartupChange = (newId: string) => {
+        if (setSelectedStartupId) setSelectedStartupId(newId);
+        if (onSelectStartupId) onSelectStartupId(newId);
+    };
+
+    // Filter 1:1 slots based on active role & selected entity
+    const roleSlots = scheduleSlots.filter((slot) => {
+        if (personaRole === 'investor') {
+            if (!activeInvestor) return true;
+            return slot.investor.id === activeInvestor.id || slot.investor.firm === activeInvestor.firm;
+        } else {
+            if (!activeStartup) return true;
+            return slot.startup.id === activeStartup.id || slot.startup.name === activeStartup.name;
+        }
+    });
+
+    const filteredSlots = roleSlots.filter((slot) => {
         if (activeFilter === 'Upcoming') return slot.status === 'Upcoming' || slot.status === 'In Progress';
         if (activeFilter === 'Completed') return slot.status === 'Completed';
         return true;
     });
 
-    const investorName = currentInvestor?.name || 'DAVAS Delegate';
-    const investorFirm = currentInvestor?.firm || 'Attending Venture Capital';
-    const investorRole = currentInvestor?.role || 'Partner';
+    // Investor Profile Data
+    const investorName = activeInvestor?.name || 'DAVAS Delegate';
+    const investorFirm = activeInvestor?.firm || 'Attending Venture Capital';
+    const investorRole = activeInvestor?.role || 'Partner';
     const investorAvatar =
-        currentInvestor?.avatar ||
+        activeInvestor?.avatar ||
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80';
 
-    // Extract investor sector keywords and investment philosophy for AI Recommended badge matching
-    const investorSectors = (currentInvestor?.targetSectors || (currentInvestor as any)?.sectors || []).map((s: string) => s.toLowerCase());
-    const investmentPhilosophy = (currentInvestor?.investmentPhilosophy || '').toLowerCase();
+    // Startup Profile Data
+    const startupName = activeStartup?.name || 'DAVAS Startup';
+    const startupFounder = activeStartup?.founderName || 'Founder & CEO';
+    const startupTitle = activeStartup?.founderTitle || 'Founder';
+    const startupSector = activeStartup?.sector || 'General Tech';
+    const startupStage = activeStartup?.stage || 'Seed';
+    const startupAsk = activeStartup?.targetAsk || '$500K';
+    const startupAvatar =
+        activeStartup?.avatar ||
+        activeStartup?.logo ||
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80';
 
+    // Smart Workshop Match Logic for Day 1 & Day 2
     const isEventAIRecommended = (tags: string[], title: string, desc: string) => {
-        if (!currentInvestor) return false;
         const combinedContent = `${tags.join(' ')} ${title} ${desc}`.toLowerCase();
 
-        // Match against target sectors with smart keyword mapping
-        const sectorMatch = investorSectors.some((sec: string) => {
-            const cleanSec = sec.trim().toLowerCase();
-            if (!cleanSec) return false;
-            return (
-                combinedContent.includes(cleanSec) ||
-                (cleanSec.includes('ai') && combinedContent.includes('ai')) ||
-                (cleanSec.includes('deeptech') && (combinedContent.includes('deeptech') || combinedContent.includes('semiconductor'))) ||
-                (cleanSec.includes('fintech') && combinedContent.includes('fintech')) ||
-                (cleanSec.includes('blockchain') && (combinedContent.includes('web3') || combinedContent.includes('blockchain') || combinedContent.includes('rwa'))) ||
-                (cleanSec.includes('cleantech') && (combinedContent.includes('green') || combinedContent.includes('cleantech') || combinedContent.includes('sustainability'))) ||
-                (cleanSec.includes('hardware') && (combinedContent.includes('semiconductor') || combinedContent.includes('hardware'))) ||
-                (cleanSec.includes('saas') && combinedContent.includes('market access'))
-            );
-        });
+        if (personaRole === 'investor') {
+            if (!activeInvestor) return false;
+            const investorSectors = (activeInvestor?.targetSectors || (activeInvestor as any)?.sectors || []).map((s: string) => s.toLowerCase());
+            const investmentPhilosophy = (activeInvestor?.investmentPhilosophy || '').toLowerCase();
 
-        // Match against investment philosophy
-        const philosophyMatch = ['web3', 'ai', 'deeptech', 'fintech', 'semiconductor', 'sustainability', 'green', 'golf', 'vip vc']
-            .some(kw => investmentPhilosophy.includes(kw) && combinedContent.includes(kw));
+            const sectorMatch = investorSectors.some((sec: string) => {
+                const cleanSec = sec.trim().toLowerCase();
+                if (!cleanSec) return false;
+                return (
+                    combinedContent.includes(cleanSec) ||
+                    (cleanSec.includes('ai') && combinedContent.includes('ai')) ||
+                    (cleanSec.includes('deeptech') && (combinedContent.includes('deeptech') || combinedContent.includes('semiconductor'))) ||
+                    (cleanSec.includes('fintech') && combinedContent.includes('fintech')) ||
+                    (cleanSec.includes('blockchain') && (combinedContent.includes('web3') || combinedContent.includes('blockchain') || combinedContent.includes('rwa'))) ||
+                    (cleanSec.includes('cleantech') && (combinedContent.includes('green') || combinedContent.includes('cleantech') || combinedContent.includes('sustainability'))) ||
+                    (cleanSec.includes('hardware') && (combinedContent.includes('semiconductor') || combinedContent.includes('hardware'))) ||
+                    (cleanSec.includes('saas') && combinedContent.includes('market access'))
+                );
+            });
 
-        return sectorMatch || philosophyMatch;
+            const philosophyMatch = ['web3', 'ai', 'deeptech', 'fintech', 'semiconductor', 'sustainability', 'green', 'golf', 'vip vc']
+                .some((kw) => investmentPhilosophy.includes(kw) && combinedContent.includes(kw));
+
+            return sectorMatch || philosophyMatch;
+        } else {
+            // Startup Founder Recommendations
+            if (!activeStartup) return false;
+            const sec = (activeStartup.sector || '').toLowerCase();
+            const tagsList = (activeStartup.keyTags || []).map((t) => t.toLowerCase());
+
+            const sectorMatch =
+                combinedContent.includes(sec) ||
+                (sec.includes('ai') && combinedContent.includes('ai')) ||
+                (sec.includes('deeptech') && (combinedContent.includes('deeptech') || combinedContent.includes('semiconductor'))) ||
+                (sec.includes('semiconductor') && combinedContent.includes('semiconductor')) ||
+                (sec.includes('fintech') && combinedContent.includes('fintech')) ||
+                (sec.includes('blockchain') && (combinedContent.includes('web3') || combinedContent.includes('blockchain') || combinedContent.includes('rwa'))) ||
+                (sec.includes('web3') && (combinedContent.includes('web3') || combinedContent.includes('blockchain'))) ||
+                (sec.includes('cleantech') && (combinedContent.includes('green') || combinedContent.includes('sustainability') || combinedContent.includes('cleantech'))) ||
+                (sec.includes('greentech') && (combinedContent.includes('green') || combinedContent.includes('sustainability'))) ||
+                (sec.includes('hardware') && (combinedContent.includes('semiconductor') || combinedContent.includes('hardware') || combinedContent.includes('deeptech'))) ||
+                (sec.includes('saas') && (combinedContent.includes('market access') || combinedContent.includes('growth') || combinedContent.includes('summit')));
+
+            const tagMatch = tagsList.some((t) => combinedContent.includes(t));
+            const generalStartupMatch = combinedContent.includes('startup') || combinedContent.includes('market access') || combinedContent.includes('pitch');
+
+            return sectorMatch || tagMatch || generalStartupMatch;
+        }
     };
 
-    const avgInvestorScore =
-        scheduleSlots.length > 0
-            ? Math.round(scheduleSlots.reduce((acc, s) => acc + (s.matchScore || 90), 0) / scheduleSlots.length)
+    const avgMatchScore =
+        roleSlots.length > 0
+            ? Math.round(roleSlots.reduce((acc, s) => acc + (s.matchScore || 90), 0) / roleSlots.length)
             : 0;
 
     return (
@@ -253,22 +330,49 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
             >
                 <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
 
-                {/* Investor Persona Switcher Dropdown */}
-                {investors.length > 0 && (
-                    <div className="mb-4 pb-3.5 border-b border-slate-800/90 flex flex-col gap-1.5 relative z-10">
-                        <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400">
-                            <span className="flex items-center gap-1.5 text-cyan-400">
-                                <Users className="w-3.5 h-3.5" />
-                                <span>Investor Persona Switcher</span>
-                            </span>
-                            <span className="text-[10px] text-slate-500 font-mono">
-                                {investors.length} VCs
-                            </span>
-                        </div>
+                {/* 2-WAY PERSONA ROLE SWITCHER (INVESTOR vs STARTUP) */}
+                <div className="mb-4 pb-3.5 border-b border-slate-800/90 space-y-2.5 relative z-10">
+                    <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400">
+                        <span className="flex items-center gap-1.5 text-cyan-400">
+                            <Users className="w-3.5 h-3.5" />
+                            <span>Delegate Role & Persona</span>
+                        </span>
+                        <span className="text-[10px] text-slate-500 font-mono">DAVAS 2026</span>
+                    </div>
+
+                    {/* Role Switcher Tabs */}
+                    <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-950/80 rounded-2xl border border-slate-800">
+                        <motion.button
+                            whileTap={{ scale: 0.96 }}
+                            onClick={() => setPersonaRole('investor')}
+                            className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${personaRole === 'investor'
+                                    ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-500/20'
+                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                                }`}
+                        >
+                            <Briefcase className="w-3.5 h-3.5" />
+                            <span>💼 Investor ({investors.length})</span>
+                        </motion.button>
+
+                        <motion.button
+                            whileTap={{ scale: 0.96 }}
+                            onClick={() => setPersonaRole('startup')}
+                            className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${personaRole === 'startup'
+                                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20'
+                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                                }`}
+                        >
+                            <Rocket className="w-3.5 h-3.5" />
+                            <span>🚀 Startup ({startups.length})</span>
+                        </motion.button>
+                    </div>
+
+                    {/* Persona Dropdown (Investor or Startup) */}
+                    {personaRole === 'investor' ? (
                         <div className="relative">
                             <select
                                 id="investor-persona-switcher"
-                                value={selectedInvestorId || currentInvestor?.id || ''}
+                                value={selectedInvestorId || activeInvestor?.id || ''}
                                 onChange={(e) => handleInvestorChange(e.target.value)}
                                 className="w-full bg-slate-950/90 text-cyan-200 text-xs font-semibold rounded-xl border border-cyan-500/30 px-3 py-2 pr-8 focus:outline-none focus:ring-1 focus:ring-cyan-400 cursor-pointer truncate appearance-none hover:border-cyan-400/60 transition-all shadow-inner"
                             >
@@ -280,38 +384,85 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                             </select>
                             <ChevronDown className="w-4 h-4 text-cyan-400/80 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
+                    ) : (
+                        <div className="relative">
+                            <select
+                                id="startup-persona-switcher"
+                                value={selectedStartupId || activeStartup?.id || ''}
+                                onChange={(e) => handleStartupChange(e.target.value)}
+                                className="w-full bg-slate-950/90 text-purple-200 text-xs font-semibold rounded-xl border border-purple-500/30 px-3 py-2 pr-8 focus:outline-none focus:ring-1 focus:ring-purple-400 cursor-pointer truncate appearance-none hover:border-purple-400/60 transition-all shadow-inner"
+                            >
+                                {startups.map((st) => (
+                                    <option key={st.id} value={st.id} className="bg-slate-900 text-slate-100 py-1.5">
+                                        {st.name} • {st.sector} ({st.stage})
+                                    </option>
+                                ))}
+                            </select>
+                            <ChevronDown className="w-4 h-4 text-purple-400/80 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+                    )}
+                </div>
+
+                {/* Welcome Delegate Header (Dynamic based on Persona Role) */}
+                {personaRole === 'investor' ? (
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <img
+                                src={investorAvatar}
+                                alt={investorName}
+                                className="w-14 h-14 rounded-2xl object-cover border-2 border-cyan-400/40 shadow-lg shadow-cyan-500/20"
+                            />
+                            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-950" />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                                <span className="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 text-[10px] font-bold uppercase tracking-wider border border-cyan-500/30">
+                                    DAVAS Investor
+                                </span>
+                                <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                                    Live Summit
+                                </span>
+                            </div>
+                            <h2 className="text-lg font-extrabold text-white tracking-tight mt-0.5 truncate">
+                                Welcome, {investorFirm}
+                            </h2>
+                            <p className="text-xs text-slate-400 truncate">
+                                {investorName} • {investorRole}
+                            </p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <img
+                                src={startupAvatar}
+                                alt={startupName}
+                                className="w-14 h-14 rounded-2xl object-cover border-2 border-purple-400/40 shadow-lg shadow-purple-500/20"
+                            />
+                            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-purple-400 border-2 border-slate-950" />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                                <span className="px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 text-[10px] font-bold uppercase tracking-wider border border-purple-500/30">
+                                    DAVAS Startup
+                                </span>
+                                <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                                    Live Summit
+                                </span>
+                            </div>
+                            <h2 className="text-lg font-extrabold text-white tracking-tight mt-0.5 truncate">
+                                Welcome, {startupName}
+                            </h2>
+                            <p className="text-xs text-slate-400 truncate">
+                                {startupFounder} • {startupTitle} ({startupSector})
+                            </p>
+                        </div>
                     </div>
                 )}
-
-                {/* Welcome Investor Header */}
-                <div className="flex items-center gap-3">
-                    <div className="relative">
-                        <img
-                            src={investorAvatar}
-                            alt={investorName}
-                            className="w-14 h-14 rounded-2xl object-cover border-2 border-cyan-400/40 shadow-lg shadow-cyan-500/20"
-                        />
-                        <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-950" />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5">
-                            <span className="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 text-[10px] font-bold uppercase tracking-wider border border-cyan-500/30">
-                                DAVAS Delegate
-                            </span>
-                            <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                                Live Summit
-                            </span>
-                        </div>
-                        <h2 className="text-lg font-extrabold text-white tracking-tight mt-0.5 truncate">
-                            Welcome, {investorFirm}
-                        </h2>
-                        <p className="text-xs text-slate-400 truncate">
-                            {investorName} • {investorRole}
-                        </p>
-                    </div>
-                </div>
 
                 {/* Quick Day Stats Banner */}
                 <div className="mt-4 pt-3 border-t border-slate-800 grid grid-cols-3 gap-2 text-center">
@@ -320,22 +471,30 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                         className="bg-slate-950/60 p-2 rounded-xl border border-slate-800"
                     >
                         <div className="text-[10px] text-slate-400 uppercase font-bold">1:1 Meetings</div>
-                        <div className="text-base font-black text-cyan-300">{scheduleSlots.length}</div>
+                        <div className="text-base font-black text-cyan-300">{roleSlots.length}</div>
                     </motion.div>
+
                     <motion.div
                         whileHover={{ scale: 1.03 }}
                         className="bg-slate-950/60 p-2 rounded-xl border border-slate-800"
                     >
-                        <div className="text-[10px] text-slate-400 uppercase font-bold">Hall Location</div>
-                        <div className="text-xs font-bold text-white mt-1">Furama A1</div>
+                        <div className="text-[10px] text-slate-400 uppercase font-bold">
+                            {personaRole === 'investor' ? 'Hall Location' : 'Target Ask'}
+                        </div>
+                        <div className="text-xs font-bold text-white mt-1 truncate">
+                            {personaRole === 'investor' ? 'Furama A1' : startupAsk}
+                        </div>
                     </motion.div>
+
                     <motion.div
                         whileHover={{ scale: 1.03 }}
                         className="bg-slate-950/60 p-2 rounded-xl border border-slate-800"
                     >
-                        <div className="text-[10px] text-slate-400 uppercase font-bold">Avg AI Match</div>
+                        <div className="text-[10px] text-slate-400 uppercase font-bold">
+                            {personaRole === 'investor' ? 'Avg Match' : 'Stage'}
+                        </div>
                         <div className="text-base font-black text-yellow-400">
-                            {scheduleSlots.length > 0 ? `${avgInvestorScore}%` : '--'}
+                            {personaRole === 'investor' ? (roleSlots.length > 0 ? `${avgMatchScore}%` : '--') : startupStage}
                         </div>
                     </motion.div>
                 </div>
@@ -589,7 +748,11 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                             <div>
                                 <h4 className="text-sm font-extrabold text-white flex items-center gap-2">
                                     <Sparkles className="w-4 h-4 text-cyan-400" />
-                                    <span>My 1:1 Speed Meetings (Summit Tables)</span>
+                                    <span>
+                                        {personaRole === 'investor'
+                                            ? 'My 1:1 Speed Meetings (Summit Tables)'
+                                            : 'My Investor Meetings (Summit Tables)'}
+                                    </span>
                                 </h4>
                                 <p className="text-[11px] text-slate-400">
                                     09:00 - 16:00 | 12 Designated Summit Tables
@@ -625,9 +788,13 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                             <div className="w-12 h-12 mx-auto rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20">
                                 <Calendar className="w-6 h-6" />
                             </div>
-                            <h4 className="text-sm font-bold text-white">No 1:1 Meetings Scheduled</h4>
+                            <h4 className="text-sm font-bold text-white">
+                                {personaRole === 'investor'
+                                    ? 'No 1:1 Meetings Scheduled'
+                                    : 'No VC Meetings Scheduled for this Startup'}
+                            </h4>
                             <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
-                                Generate your personalized AI speed meeting schedule in the Admin Dashboard to see your timed agenda here.
+                                Generate your personalized speed meeting schedule in the Admin Dashboard to see your timed sessions here.
                             </p>
                         </div>
                     ) : (
@@ -695,50 +862,98 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                                 </div>
                                             </div>
 
-                                            {/* Startup Header Info */}
-                                            <div className="flex items-start gap-3">
-                                                <img
-                                                    src={slot.startup.logo}
-                                                    alt={slot.startup.name}
-                                                    className="w-12 h-12 rounded-xl object-cover border border-slate-700 shrink-0 shadow-md"
-                                                />
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center justify-between gap-2">
-                                                        <h4 className="text-sm font-extrabold text-white truncate">
-                                                            {slot.startup.name}
-                                                        </h4>
-                                                        <div className="flex items-center gap-1.5 shrink-0">
-                                                            {(slot.notes || slot.followUpGenerated) && (
-                                                                <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
-                                                                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                                                                    Logged
+                                            {/* Header Info: Dynamic based on personaRole (If Investor -> Show Startup Info; If Startup -> Show Investor Info) */}
+                                            {personaRole === 'investor' ? (
+                                                /* INVESTOR VIEW -> SHOW STARTUP PROFILE */
+                                                <div className="flex items-start gap-3">
+                                                    <img
+                                                        src={slot.startup.logo}
+                                                        alt={slot.startup.name}
+                                                        className="w-12 h-12 rounded-xl object-cover border border-slate-700 shrink-0 shadow-md"
+                                                    />
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <h4 className="text-sm font-extrabold text-white truncate">
+                                                                {slot.startup.name}
+                                                            </h4>
+                                                            <div className="flex items-center gap-1.5 shrink-0">
+                                                                {(slot.notes || slot.followUpGenerated) && (
+                                                                    <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
+                                                                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                                                        Logged
+                                                                    </span>
+                                                                )}
+                                                                <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                                                                    {slot.startup.stage}
                                                                 </span>
-                                                            )}
-                                                            <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                                                                {slot.startup.stage}
+                                                            </div>
+                                                        </div>
+
+                                                        <p className="text-xs text-slate-300 line-clamp-2 mt-0.5">
+                                                            {slot.startup.tagline}
+                                                        </p>
+
+                                                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
+                                                            <span>Ask: <strong className="text-white">{slot.startup.targetAsk}</strong></span>
+                                                            <span>•</span>
+                                                            <span>Founder: <strong className="text-slate-200">{slot.startup.founderName}</strong></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                /* STARTUP VIEW -> SHOW INVESTOR / VC FUND PROFILE */
+                                                <div className="flex items-start gap-3">
+                                                    <img
+                                                        src={slot.investor.avatar}
+                                                        alt={slot.investor.firm}
+                                                        className="w-12 h-12 rounded-xl object-cover border border-purple-500/40 shrink-0 shadow-md"
+                                                    />
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <h4 className="text-sm font-extrabold text-white truncate flex items-center gap-1.5">
+                                                                <Building2 className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                                                                <span>{slot.investor.firm}</span>
+                                                            </h4>
+                                                            <div className="flex items-center gap-1.5 shrink-0">
+                                                                {(slot.notes || slot.followUpGenerated) && (
+                                                                    <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
+                                                                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                                                        Logged
+                                                                    </span>
+                                                                )}
+                                                                <span className="text-[10px] font-semibold text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded border border-purple-500/30">
+                                                                    {slot.investor.country || 'Global VC'}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                        <p className="text-xs text-slate-300 mt-0.5 flex items-center gap-1">
+                                                            <span>Representative:</span>
+                                                            <strong className="text-white">{slot.investor.name}</strong>
+                                                            <span className="text-slate-400">({slot.investor.role})</span>
+                                                        </p>
+
+                                                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
+                                                            <span className="flex items-center gap-1 text-emerald-300 font-semibold">
+                                                                <DollarSign className="w-3 h-3" />
+                                                                Ticket: {slot.investor.ticketSizeRange || '$250K - $1M'}
+                                                            </span>
+                                                            <span>•</span>
+                                                            <span>
+                                                                Target: <strong className="text-slate-200">{slot.investor.targetSectors?.slice(0, 2).join(', ')}</strong>
                                                             </span>
                                                         </div>
                                                     </div>
-
-                                                    <p className="text-xs text-slate-300 line-clamp-2 mt-0.5">
-                                                        {slot.startup.tagline}
-                                                    </p>
-
-                                                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
-                                                        <span>Ask: <strong className="text-white">{slot.startup.targetAsk}</strong></span>
-                                                        <span>•</span>
-                                                        <span>Founder: <strong className="text-slate-200">{slot.startup.founderName}</strong></span>
-                                                    </div>
                                                 </div>
-                                            </div>
+                                            )}
 
-                                            {/* Generated AI Followup summary pill if present */}
+                                            {/* Generated Followup / Notes summary pill if present */}
                                             {(slot.notes || slot.followUpGenerated) && (
                                                 <div className="mt-3 p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-xs space-y-1">
                                                     <div className="flex items-center justify-between text-purple-300 font-semibold text-[11px]">
                                                         <span className="flex items-center gap-1">
                                                             <Sparkles className="w-3 h-3 text-yellow-400" />
-                                                            {slot.followUpGenerated ? 'AI Follow-up Draft Ready' : 'Meeting Notes Saved'}
+                                                            {slot.followUpGenerated ? 'Follow-up Draft Ready' : 'Meeting Notes Saved'}
                                                         </span>
                                                         <span className="text-[10px] text-emerald-400 font-mono">Logged</span>
                                                     </div>
@@ -764,7 +979,11 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                                 >
                                                     <FileText className="w-4 h-4 text-cyan-200" />
                                                     <span>
-                                                        {(slot.notes || slot.followUpGenerated) ? 'View / Edit Notes & AI Draft' : 'Add Notes & AI Follow-up'}
+                                                        {slot.notes || slot.followUpGenerated
+                                                            ? 'View / Edit Notes & Summary'
+                                                            : personaRole === 'investor'
+                                                                ? 'Add Notes & AI Follow-up'
+                                                                : 'Add Meeting Notes & VC Feedback'}
                                                     </span>
                                                     <ChevronRight className="w-4 h-4 ml-auto text-cyan-200" />
                                                 </motion.button>
@@ -785,7 +1004,9 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                     <span>DAVAS 1:1 Summit Tip</span>
                 </div>
                 <p className="text-[11px] leading-relaxed">
-                    Tap "Add Notes & AI Follow-up" during or right after your 1:1 meeting. Our Gemini AI engine will draft an executive email summary and action items in seconds.
+                    {personaRole === 'investor'
+                        ? 'Tap "Add Notes & AI Follow-up" during or right after your 1:1 meeting. Our Gemini AI engine will draft an executive email summary and action items in seconds.'
+                        : 'Review your VC partner’s ticket size and focus areas before sitting at your designated Summit Table. Log your notes directly for follow-ups.'}
                 </p>
             </div>
         </div>

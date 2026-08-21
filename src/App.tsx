@@ -31,6 +31,7 @@ export default function App() {
     const [matches, setMatches] = useState<MatchPair[]>([]);
     const [scheduleSlots, setScheduleSlots] = useState<MeetingSlot[]>([]);
     const [selectedInvestorId, setSelectedInvestorId] = useState<string>('');
+    const [selectedStartupId, setSelectedStartupId] = useState<string>('');
 
     // Selected Current Investor for Participant Portal
     const currentInvestor: Investor | null =
@@ -840,13 +841,14 @@ export default function App() {
                         />
                     ) : (
                         <ParticipantPortal
-                            scheduleSlots={scheduleSlots.filter(
-                                (slot) => slot.investor.id === currentInvestor?.id || slot.investor.firm === currentInvestor?.firm
-                            )}
+                            scheduleSlots={scheduleSlots}
                             currentInvestor={currentInvestor}
                             investors={investors}
                             selectedInvestorId={selectedInvestorId}
                             setSelectedInvestorId={setSelectedInvestorId}
+                            startups={startups}
+                            selectedStartupId={selectedStartupId}
+                            setSelectedStartupId={setSelectedStartupId}
                             onOpenFollowUpModal={(slot) => setFollowUpSlot(slot)}
                         />
                     )}
