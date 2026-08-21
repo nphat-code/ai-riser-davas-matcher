@@ -23,7 +23,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     matchesCount,
 }) => {
     return (
-        <aside className="w-full lg:w-64 glass-panel border-r border-slate-800 shrink-0 p-4 flex flex-col justify-between gap-6">
+        <aside className="w-full lg:w-64 glass-panel border-r border-slate-800 shrink-0 p-4 flex flex-col justify-between gap-6 lg:sticky lg:top-20 lg:h-[calc(100vh-5rem)] overflow-y-auto">
             <div className="space-[#121826] flex flex-col gap-6">
                 {/* Summit Info Box */}
                 <div className="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-950/80 to-slate-900 border border-indigo-500/20 shadow-inner">
