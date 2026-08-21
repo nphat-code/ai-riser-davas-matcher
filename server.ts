@@ -170,20 +170,34 @@ Generate a polished follow-up package for the VC to send to the startup after th
       contents: prompt,
       config: {
         systemInstruction:
-          "You are an executive VC AI Assistant at DAVAS. Generate a highly tailored follow-up email and key takeaways based on the startup profile and notes taken during the 1:1 summit meeting.",
+          "You are an Executive VC Partner at DAVAS (Da Nang Venture & Angel Summit). Write a professional, highly structured 4-paragraph post-meeting follow-up email based on the investor notes and startup profile.\n\n" +
+          "STRICT EMAIL STRUCTURE:\n" +
+          "Paragraph 1 (Opening): Warm greeting, pleasure meeting at DAVAS, and thank them for presenting their startup.\n" +
+          "Paragraph 2 (Traction & Alignment): Highlight specific impressive metrics/traction from the notes, explain why their model strongly aligns with the VC's thesis and target ask.\n" +
+          "Paragraph 3 (Next Steps & Action Item): Clear proposal for next steps (e.g. Due Diligence, requesting Data Room access, or scheduling a partner sync).\n" +
+          "Paragraph 4 (Closing & Signature): Courteous sign-off, followed by 'Best regards,', Investor Name, and Investor Firm on separate lines.\n\n" +
+          "Use real line breaks between paragraphs, NOT literal text '\\n'.",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            emailSubject: { type: Type.STRING },
-            emailBody: { type: Type.STRING },
+            emailSubject: {
+              type: Type.STRING,
+              description: "Compelling email subject line, e.g., 'DAVAS 2026 Follow-up | [Startup] x [Investor Firm]'"
+            },
+            emailBody: {
+              type: Type.STRING,
+              description: "Complete 4-paragraph formatted email with standard VC tone and clear paragraph separation"
+            },
             keyTakeaways: {
               type: Type.ARRAY,
               items: { type: Type.STRING },
+              description: "Top 2-3 key strategic takeaways from the meeting notes",
             },
             actionItems: {
               type: Type.ARRAY,
               items: { type: Type.STRING },
+              description: "Top 2 concrete next step action items for the deal team",
             },
           },
           required: ["emailSubject", "emailBody", "keyTakeaways", "actionItems"],
