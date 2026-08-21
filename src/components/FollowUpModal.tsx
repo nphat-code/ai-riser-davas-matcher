@@ -112,7 +112,7 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
                     />
                 </div>
 
-                {/* Action Button: Generate AI Follow-up */}
+                {/* Action Button: Generate Follow-up Draft */}
                 <button
                     onClick={handleGenerateFollowUp}
                     disabled={isGenerating}
@@ -125,24 +125,24 @@ export const FollowUpModal: React.FC<FollowUpModalProps> = ({
                         {isGenerating ? (
                             <>
                                 <RefreshCw className="w-4 h-4 text-cyan-300 animate-spin" />
-                                <span>Drafting Executive Follow-up with Gemini...</span>
+                                <span>Drafting Executive Follow-up...</span>
                             </>
                         ) : (
                             <>
                                 <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
-                                <span>Generate AI Follow-up & Email Draft</span>
+                                <span>Generate Follow-up Draft</span>
                             </>
                         )}
                     </div>
                 </button>
 
-                {/* Generated AI Result Preview Card */}
+                {/* Generated Result Preview Card */}
                 {followUpResult && (
                     <div className="space-y-4 pt-3 border-t border-slate-800 animate-fadeIn">
                         <div className="flex items-center justify-between">
                             <h4 className="text-xs font-extrabold text-cyan-300 flex items-center gap-1.5">
                                 <Mail className="w-4 h-4 text-cyan-400" />
-                                <span>AI Drafted Post-Summit Email</span>
+                                <span>Executive Follow-up Email</span>
                             </h4>
                             <button
                                 onClick={handleCopyEmail}

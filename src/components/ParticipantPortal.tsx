@@ -967,12 +967,12 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                                 </div>
                                             )}
 
-                                            {/* AI Ice-breakers (Investor) vs Pitch Prep (Startup) Box */}
+                                            {/* Ice-breakers (Investor) vs Pitch Prep (Startup) Box */}
                                             {personaRole === 'investor' ? (
                                                 <div className="mt-3 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20 space-y-2">
                                                     <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-300">
                                                         <Sparkles className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
-                                                        <span>💡 AI Ice-breakers (Questions to Ask Founder)</span>
+                                                        <span>💡 Executive Ice-breakers (Questions to Ask Founder)</span>
                                                     </div>
                                                     <div className="space-y-1.5">
                                                         {getInvestorIceBreakers(slot).map((q, idx) => (
@@ -1046,8 +1046,8 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                                     <span>
                                                         {personaRole === 'investor'
                                                             ? (slot.notes || slot.followUpGenerated)
-                                                                ? '📝 View / Edit Notes & AI Draft'
-                                                                : '📝 Add Notes & AI Follow-up'
+                                                                ? '📝 View / Edit Notes & Follow-up'
+                                                                : '📝 Add Notes & Follow-up'
                                                             : (slot.notes || slot.followUpGenerated)
                                                                 ? '📬 View VC Feedback & Email Draft'
                                                                 : '🎯 Review Table Location & Pitch Deck'}
@@ -1072,7 +1072,7 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                 </div>
                 <p className="text-[11px] leading-relaxed">
                     {personaRole === 'investor'
-                        ? 'Tap "Add Notes & AI Follow-up" during or right after your 1:1 meeting. Our Gemini AI engine will draft an executive email summary and action items in seconds.'
+                        ? 'Tap "Add Notes & Follow-up" during or right after your 1:1 meeting to craft an executive email summary and action items in seconds.'
                         : 'Review your VC partner’s ticket size and focus areas before sitting at your designated Summit Table. Log your notes directly for follow-ups.'}
                 </p>
             </div>

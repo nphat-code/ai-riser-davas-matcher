@@ -128,7 +128,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     }`}
                             >
                                 <Sparkles className="w-4 h-4 text-yellow-400" />
-                                <span>AI Matches ({matchesCount})</span>
+                                <span>Match Pairings ({matchesCount})</span>
                             </button>
 
                             <button

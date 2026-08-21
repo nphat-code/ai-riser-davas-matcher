@@ -391,7 +391,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                     {/* Action Panel Buttons (Run AI Matchmaking & Generate Smart Schedule) */}
                     <div className="flex flex-wrap items-center gap-3 shrink-0">
-                        {/* Button 1: Run AI Matchmaking */}
+                        {/* Button 1: Run Matchmaking */}
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.95 }}
@@ -411,7 +411,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 ) : (
                                     <>
                                         <Sparkles className="w-4 h-4 text-yellow-300 group-hover:rotate-12 transition-transform" />
-                                        <span className="text-sm">Run AI Matchmaking</span>
+                                        <span className="text-sm">Run Matchmaking</span>
                                     </>
                                 )}
                             </div>
@@ -514,7 +514,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     className="glass-panel p-5 rounded-2xl border border-slate-800/80 hover:border-slate-700 transition-all"
                 >
                     <div className="flex items-center justify-between text-slate-400 mb-3">
-                        <span className="text-xs font-semibold uppercase tracking-wider">Avg AI Match Score</span>
+                        <span className="text-xs font-semibold uppercase tracking-wider">Avg Match Score</span>
                         <div className="p-2 rounded-xl bg-yellow-500/10 text-yellow-400">
                             <Sparkles className="w-4 h-4" />
                         </div>
@@ -523,7 +523,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         {stats.scheduledMeetings === 0 || stats.avgMatchScore === 0 ? '--' : `${stats.avgMatchScore}%`}
                     </div>
                     <p className="text-[11px] text-yellow-400 font-medium mt-1.5">
-                        {stats.scheduledMeetings === 0 || stats.avgMatchScore === 0 ? 'Awaiting Match Execution' : 'Gemini Flash Criteria'}
+                        {stats.scheduledMeetings === 0 || stats.avgMatchScore === 0 ? 'Awaiting Match Execution' : 'Compatibility Evaluation'}
                     </p>
                 </motion.div>
 
@@ -572,7 +572,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             : 'text-slate-400 hover:text-white bg-slate-900/40 hover:bg-slate-800/80 border border-transparent hover:border-slate-800'
                             }`}
                     >
-                        ✨ AI Match Pairings ({matches.length})
+                        ✨ Match Pairings ({matches.length})
                     </motion.button>
 
                     <motion.button
@@ -665,7 +665,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                         <div className="text-lg font-bold text-white mt-0.5">{stats.scheduledMeetings} Meetings</div>
                                     </div>
                                     <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                                        <div className="text-[11px] text-slate-400">AI Matches Generated</div>
+                                        <div className="text-[11px] text-slate-400">Match Pairings Generated</div>
                                         <div className="text-lg font-bold text-purple-300 mt-0.5">{matches.length} Matches</div>
                                     </div>
                                     <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
@@ -834,7 +834,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </motion.div>
                 )}
 
-                {/* TAB 2: AI MATCH PAIRINGS LIST with Staggered & Hover Card Animations */}
+                {/* TAB 2: MATCH PAIRINGS LIST with Staggered & Hover Card Animations */}
                 {activeTab === 'matches' && (
                     <motion.div
                         key="matches"
@@ -850,7 +850,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 <span>Recommended High-Conviction Match Pairs</span>
                             </h3>
                             <span className="text-xs text-slate-400">
-                                Showing {matches.length} AI evaluated pairs
+                                Showing {matches.length} evaluated pairs
                             </span>
                         </div>
 
@@ -860,9 +860,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     <Sparkles className="w-7 h-7" />
                                 </div>
                                 <div className="space-y-1">
-                                    <h4 className="text-base font-bold text-white">No AI Match Pairings Generated Yet</h4>
+                                    <h4 className="text-base font-bold text-white">No Match Pairings Generated Yet</h4>
                                     <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
-                                        Click the "Run AI Matchmaking" button to pair startups and VCs with 4-pillar compatibility analysis powered by Gemini AI.
+                                        Click the "Run Matchmaking" button to pair startups and VCs with 4-pillar compatibility analysis.
                                     </p>
                                 </div>
                                 <button
@@ -871,7 +871,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 transition-all cursor-pointer inline-flex items-center gap-2 disabled:opacity-50"
                                 >
                                     <Sparkles className="w-4 h-4 text-yellow-300" />
-                                    <span>{isMatchmakingLoading ? 'Evaluating compatibility...' : 'Run First AI Match'}</span>
+                                    <span>{isMatchmakingLoading ? 'Evaluating compatibility...' : 'Run First Match'}</span>
                                 </button>
                             </div>
                         ) : (
@@ -942,11 +942,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                             </div>
                                         </div>
 
-                                        {/* AI Analytical Reason */}
+                                        {/* Analytical Reason */}
                                         <div className="space-y-2 mb-4">
                                             <div className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                                                 <FileText className="w-3.5 h-3.5 text-indigo-400" />
-                                                <span>AI Synergy Analysis:</span>
+                                                <span>Compatibility Analysis:</span>
                                             </div>
                                             <p className="text-xs text-slate-400 italic bg-slate-950/50 p-2.5 rounded-lg border border-slate-800/80 leading-relaxed">
                                                 "{pair.analysis.reason}"
@@ -957,7 +957,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                         <div className="space-y-1.5">
                                             <div className="text-[11px] font-bold text-cyan-300 flex items-center gap-1">
                                                 <HelpCircle className="w-3 h-3 text-cyan-400" />
-                                                <span>Suggested Ice Breaker:</span>
+                                                <span>Executive Ice-breaker:</span>
                                             </div>
                                             <p className="text-[11px] text-slate-300 line-clamp-1 bg-cyan-950/20 px-2.5 py-1 rounded border border-cyan-500/20">
                                                 "{pair.analysis.ice_breakers[0] || 'How do you plan to scale in SEA?'}"
