@@ -314,6 +314,26 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
         }
     };
 
+    // Helper to generate 3 sharp AI Ice-breakers for Investor
+    const getInvestorIceBreakers = (slot: MeetingSlot): string[] => {
+        return [
+            `What is your customer acquisition strategy and current monthly burn rate for ${slot.startup.name}?`,
+            `How will the ${slot.startup.targetAsk} round be allocated towards product milestones and regional expansion?`,
+            `What technical moat or proprietary IP protects your product against rapid competitor cloning in ${slot.startup.sector}?`,
+        ];
+    };
+
+    // Helper to generate 3 focused Pitch Prep topics for Startup Founder
+    const getStartupPitchPrep = (slot: MeetingSlot): string[] => {
+        const sectors = slot.investor.targetSectors?.slice(0, 2).join(' & ') || 'Technology';
+        const ticket = slot.investor.ticketSizeRange || '$250K - $1M';
+        return [
+            `Align your pitch with ${slot.investor.firm}'s investment thesis in ${sectors} (typical ticket size: ${ticket}).`,
+            `Prepare key traction metrics (MRR/ARR, growth velocity, and user retention) justifying your ${slot.startup.targetAsk} ask.`,
+            `Be ready to address unit economics, defensibility, and your SEA / global expansion execution plan.`,
+        ];
+    };
+
     const avgMatchScore =
         roleSlots.length > 0
             ? Math.round(roleSlots.reduce((acc, s) => acc + (s.matchScore || 90), 0) / roleSlots.length)
@@ -947,13 +967,58 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                                 </div>
                                             )}
 
+                                            {/* AI Ice-breakers (Investor) vs Pitch Prep (Startup) Box */}
+                                            {personaRole === 'investor' ? (
+                                                <div className="mt-3 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20 space-y-2">
+                                                    <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-300">
+                                                        <Sparkles className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
+                                                        <span>💡 AI Ice-breakers (Questions to Ask Founder)</span>
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        {getInvestorIceBreakers(slot).map((q, idx) => (
+                                                            <div key={idx} className="flex items-start gap-2 text-[11px] text-slate-300 leading-snug">
+                                                                <span className="w-4 h-4 rounded-full bg-cyan-500/20 text-cyan-300 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5 border border-cyan-500/30">
+                                                                    {idx + 1}
+                                                                </span>
+                                                                <span className="flex-1">{q}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="mt-3 p-3 rounded-xl bg-purple-950/30 border border-purple-500/20 space-y-2">
+                                                    <div className="flex items-center gap-1.5 text-xs font-bold text-purple-300">
+                                                        <Sparkles className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
+                                                        <span>🎯 Pitch Prep (Expected Topics VC Will Ask You)</span>
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        {getStartupPitchPrep(slot).map((topic, idx) => (
+                                                            <div key={idx} className="flex items-start gap-2 text-[11px] text-slate-300 leading-snug">
+                                                                <span className="w-4 h-4 rounded-full bg-purple-500/20 text-purple-300 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5 border border-purple-500/30">
+                                                                    {idx + 1}
+                                                                </span>
+                                                                <span className="flex-1">{topic}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             {/* Generated Followup / Notes summary pill if present */}
                                             {(slot.notes || slot.followUpGenerated) && (
-                                                <div className="mt-3 p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-xs space-y-1">
-                                                    <div className="flex items-center justify-between text-purple-300 font-semibold text-[11px]">
+                                                <div className={`mt-3 p-2.5 rounded-xl border text-xs space-y-1 ${personaRole === 'investor'
+                                                        ? 'bg-purple-950/40 border-purple-500/30'
+                                                        : 'bg-indigo-950/40 border-indigo-500/30'
+                                                    }`}>
+                                                    <div className={`flex items-center justify-between font-semibold text-[11px] ${personaRole === 'investor' ? 'text-purple-300' : 'text-indigo-300'
+                                                        }`}>
                                                         <span className="flex items-center gap-1">
                                                             <Sparkles className="w-3 h-3 text-yellow-400" />
-                                                            {slot.followUpGenerated ? 'Follow-up Draft Ready' : 'Meeting Notes Saved'}
+                                                            {personaRole === 'startup'
+                                                                ? 'VC Partner Feedback & Follow-up Draft'
+                                                                : slot.followUpGenerated
+                                                                    ? 'Follow-up Draft Ready'
+                                                                    : 'Meeting Notes Saved'}
                                                         </span>
                                                         <span className="text-[10px] text-emerald-400 font-mono">Logged</span>
                                                     </div>
@@ -979,11 +1044,13 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                                 >
                                                     <FileText className="w-4 h-4 text-cyan-200" />
                                                     <span>
-                                                        {slot.notes || slot.followUpGenerated
-                                                            ? 'View / Edit Notes & Summary'
-                                                            : personaRole === 'investor'
-                                                                ? 'Add Notes & AI Follow-up'
-                                                                : 'Add Meeting Notes & VC Feedback'}
+                                                        {personaRole === 'investor'
+                                                            ? (slot.notes || slot.followUpGenerated)
+                                                                ? '📝 View / Edit Notes & AI Draft'
+                                                                : '📝 Add Notes & AI Follow-up'
+                                                            : (slot.notes || slot.followUpGenerated)
+                                                                ? '📬 View VC Feedback & Email Draft'
+                                                                : '🎯 Review Table Location & Pitch Deck'}
                                                     </span>
                                                     <ChevronRight className="w-4 h-4 ml-auto text-cyan-200" />
                                                 </motion.button>
