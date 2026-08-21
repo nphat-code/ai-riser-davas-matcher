@@ -351,7 +351,7 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                 }`}
                         >
                             <Briefcase className="w-3.5 h-3.5" />
-                            <span>💼 Investor ({investors.length})</span>
+                            <span>Investor ({investors.length})</span>
                         </motion.button>
 
                         <motion.button
@@ -363,7 +363,7 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                 }`}
                         >
                             <Rocket className="w-3.5 h-3.5" />
-                            <span>🚀 Startup ({startups.length})</span>
+                            <span>Startup ({startups.length})</span>
                         </motion.button>
                     </div>
 
