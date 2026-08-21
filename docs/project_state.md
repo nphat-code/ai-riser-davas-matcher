@@ -57,8 +57,8 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
   - **Quy trình Điều phối 2 Bước Chuẩn hóa (2-Phase Matchmaking Workflow):** Khi vừa Match ban đầu, cặp đấu ở trạng thái `Pending Schedule` / `Table TBD`. Chỉ khi bấm "Generate Smart Schedule", hệ thống mới chính thức phân bổ ca họp, số bàn chính thức và chuyển sang `Scheduled`.
   - **Cổng Thông Tin Đại Biểu 2 Chiều (2-Way Dual Persona Portal - 31 Investors 🤝 62 Startups):** 
     * Cho phép chuyển đổi linh hoạt giữa góc nhìn **`💼 Investor (31)`** và **`🚀 Startup (62)`**.
-    * Khi ở vai trò **Startup Founder**: Tự động hiển thị thẻ hồ sơ Quỹ VC đối tác (Tên Quỹ, Đại diện, Ticket Size, Bàn họp), xem Ice-breakers chuẩn bị trước cuộc gặp, và nhận gợi ý Workshop Day 1 & Day 2 theo đúng ngành nghề của Startup.
-    * Khi ở vai trò **Investor**: Xem danh sách Startups gặp trong ngày, xem chỉ số kinh doanh, ghi chép `Investor Notes` và tạo Email Follow-up tự động.
+    * Khi ở vai trò **Startup Founder**: Tự động hiển thị thẻ hồ sơ Quỹ VC đối tác (Tên Quỹ, Đại diện, Ticket Size, Bàn họp), xem **`🎯 Pitch Prep (3 Chủ đề VC sẽ chất vấn)`** để chuẩn bị kịch bản trước cuộc gặp, xem phản hồi của Quỹ sau cuộc họp, và nhận gợi ý Workshop Day 1 & Day 2 theo ngành nghề.
+    * Khi ở vai trò **Investor**: Xem danh sách Startups gặp trong ngày, xem chỉ số kinh doanh, xem **`💡 AI Ice-breakers (3 Câu hỏi gợi mở để VC hỏi Founder)`**, ghi chép `Investor Notes` thẩm định và tạo Email Follow-up tự động.
   - **Thuật toán Xếp lịch Tăng dần & Khóa Cố định (Slot-Locking Incremental Scheduler):** Khóa cứng giờ họp, số bàn, ghi chú và trạng thái của các cuộc hẹn đã chốt lịch, chỉ phân bổ khung giờ và bàn còn trống cho các cặp mới mà không làm xáo trộn lịch cũ.
 - **Hệ thống Chỉ số Đo lường Động học (100% Dynamic Post-Event Analytics):**
   - "Avg AI Match Score": Tính trung bình cộng chuẩn xác theo danh sách các cặp đấu thực tế.
