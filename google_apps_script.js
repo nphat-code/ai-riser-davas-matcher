@@ -57,6 +57,9 @@ function doPost(e) {
         "Scheduled"
       ]);
 
+      // Xóa cache cũ để request tiếp theo cập nhật dữ liệu mới nhất
+      try { CacheService.getScriptCache().remove("davas_full_data"); } catch (ce) {}
+
       return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Match saved to Google Sheets" }))
         .setMimeType(ContentService.MimeType.JSON);
     }
@@ -81,6 +84,8 @@ function doPost(e) {
           }
         });
       }
+      try { CacheService.getScriptCache().remove("davas_full_data"); } catch (ce) {}
+
       return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Schedule updated in Google Sheets" }))
         .setMimeType(ContentService.MimeType.JSON);
     }
@@ -124,6 +129,8 @@ function doPost(e) {
           }
         }
       }
+      try { CacheService.getScriptCache().remove("davas_full_data"); } catch (ce) {}
+
       return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Follow-up saved to Google Sheets" }))
         .setMimeType(ContentService.MimeType.JSON);
     }
@@ -206,38 +213,57 @@ function createCalendarEvent(startupEmail, investorEmail, startupName, investorN
 }
 
 // =========================================================================
-// GIAI ĐOẠN 4: TẠO API (GET) CHO REACT WEB DASHBOARD
+// GIAI ĐOẠN 4: TẠO API (GET) CHO REACT WEB DASHBOARD (HIGH-SPEED CACHE)
 // =========================================================================
 
 /**
  * Hàm doGet: Trả về danh sách Startups, Investors và các Matches đã lưu từ trước
+ * Tối ưu hóa siêu tốc bằng CacheService của Google (~0.2s response time)
  */
 function doGet(e) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-  function getSheetData(sheetName) {
-    const sheet = ss.getSheetByName(sheetName);
-    if (!sheet) return [];
-    const data = sheet.getDataRange().getValues();
-    if (data.length <= 1) return [];
-    const headers = data[0];
-    const rows = [];
-    for (let i = 1; i < data.length; i++) {
-      let obj = {};
-      for (let j = 0; j < headers.length; j++) {
-        obj[headers[j]] = data[i][j];
-      }
-      rows.push(obj);
+  try {
+    const cache = CacheService.getScriptCache();
+    const cachedData = cache.get("davas_full_data");
+    
+    // Nếu dữ liệu đã có trong RAM Cache của Google, trả về ngay lập tức
+    if (cachedData != null) {
+      return ContentService.createTextOutput(cachedData)
+        .setMimeType(ContentService.MimeType.JSON);
     }
-    return rows;
+
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    function getSheetData(sheetName) {
+      const sheet = ss.getSheetByName(sheetName);
+      if (!sheet) return [];
+      const data = sheet.getDataRange().getValues();
+      if (data.length <= 1) return [];
+      const headers = data[0];
+      const rows = [];
+      for (let i = 1; i < data.length; i++) {
+        let obj = {};
+        for (let j = 0; j < headers.length; j++) {
+          obj[headers[j]] = data[i][j];
+        }
+        rows.push(obj);
+      }
+      return rows;
+    }
+
+    const result = {
+      startups: getSheetData("Startups"),
+      investors: getSheetData("Investors"),
+      matches: getSheetData("Matches")
+    };
+
+    const jsonString = JSON.stringify(result);
+    // Lưu vào RAM Cache của Google trong 1 giờ (3600s)
+    cache.put("davas_full_data", jsonString, 3600);
+
+    return ContentService.createTextOutput(jsonString)
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
-
-  const result = {
-    startups: getSheetData("Startups"),
-    investors: getSheetData("Investors"),
-    matches: getSheetData("Matches")
-  };
-
-  return ContentService.createTextOutput(JSON.stringify(result))
-    .setMimeType(ContentService.MimeType.JSON);
 }

@@ -1465,7 +1465,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                         >
                                             <div className="flex items-center justify-between">
                                                 <span className={`text-[10px] font-bold uppercase tracking-wider ${isSelected ? 'text-cyan-400' : 'text-slate-500'}`}>
-                                                    Ca {idx + 1}
+                                                    SLOT {idx + 1}
                                                 </span>
                                                 <span
                                                     className={`px-1.5 py-0.5 rounded text-[9px] font-bold font-mono ${occupiedCount === 12
