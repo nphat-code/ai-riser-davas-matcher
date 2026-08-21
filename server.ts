@@ -370,59 +370,56 @@ const FALLBACK_INVESTORS = [
   }
 ];
 
+// Cache & Server Pre-warming for instant data retrieval
+let cachedSheetsData: any = null;
+let lastCacheTime = 0;
+const CACHE_TTL_MS = 60 * 1000; // Cache 60s
+
+// Hàm tự động tải sẵn dữ liệu ngay khi Server khởi động
+async function prewarmSheetsData() {
+  const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL?.trim();
+  if (!sheetsApiUrl) return;
+  try {
+    const response = await fetch(sheetsApiUrl, {
+      headers: { "Accept": "application/json" },
+      redirect: "follow",
+    });
+    if (response.ok) {
+      cachedSheetsData = await response.json();
+      lastCacheTime = Date.now();
+      console.log("⚡ [DAVAS] Pre-warmed Google Sheets cache successfully!");
+    }
+  } catch (err: any) {
+    console.warn("Prewarm notice:", err.message);
+  }
+}
+
 // Google Sheets Data Endpoint
 app.get("/api/data", async (_req, res) => {
-  try {
-    const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL?.trim();
-    if (!sheetsApiUrl) {
-      return res.json({
-        startups: FALLBACK_STARTUPS,
-        investors: FALLBACK_INVESTORS,
-        matches: [],
-        source: "fallback",
-        message: "GOOGLE_SHEETS_API_URL not configured, loaded default DAVAS 2026 dataset",
-      });
-    }
-
-    try {
-      const response = await fetch(sheetsApiUrl, {
-        headers: { "Accept": "application/json" },
-        redirect: "follow",
-      });
-
-      if (!response.ok) {
-        console.warn(`Google Sheets API responded with status ${response.status}. Using fallback DAVAS 2026 data.`);
-        return res.json({
-          startups: FALLBACK_STARTUPS,
-          investors: FALLBACK_INVESTORS,
-          matches: [],
-          source: "fallback",
-          warning: `Google Sheets API responded with status ${response.status}`,
-        });
-      }
-
-      const data = await response.json();
-      return res.json(data);
-    } catch (fetchErr: any) {
-      console.warn("Google Sheets fetch error, returning fallback data:", fetchErr.message);
-      return res.json({
-        startups: FALLBACK_STARTUPS,
-        investors: FALLBACK_INVESTORS,
-        matches: [],
-        source: "fallback",
-        warning: fetchErr.message,
-      });
-    }
-  } catch (error: any) {
-    console.warn("Google Sheets API endpoint handler warning:", error.message);
-    return res.json({
-      startups: FALLBACK_STARTUPS,
-      investors: FALLBACK_INVESTORS,
-      matches: [],
-      source: "fallback",
-      warning: error.message,
-    });
+  const now = Date.now();
+  if (cachedSheetsData && (now - lastCacheTime < CACHE_TTL_MS)) {
+    return res.json(cachedSheetsData);
   }
+
+  // Nếu chưa có hoặc hết hạn thì fetch mới và cập nhật cache
+  const sheetsApiUrl = process.env.GOOGLE_SHEETS_API_URL?.trim();
+  if (!sheetsApiUrl) {
+    return res.json({ startups: FALLBACK_STARTUPS, investors: FALLBACK_INVESTORS, matches: [] });
+  }
+
+  try {
+    const response = await fetch(sheetsApiUrl, {
+      headers: { "Accept": "application/json" },
+      redirect: "follow",
+    });
+    if (response.ok) {
+      cachedSheetsData = await response.json();
+      lastCacheTime = Date.now();
+      return res.json(cachedSheetsData);
+    }
+  } catch (e) { }
+
+  return res.json(cachedSheetsData || { startups: FALLBACK_STARTUPS, investors: FALLBACK_INVESTORS, matches: [] });
 });
 
 // Save Match to Google Sheets Endpoint
@@ -596,6 +593,8 @@ async function startServer() {
 
   const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`DavaSync Full-Stack Server running on http://0.0.0.0:${PORT}`);
+    // Run pre-warming in background
+    prewarmSheetsData();
   });
 
   server.on("error", (err: any) => {
