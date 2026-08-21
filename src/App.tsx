@@ -391,6 +391,45 @@ export default function App() {
         return bestScore;
     };
 
+    // Helper to parse funding strings into numeric USD values
+    const parseFundingAmount = (text: string): number => {
+        if (!text) return 0;
+        const cleanStr = text.replace(/,/g, '').trim();
+        const numMatch = cleanStr.match(/([\d.]+)\s*([KkMmBb])?/);
+        if (!numMatch) return 0;
+        let val = parseFloat(numMatch[1]);
+        if (isNaN(val)) return 0;
+        const unit = numMatch[2]?.toUpperCase();
+        if (unit === 'K') val *= 1_000;
+        else if (unit === 'M') val *= 1_000_000;
+        else if (unit === 'B') val *= 1_000_000_000;
+        return val;
+    };
+
+    // Helper to parse max ticket size from investor range (e.g. "$250k - $1M", "Up to $1M", "$2M+")
+    const parseMaxTicketSize = (rangeStr: string): number => {
+        if (!rangeStr) return Infinity;
+        const cleanStr = rangeStr.replace(/,/g, '');
+        const matches = Array.from(cleanStr.matchAll(/([\d.]+)\s*([KkMmBb])?/g));
+        if (matches.length === 0) return Infinity;
+
+        let maxVal = 0;
+        for (const match of matches) {
+            let val = parseFloat(match[1]);
+            if (isNaN(val)) continue;
+            const unit = match[2]?.toUpperCase();
+            if (unit === 'K') val *= 1_000;
+            else if (unit === 'M') val *= 1_000_000;
+            else if (unit === 'B') val *= 1_000_000_000;
+            else if (val <= 100 && !unit) {
+                val *= 1_000_000;
+            }
+            if (val > maxVal) maxVal = val;
+        }
+
+        return maxVal > 0 ? maxVal : Infinity;
+    };
+
     // Find the best-fit investor for a selected startup
     const findBestFitInvestor = (
         startup: Startup,
@@ -422,18 +461,27 @@ export default function App() {
                 }
             }
 
-            // 2. Stage Alignment
+            // 2. Stage Alignment & Penalty
             const preferredStages = investor.preferredStages || [];
-            const startupStage = (startup.stage || '').toLowerCase();
+            const startupStage = (startup.stage || '').toLowerCase().trim();
             const hasStageMatch = preferredStages.some((st) => {
-                const normSt = st.toLowerCase();
-                return normSt.includes(startupStage) || startupStage.includes(normSt);
+                const normSt = st.toLowerCase().trim();
+                return normSt === startupStage || normSt.includes(startupStage) || startupStage.includes(normSt);
             });
             if (hasStageMatch) {
-                score += 25;
+                score += 40; // Trùng khớp hoàn toàn Stage
+            } else {
+                score -= 35; // Lệch Stage (ví dụ Startup Series A mà Quỹ chỉ Pre-Seed)
             }
 
-            // 3. Duplicate Pairing Penalty (avoid pairing the same startup and investor twice if alternatives exist)
+            // 3. Ticket Size (Quy mô vốn) Matching & Over-ask Penalty
+            const startupAsk = parseFundingAmount(startup.targetAsk);
+            const investorMaxTicket = parseMaxTicketSize(investor.ticketSizeRange);
+            if (startupAsk > 0 && investorMaxTicket > 0 && investorMaxTicket !== Infinity && startupAsk > investorMaxTicket) {
+                score -= 50; // Vốn gọi vượt quá khả năng chi trả của Quỹ
+            }
+
+            // 4. Duplicate Pairing Penalty (avoid pairing the same startup and investor twice if alternatives exist)
             const alreadyPaired = existingMatches.some(
                 (m) =>
                     (m.startupId === startup.id && m.investorId === investor.id) ||
@@ -443,7 +491,7 @@ export default function App() {
                 score -= 60;
             }
 
-            // 4. Meeting Load Balancing
+            // 5. Meeting Load Balancing
             const totalInvestorMeetings = existingMatches.filter(
                 (m) => m.investorId === investor.id || m.investor?.firm === investor.firm
             ).length;
@@ -455,10 +503,8 @@ export default function App() {
         // Sort descending by score
         scored.sort((a, b) => b.score - a.score);
 
-        // Pick among the highest scoring candidates
-        const topScore = scored[0].score;
-        const topCandidates = scored.filter((s) => s.score >= topScore - 5);
-        return topCandidates[Math.floor(Math.random() * topCandidates.length)].investor;
+        // Luôn chọn ứng viên tốt nhất số 1
+        return scored[0].investor;
     };
 
     // Helper to validate if an argument is a true Startup object and not a React Event
