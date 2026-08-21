@@ -45,9 +45,10 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
 - **Chuẩn hóa Toàn diện Bộ Dữ liệu (62 Startups & 31 Investors):**
   - Cập nhật 62 Startups với tên gọi, người đại diện, vòng gọi vốn và ngành nghề khớp 100% (không còn tình trạng tên Edu đi với Cleantech).
   - Cập nhật 31 Quỹ đầu tư với câu Investment Thesis độc bản, chuẩn văn phong VC quốc tế trong `davas_investors.csv` và `davas_startups.csv`.
-- **UI/UX Phân trang, Tìm kiếm & Persona Switcher:** 
+- **UI/UX Phân trang, Tìm kiếm & Quản lý Hội trường 12 Bàn (Master Floor Matrix):** 
   - Tích hợp bộ lọc ngành và phân trang (8 items/trang) cho 62 Startups và 31 Investors, kèm nút "Match VC" trực tiếp trên từng dòng.
   - Tích hợp "Investor Persona Switcher" trong Participant Portal cho phép chuyển đổi và kiểm tra lịch riêng biệt của 31 VCs.
+  - **Tab "🏛️ Summit Tables (12 Tables Floor Matrix)":** Ma trận điều phối 12 bàn theo 4 Zone (Zone A - Alpha Suite, Zone B - Beta Suite, Zone C - Gamma Suite, Zone D - Delta Suite) và 8 ca họp trong ngày, kèm máy đo tỷ lệ lấp đầy bàn (Occupancy Rate Telemetry) và trạng thái `Available / Occupied` trực quan.
 - **Đồng bộ Lịch Trình & Cập nhật Hai Chiều với Google Sheets:**
   - Đồng bộ `save_match`, `update_schedule` và `save_followup` vào tab `Matches` trên Google Sheets (cột T: Investor_Notes, cột U: AI_Followup_Draft, cột V: Deal_Outcome).
   - Tự động hydrate (khôi phục) toàn bộ nội dung ghi chú và bản thảo email khi F5 tải lại trang.
