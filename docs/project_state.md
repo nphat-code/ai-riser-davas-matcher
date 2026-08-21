@@ -40,7 +40,7 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
 - Tự động hóa gửi email và đặt lịch 1:1 trên Google Calendar bằng Apps Script cho từng cặp Match.
 
 **6. Giai đoạn 6: Thuật toán Best-Fit Smart Matchmaking & Dữ liệu Chuẩn hóa (Đã hoàn thành)**
-- **Semantic Sector, Stage & Ticket Size Scoring:** Thuật toán bóc tách từ khóa (tokenization), so khớp ngữ nghĩa ngành nghề, lọc quy mô vốn gọi (Ticket Size Matching) và phạt lệch vòng gọi vốn.
+- **Semantic Sector, Stage & Ticket Size Scoring:** Thuật toán bóc tách từ khóa (tokenization), so khớp ngữ nghĩa ngành nghề, tính điểm thưởng đa ngành (Multi-sector Overlap Bonus), quét sâu ngữ nghĩa luận điểm đầu tư (Thesis Deep Scanning), lọc quy mô vốn gọi (Ticket Size Matching) và phạt lệch vòng gọi vốn.
 - **Tối ưu hóa đa tiêu chí (100% Deterministic Best-Fit):** Tích hợp trọng số khẩu vị đầu tư (Thesis), phạt vốn vượt trần quỹ (`-50pts`), phạt lệch Stage (`-35pts`), phạt chống trùng lặp cặp match (`-60pts`) và cơ chế cân bằng tải (`Load Balancing`), loại bỏ ngẫu nhiên để luôn luôn chọn ra Quỹ đầu tư phù hợp nhất số 1 ngay lần bấm đầu tiên.
 - **Chuẩn hóa Toàn diện Bộ Dữ liệu (62 Startups & 31 Investors):**
   - Cập nhật 62 Startups với tên gọi, người đại diện, vòng gọi vốn và ngành nghề khớp 100% (không còn tình trạng tên Edu đi với Cleantech).
