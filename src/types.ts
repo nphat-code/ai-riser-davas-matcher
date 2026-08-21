@@ -53,7 +53,7 @@ export interface MatchPair {
     startup: Startup;
     investor: Investor;
     analysis: AIMatchAnalysis;
-    status: 'Pending' | 'Scheduled' | 'Confirmed' | 'Completed';
+    status: 'Pending' | 'Pending Schedule' | 'Scheduled' | 'Confirmed' | 'Completed';
     recommendedTable?: string;
 }
 

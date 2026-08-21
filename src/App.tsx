@@ -600,8 +600,8 @@ export default function App() {
                 investorId: bestInvestor.id,
                 startup: chosenStartup,
                 investor: bestInvestor,
-                status: 'Scheduled',
-                recommendedTable: `Table ${String.fromCharCode(65 + Math.floor(Math.random() * 4))}${Math.floor(Math.random() * 3) + 1}`,
+                status: 'Pending Schedule', // Trạng thái ban đầu
+                recommendedTable: 'Table TBD', // Chưa phân bổ bàn
                 analysis: {
                     matching_score: analysis.matching_score || 95,
                     reason: analysis.reason || 'Strong synergy across sector targets and stage funding.',
@@ -664,6 +664,26 @@ export default function App() {
             const optimizedSlots = generateSmartSchedule(matches, scheduleSlots);
 
             setScheduleSlots(optimizedSlots);
+
+            // Cập nhật lại bàn chính thức và trạng thái 'Scheduled' cho các cặp trong matches
+            setMatches((prevMatches) =>
+                prevMatches.map((m) => {
+                    const assignedSlot = optimizedSlots.find(
+                        (s) =>
+                            (s.startup.id === m.startup.id && s.investor.id === m.investor.id) ||
+                            (s.startup.name === m.startup.name && s.investor.firm === m.investor.firm)
+                    );
+                    if (assignedSlot) {
+                        return {
+                            ...m,
+                            status: 'Scheduled',
+                            recommendedTable: assignedSlot.table,
+                        };
+                    }
+                    return m;
+                })
+            );
+
             setStats((prev) => ({
                 ...prev,
                 scheduledMeetings: optimizedSlots.length,
