@@ -57,23 +57,11 @@ export default function App() {
     // Toast Notification
     const [toast, setToast] = useState<ToastState | null>(null);
 
-    const showToast = (msg: string, type?: 'success' | 'info' | 'error' | 'ai') => {
-        let resolvedType = type;
-        if (!resolvedType) {
-            if (msg.includes('🤖') || msg.includes('✨') || msg.includes('AI') || msg.includes('Smart Match')) {
-                resolvedType = 'ai';
-            } else if (msg.includes('⚠️') || msg.includes('Failed') || msg.includes('error')) {
-                resolvedType = 'error';
-            } else if (msg.includes('✅') || msg.includes('Successfully') || msg.includes('saved')) {
-                resolvedType = 'success';
-            } else {
-                resolvedType = 'info';
-            }
-        }
+    const showToast = (msg: string, type: 'success' | 'info' | 'error' | 'ai' = 'info') => {
         setToast({
             id: `toast-${Date.now()}`,
-            message: msg.replace(/^[🤖✨⚠️✅📊📅]\s*/, ''),
-            type: resolvedType,
+            message: msg,
+            type,
         });
         setTimeout(() => {
             setToast(null);
@@ -369,7 +357,7 @@ export default function App() {
                             avgMatchScore: avgScore,
                         };
                     });
-                    showToast('📊 Loaded live data & matches from Google Sheets API');
+                    showToast('Loaded live data & matches from Google Sheets API', 'success');
                 }
             } catch (err) {
                 console.warn('Could not load live Google Sheets data, using default fallback data:', err);
@@ -612,7 +600,7 @@ export default function App() {
     // Handler: Run Best-Fit Smart Matchmaking
     const handleRunMatchmaking = async (targetStartup?: Startup | unknown) => {
         if (startups.length === 0 || investors.length === 0) {
-            showToast('⚠️ No startups or investors available. Please ensure data is loaded.');
+            showToast('No startups or investors available. Please ensure data is loaded.', 'error');
             return;
         }
 
@@ -642,7 +630,7 @@ export default function App() {
             }
 
             setMatchingStartupId(chosenStartup.id);
-            showToast(`🤖 Gemini AI is analyzing thesis synergy for ${chosenStartup.name}...`);
+            showToast(`Gemini AI is analyzing thesis synergy for ${chosenStartup.name}...`, 'ai');
 
             // 2. Choose Best-Fit Investor matching sector, stage & thesis
             const bestInvestor = findBestFitInvestor(chosenStartup, investors, matches);
@@ -691,7 +679,7 @@ export default function App() {
 
             // Automatically inspect the newly generated AI match
             setInspectPair(newPair);
-            showToast(`✨ Smart Match: ${chosenStartup.name} matched with ${bestInvestor.firm} (${newPair.analysis.matching_score}% Fit)`);
+            showToast(`Smart Match: ${chosenStartup.name} matched with ${bestInvestor.firm} (${newPair.analysis.matching_score}% Fit)`, 'ai');
 
             // Save match to Google Sheets in background
             fetch('/api/matches', {
@@ -709,7 +697,7 @@ export default function App() {
             });
         } catch (err) {
             console.error('Matchmaking error:', err);
-            showToast('⚠️ AI Matchmaking evaluation completed with standard criteria.');
+            showToast('AI Matchmaking evaluation completed with standard criteria.', 'info');
         } finally {
             setIsMatchmakingLoading(false);
             setMatchingStartupId(null);
@@ -719,7 +707,7 @@ export default function App() {
     // Handler: Generate Smart Schedule using Greedy + Priority Algorithm
     const handleGenerateSchedule = async () => {
         if (matches.length === 0) {
-            showToast('⚠️ Please run AI Matchmaking first before generating schedule.');
+            showToast('Please run AI Matchmaking first before generating schedule.', 'error');
             return;
         }
 
@@ -755,7 +743,7 @@ export default function App() {
                 scheduledMeetings: optimizedSlots.length,
             }));
 
-            showToast(`📅 Smart Schedule Generated! ${optimizedSlots.length} 1:1 meetings assigned with zero collisions.`);
+            showToast(`Smart Schedule Generated! ${optimizedSlots.length} 1:1 meetings assigned with zero collisions.`, 'success');
 
             // Send optimized schedule batch to Google Sheets to update Meeting_Time_Slot & Assigned_Table
             const schedulePayload = optimizedSlots.map((slot) => ({
@@ -809,11 +797,11 @@ export default function App() {
                     })
                 );
 
-                showToast('📅 Successfully synced schedule to Google Calendar & Sheets!');
+                showToast('Successfully synced schedule to Google Calendar & Sheets!', 'success');
             }
         } catch (err) {
             console.error('Smart scheduling failed:', err);
-            showToast('⚠️ Failed to generate schedule.');
+            showToast('Failed to generate schedule.', 'error');
         } finally {
             setIsScheduleLoading(false);
         }
@@ -851,7 +839,7 @@ export default function App() {
             });
         }
 
-        showToast('✅ Meeting notes and AI Follow-up draft saved to your schedule.');
+        showToast('Meeting notes and AI Follow-up draft saved to your schedule.', 'success');
     };
 
     return (
