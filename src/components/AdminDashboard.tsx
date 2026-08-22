@@ -17,7 +17,12 @@ import {
     FileText,
     Grid,
     Clock,
-    Loader2
+    Loader2,
+    Activity,
+    Cpu,
+    Database,
+    Cloud,
+    DollarSign
 } from 'lucide-react';
 import { Startup, Investor, MatchPair, MeetingSlot, EventStats } from '../types';
 import { DEFAULT_TIME_SLOTS } from '../utils/scheduler';
@@ -368,45 +373,45 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                     {/* Action Panel Buttons (Run AI Matchmaking & Generate Smart Schedule) */}
                     <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-                        {/* Button 1: Run Matchmaking */}
+                        {/* Button 1: Run Matchmaking (PRIMARY CTA) */}
                         <button
                             onClick={onRunMatchmaking}
                             disabled={isMatchmakingLoading}
-                            className={`px-4 py-2 rounded-md text-xs font-medium transition-colors border cursor-pointer flex items-center gap-2 ${isMatchmakingLoading
-                                    ? 'bg-[#141516] border-[#23252a] text-[#8a8f98] opacity-80 cursor-wait'
-                                    : 'bg-[#141516] hover:bg-[#18191a] text-[#f7f8f8] border-[#34343a] hover:border-[#5e6ad2]'
+                            className={`px-4 py-2 rounded-md text-xs font-medium transition-colors cursor-pointer flex items-center gap-2 ${isMatchmakingLoading
+                                    ? 'bg-[#5e6ad2]/50 text-white opacity-80 cursor-wait'
+                                    : 'bg-[#5e6ad2] hover:bg-[#828fff] text-white shadow-sm'
                                 }`}
                         >
                             {isMatchmakingLoading ? (
                                 <>
-                                    <RefreshCw className="w-3.5 h-3.5 text-[#828fff] animate-spin" />
+                                    <RefreshCw className="w-3.5 h-3.5 text-white animate-spin" />
                                     <span>Evaluating...</span>
                                 </>
                             ) : (
                                 <>
-                                    <Sparkles className="w-3.5 h-3.5 text-[#828fff]" />
+                                    <Sparkles className="w-3.5 h-3.5 text-white" />
                                     <span>Run Matchmaking</span>
                                 </>
                             )}
                         </button>
 
-                        {/* Button 2: Generate Smart Schedule */}
+                        {/* Button 2: Generate Smart Schedule (SECONDARY CTA) */}
                         <button
                             onClick={onGenerateSchedule}
                             disabled={isScheduleLoading}
-                            className={`px-4 py-2 rounded-md text-xs font-medium transition-colors cursor-pointer flex items-center gap-2 ${isScheduleLoading
-                                    ? 'bg-[#5e6ad2]/50 text-white opacity-80 cursor-wait'
-                                    : 'bg-[#5e6ad2] hover:bg-[#828fff] text-white shadow-sm'
+                            className={`px-4 py-2 rounded-md text-xs font-medium transition-colors border cursor-pointer flex items-center gap-2 ${isScheduleLoading
+                                    ? 'bg-[#141516] border-[#23252a] text-[#8a8f98] opacity-80 cursor-wait'
+                                    : 'bg-[#141516] hover:bg-[#18191a] text-[#f7f8f8] border-[#23252a] hover:border-[#34343a]'
                                 }`}
                         >
                             {isScheduleLoading ? (
                                 <>
-                                    <RefreshCw className="w-3.5 h-3.5 text-white animate-spin" />
+                                    <RefreshCw className="w-3.5 h-3.5 text-[#8a8f98] animate-spin" />
                                     <span>Optimizing Slots...</span>
                                 </>
                             ) : (
                                 <>
-                                    <Calendar className="w-3.5 h-3.5 text-white" />
+                                    <Calendar className="w-3.5 h-3.5 text-[#8a8f98]" />
                                     <span>Generate Smart Schedule</span>
                                 </>
                             )}
@@ -425,9 +430,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {/* Total Startups */}
                 <motion.div
                     variants={statCardVariants}
-                    className="bg-[#0f1011] border border-[#23252a] rounded-xl p-5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]"
+                    className="bg-[#0f1011] border border-[#23252a] rounded-xl p-3.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]"
                 >
-                    <div className="flex items-center justify-between text-[#8a8f98] mb-2">
+                    <div className="flex items-center justify-between text-[#8a8f98] mb-1.5">
                         <span className="text-xs font-medium text-[#8a8f98] uppercase tracking-wider">Total Startups</span>
                         <Building2 className="w-4 h-4 text-[#8a8f98]" />
                     </div>
@@ -437,9 +442,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {/* Total Investors */}
                 <motion.div
                     variants={statCardVariants}
-                    className="bg-[#0f1011] border border-[#23252a] rounded-xl p-5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]"
+                    className="bg-[#0f1011] border border-[#23252a] rounded-xl p-3.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]"
                 >
-                    <div className="flex items-center justify-between text-[#8a8f98] mb-2">
+                    <div className="flex items-center justify-between text-[#8a8f98] mb-1.5">
                         <span className="text-xs font-medium text-[#8a8f98] uppercase tracking-wider">Total VCs / Angels</span>
                         <Users className="w-4 h-4 text-[#8a8f98]" />
                     </div>
@@ -449,9 +454,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {/* Scheduled Meetings */}
                 <motion.div
                     variants={statCardVariants}
-                    className="bg-[#0f1011] border border-[#23252a] rounded-xl p-5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]"
+                    className="bg-[#0f1011] border border-[#23252a] rounded-xl p-3.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]"
                 >
-                    <div className="flex items-center justify-between text-[#8a8f98] mb-2">
+                    <div className="flex items-center justify-between text-[#8a8f98] mb-1.5">
                         <span className="text-xs font-medium text-[#8a8f98] uppercase tracking-wider">1:1 Meetings</span>
                         <Calendar className="w-4 h-4 text-[#8a8f98]" />
                     </div>
@@ -461,13 +466,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {/* Avg Match Score */}
                 <motion.div
                     variants={statCardVariants}
-                    className="bg-[#0f1011] border border-[#23252a] rounded-xl p-5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]"
+                    className="bg-[#0f1011] border border-[#23252a] rounded-xl p-3.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]"
                 >
-                    <div className="flex items-center justify-between text-[#8a8f98] mb-2">
+                    <div className="flex items-center justify-between text-[#8a8f98] mb-1.5">
                         <span className="text-xs font-medium text-[#8a8f98] uppercase tracking-wider">Avg Match Score</span>
-                        <Sparkles className="w-4 h-4 text-[#828fff]" />
+                        <Sparkles className="w-4 h-4 text-[#8a8f98]" />
                     </div>
-                    <div className="text-2xl font-semibold text-[#828fff] tracking-tight">
+                    <div className="text-2xl font-semibold text-[#f7f8f8] tracking-tight">
                         {stats.scheduledMeetings === 0 || stats.avgMatchScore === 0 ? '--' : `${stats.avgMatchScore}%`}
                     </div>
                 </motion.div>
@@ -475,13 +480,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {/* Deal Success Rate */}
                 <motion.div
                     variants={statCardVariants}
-                    className="bg-[#0f1011] border border-[#23252a] rounded-xl p-5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]"
+                    className="bg-[#0f1011] border border-[#23252a] rounded-xl p-3.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]"
                 >
-                    <div className="flex items-center justify-between text-[#8a8f98] mb-2">
+                    <div className="flex items-center justify-between text-[#8a8f98] mb-1.5">
                         <span className="text-xs font-medium text-[#8a8f98] uppercase tracking-wider">Deal Conversion</span>
-                        <TrendingUp className="w-4 h-4 text-[#27a644]" />
+                        <TrendingUp className="w-4 h-4 text-[#8a8f98]" />
                     </div>
-                    <div className="text-2xl font-semibold text-[#27a644] tracking-tight">
+                    <div className="text-2xl font-semibold text-[#f7f8f8] tracking-tight">
                         {!stats.dealSuccessRate || stats.dealSuccessRate === 0 ? '--' : `${stats.dealSuccessRate}%`}
                     </div>
                 </motion.div>
@@ -554,190 +559,426 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         transition={{ duration: 0.2 }}
                         className="grid grid-cols-1 lg:grid-cols-3 gap-4"
                     >
-                        {/* Post-Event Deal Success Chart Panel */}
-                        <div className="lg:col-span-2 bg-[#0f1011] p-5 rounded-xl border border-[#23252a] space-y-5">
-                            <div>
-                                <h3 className="text-sm font-semibold text-[#f7f8f8] flex items-center gap-2">
-                                    <TrendingUp className="w-4 h-4 text-[#8a8f98]" />
-                                    <span>Post-Event Analytics: Deal Success & Term Sheet Conversion</span>
-                                </h3>
-                                <p className="text-xs text-[#8a8f98] mt-0.5">
-                                    Conversion rate from 1:1 business matching to term sheets issued at DAVAS
-                                </p>
+                        {/* Left Column: Post-Event Analytics & Capital Pipeline */}
+                        <div className="lg:col-span-2 space-y-4">
+                            {/* Panel 1: Post-Event Deal Success & Deal Flow Density */}
+                            <div className="bg-[#0f1011] p-5 rounded-xl border border-[#23252a] space-y-5">
+                                <div>
+                                    <h3 className="text-sm font-semibold text-[#f7f8f8] flex items-center gap-2">
+                                        <TrendingUp className="w-4 h-4 text-[#8a8f98]" />
+                                        <span>Post-Event Analytics: Deal Success & Term Sheet Conversion</span>
+                                    </h3>
+                                    <p className="text-xs text-[#8a8f98] mt-0.5">
+                                        Conversion rate from 1:1 business matching to term sheets issued at DAVAS
+                                    </p>
+                                </div>
+
+                                {/* Progress Bar & Success Gauge */}
+                                <div className="space-y-3 bg-[#141516] p-4 rounded-lg border border-[#23252a]">
+                                    <div className="flex items-center justify-between text-xs">
+                                        <span className="font-medium text-[#d0d6e0]">Matching-to-Term Sheet Velocity</span>
+                                        <span className="font-mono text-[#828fff]">
+                                            {!stats.dealSuccessRate || stats.dealSuccessRate === 0
+                                                ? 'Pending Data'
+                                                : `${stats.dealSuccessRate}% Target Achieved`}
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-2 bg-[#010102] rounded-full overflow-hidden border border-[#23252a]">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${stats.dealSuccessRate || 0}%` }}
+                                            transition={{ duration: 0.6, ease: 'easeOut' }}
+                                            className="h-full bg-[#5e6ad2] rounded-full"
+                                        />
+                                    </div>
+
+                                    {/* Conversion Funnel Breakdown */}
+                                    <div className="grid grid-cols-3 gap-2 pt-1 text-center">
+                                        <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
+                                            <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Confirmed Slots</div>
+                                            <div className="text-sm font-semibold text-[#f7f8f8] mt-0.5">{stats.scheduledMeetings} Slots</div>
+                                        </div>
+                                        <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
+                                            <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Match Pairs</div>
+                                            <div className="text-sm font-semibold text-[#828fff] mt-0.5">{matches.length}</div>
+                                        </div>
+                                        <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
+                                            <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Target Capital</div>
+                                            <div className="text-sm font-semibold text-[#27a644] mt-0.5">{formattedMatchFunding}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Sector Breakdown Bars */}
+                                <div>
+                                    {(() => {
+                                        if (startups.length === 0) {
+                                            return (
+                                                <div>
+                                                    <h4 className="text-xs font-medium uppercase tracking-wider text-[#8a8f98] mb-2">
+                                                        Deal Flow Density by Sector (0 Startups)
+                                                    </h4>
+                                                    <div className="p-4 rounded-lg bg-[#141516] border border-[#23252a] text-center text-xs text-[#8a8f98]">
+                                                        No startups loaded yet. Data will appear once fetched.
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+
+                                        const sectorCounts: Record<string, number> = {};
+                                        startups.forEach((s) => {
+                                            const rawSector = s.sector || 'General Tech';
+                                            const secList = rawSector.split(',').map((sec) => sec.trim()).filter(Boolean);
+                                            if (secList.length === 0) secList.push('General Tech');
+                                            secList.forEach((sec) => {
+                                                sectorCounts[sec] = (sectorCounts[sec] || 0) + 1;
+                                            });
+                                        });
+
+                                        const sortedSectors = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]);
+                                        const totalUniqueSectors = sortedSectors.length;
+
+                                        const topCount = 5;
+                                        const topSectors = sortedSectors.slice(0, topCount);
+                                        const remainingSectors = sortedSectors.slice(topCount);
+                                        const remainingStartupsCount = remainingSectors.reduce((acc, curr) => acc + curr[1], 0);
+
+                                        const itemsToRender = showAllSectors
+                                            ? sortedSectors
+                                            : [
+                                                ...topSectors,
+                                                ...(remainingSectors.length > 0
+                                                    ? [
+                                                        [
+                                                            `Other Sectors (${remainingSectors.length} categories)`,
+                                                            remainingStartupsCount,
+                                                        ] as [string, number],
+                                                    ]
+                                                    : []),
+                                            ];
+
+                                        return (
+                                            <div className="space-y-2.5">
+                                                <div className="flex items-center justify-between">
+                                                    <h4 className="text-xs font-medium uppercase tracking-wider text-[#8a8f98]">
+                                                        Deal Flow Density by Industry Sector ({startups.length} Startups)
+                                                    </h4>
+                                                    {totalUniqueSectors > topCount && (
+                                                        <button
+                                                            onClick={() => setShowAllSectors(!showAllSectors)}
+                                                            className="px-2 py-0.5 rounded bg-[#141516] hover:bg-[#18191a] text-[#8a8f98] hover:text-[#f7f8f8] border border-[#23252a] text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                                                        >
+                                                            <span>{showAllSectors ? 'Show Top 5' : `View All (${totalUniqueSectors})`}</span>
+                                                            {showAllSectors ? (
+                                                                <ChevronUp className="w-3 h-3" />
+                                                            ) : (
+                                                                <ChevronDown className="w-3 h-3" />
+                                                            )}
+                                                        </button>
+                                                    )}
+                                                </div>
+
+                                                <div
+                                                    className={`space-y-2 ${showAllSectors
+                                                        ? 'max-h-64 overflow-y-auto pr-1'
+                                                        : ''
+                                                        }`}
+                                                >
+                                                    {itemsToRender.map(([sector, count], idx) => {
+                                                        const percent = Math.min(100, Math.max(1, Math.round((count / startups.length) * 100)));
+                                                        const isOther = sector.startsWith('Other Sectors');
+
+                                                        return (
+                                                            <div key={sector} className="space-y-1">
+                                                                <div className="flex justify-between text-xs text-[#d0d6e0]">
+                                                                    <span className={`truncate max-w-[220px] sm:max-w-xs ${isOther ? 'text-[#8a8f98] italic' : ''}`}>
+                                                                        {sector}
+                                                                    </span>
+                                                                    <span className="text-[#8a8f98] text-[11px] shrink-0 ml-2 font-mono">
+                                                                        {count} ({percent}%)
+                                                                    </span>
+                                                                </div>
+                                                                <div className="w-full h-1.5 bg-[#010102] rounded-full overflow-hidden border border-[#23252a]">
+                                                                    <motion.div
+                                                                        initial={{ width: 0 }}
+                                                                        animate={{ width: `${percent}%` }}
+                                                                        transition={{ duration: 0.4, delay: Math.min(idx * 0.04, 0.3) }}
+                                                                        className={`h-full ${isOther ? 'bg-[#34343a]' : 'bg-[#5e6ad2]'} rounded-full`}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+
+                                                <p className="text-[11px] text-[#62666d] pt-1">
+                                                    *Multi-sector taxonomy: Startups may operate across multiple overlapping domains.
+                                                </p>
+                                            </div>
+                                        );
+                                    })()}
+                                </div>
                             </div>
 
-                            {/* Progress Bar & Success Gauge */}
-                            <div className="space-y-3 bg-[#141516] p-4 rounded-lg border border-[#23252a]">
-                                <div className="flex items-center justify-between text-xs">
-                                    <span className="font-medium text-[#d0d6e0]">Matching-to-Term Sheet Velocity</span>
-                                    <span className="font-mono text-[#828fff]">
-                                        {!stats.dealSuccessRate || stats.dealSuccessRate === 0
-                                            ? 'Pending Data'
-                                            : `${stats.dealSuccessRate}% Target Achieved`}
+                            {/* Panel 2: Funding Stage & Capital Pipeline */}
+                            <div className="bg-[#0f1011] p-4 rounded-xl border border-[#23252a] space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <DollarSign className="w-4 h-4 text-[#8a8f98]" />
+                                        <h4 className="text-xs font-semibold text-[#f7f8f8] uppercase tracking-wider">
+                                            Funding Stage & Capital Pipeline
+                                        </h4>
+                                    </div>
+                                    <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#141516] text-[#27a644] border border-[#27a644]/30">
+                                        Total: $44.0M Ask
                                     </span>
                                 </div>
-                                <div className="w-full h-2 bg-[#010102] rounded-full overflow-hidden border border-[#23252a]">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${stats.dealSuccessRate || 0}%` }}
-                                        transition={{ duration: 0.6, ease: 'easeOut' }}
-                                        className="h-full bg-[#5e6ad2] rounded-full"
-                                    />
-                                </div>
 
-                                {/* Conversion Funnel Breakdown */}
-                                <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-                                    <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
-                                        <div className="text-[10px] text-[#8a8f98] uppercase font-mono">1:1 Meetings</div>
-                                        <div className="text-sm font-semibold text-[#f7f8f8] mt-0.5">{stats.scheduledMeetings}</div>
-                                    </div>
-                                    <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
-                                        <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Match Pairs</div>
-                                        <div className="text-sm font-semibold text-[#828fff] mt-0.5">{matches.length}</div>
-                                    </div>
-                                    <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
-                                        <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Target Capital</div>
-                                        <div className="text-sm font-semibold text-[#27a644] mt-0.5">{formattedMatchFunding}</div>
-                                    </div>
+                                {/* Stage Rows (3 interactive rows) */}
+                                <div className="space-y-2.5">
+                                    {[
+                                        {
+                                            stage: 'Seed',
+                                            range: '$200k - $1M',
+                                            count: 38,
+                                            percent: 61,
+                                            ask: '$18.2M',
+                                        },
+                                        {
+                                            stage: 'Series A',
+                                            range: '$1M - $3M',
+                                            count: 16,
+                                            percent: 26,
+                                            ask: '$24.0M',
+                                        },
+                                        {
+                                            stage: 'Pre-Seed',
+                                            range: '< $200k',
+                                            count: 8,
+                                            percent: 13,
+                                            ask: '$1.8M',
+                                        },
+                                    ].map((item, idx) => (
+                                        <div
+                                            key={item.stage}
+                                            className="p-2.5 rounded-lg bg-[#141516] border border-[#23252a] space-y-1.5 hover:border-[#34343a] transition-colors"
+                                        >
+                                            <div className="flex items-center justify-between text-xs">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium text-[#f7f8f8]">{item.stage}</span>
+                                                    <span className="text-[11px] text-[#8a8f98] font-mono">({item.range})</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 font-mono text-[11px]">
+                                                    <span className="text-[#d0d6e0]">{item.count} Startups ({item.percent}%)</span>
+                                                    <span className="text-[#62666d]">&bull;</span>
+                                                    <span className="text-[#828fff]">Ask: {item.ask}</span>
+                                                </div>
+                                            </div>
+                                            <div className="w-full h-1.5 bg-[#010102] rounded-full overflow-hidden border border-[#23252a]">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${item.percent}%` }}
+                                                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                                                    className="h-full bg-[#5e6ad2] rounded-full"
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Sector Breakdown Bars */}
-                            <div>
+                        {/* Right Operational Column: High-Conviction Matches & Floor Telemetry */}
+                        <div className="space-y-4">
+                            {/* Widget 1: Top High-Conviction Matches */}
+                            <div className="bg-[#0f1011] p-4 rounded-xl border border-[#23252a] space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Sparkles className="w-4 h-4 text-[#828fff]" />
+                                        <h3 className="text-xs font-semibold text-[#f7f8f8] uppercase tracking-wider">
+                                            Top High-Conviction Matches
+                                        </h3>
+                                    </div>
+                                    <button
+                                        onClick={() => setActiveTab('matches')}
+                                        className="text-xs font-mono text-[#828fff] hover:text-[#f7f8f8] flex items-center gap-1 cursor-pointer transition-colors"
+                                    >
+                                        <span>View All ({matches.length})</span>
+                                        <ChevronRight className="w-3 h-3" />
+                                    </button>
+                                </div>
+
                                 {(() => {
-                                    if (startups.length === 0) {
+                                    const topMatches = [...matches]
+                                        .sort((a, b) => (b.analysis?.matching_score || 0) - (a.analysis?.matching_score || 0))
+                                        .slice(0, 3);
+
+                                    if (topMatches.length === 0) {
                                         return (
-                                            <div>
-                                                <h4 className="text-xs font-medium uppercase tracking-wider text-[#8a8f98] mb-2">
-                                                    Deal Flow Density by Sector (0 Startups)
-                                                </h4>
-                                                <div className="p-4 rounded-lg bg-[#141516] border border-[#23252a] text-center text-xs text-[#8a8f98]">
-                                                    No startups loaded yet. Data will appear once fetched.
-                                                </div>
+                                            <div className="p-4 rounded-lg bg-[#141516] border border-[#23252a] text-center space-y-1.5">
+                                                <p className="text-xs text-[#8a8f98]">No matches evaluated yet.</p>
+                                                <button
+                                                    onClick={() => onRunMatchmaking()}
+                                                    className="text-xs text-[#828fff] hover:underline cursor-pointer"
+                                                >
+                                                    Run AI Matchmaking &rarr;
+                                                </button>
                                             </div>
                                         );
                                     }
 
-                                    const sectorCounts: Record<string, number> = {};
-                                    startups.forEach((s) => {
-                                        const rawSector = s.sector || 'General Tech';
-                                        const secList = rawSector.split(',').map((sec) => sec.trim()).filter(Boolean);
-                                        if (secList.length === 0) secList.push('General Tech');
-                                        secList.forEach((sec) => {
-                                            sectorCounts[sec] = (sectorCounts[sec] || 0) + 1;
-                                        });
-                                    });
-
-                                    const sortedSectors = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]);
-                                    const totalUniqueSectors = sortedSectors.length;
-
-                                    const topCount = 5;
-                                    const topSectors = sortedSectors.slice(0, topCount);
-                                    const remainingSectors = sortedSectors.slice(topCount);
-                                    const remainingStartupsCount = remainingSectors.reduce((acc, curr) => acc + curr[1], 0);
-
-                                    const itemsToRender = showAllSectors
-                                        ? sortedSectors
-                                        : [
-                                            ...topSectors,
-                                            ...(remainingSectors.length > 0
-                                                ? [
-                                                    [
-                                                        `Other Sectors (${remainingSectors.length} categories)`,
-                                                        remainingStartupsCount,
-                                                    ] as [string, number],
-                                                ]
-                                                : []),
-                                        ];
-
                                     return (
-                                        <div className="space-y-2.5">
-                                            <div className="flex items-center justify-between">
-                                                <h4 className="text-xs font-medium uppercase tracking-wider text-[#8a8f98]">
-                                                    Deal Flow Density by Industry Sector ({startups.length} Startups)
-                                                </h4>
-                                                {totalUniqueSectors > topCount && (
-                                                    <button
-                                                        onClick={() => setShowAllSectors(!showAllSectors)}
-                                                        className="px-2 py-0.5 rounded bg-[#141516] hover:bg-[#18191a] text-[#8a8f98] hover:text-[#f7f8f8] border border-[#23252a] text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer"
-                                                    >
-                                                        <span>{showAllSectors ? 'Show Top 5' : `View All (${totalUniqueSectors})`}</span>
-                                                        {showAllSectors ? (
-                                                            <ChevronUp className="w-3 h-3" />
-                                                        ) : (
-                                                            <ChevronDown className="w-3 h-3" />
-                                                        )}
-                                                    </button>
-                                                )}
-                                            </div>
-
-                                            <div
-                                                className={`space-y-2 ${showAllSectors
-                                                    ? 'max-h-64 overflow-y-auto pr-1'
-                                                    : ''
-                                                    }`}
-                                            >
-                                                {itemsToRender.map(([sector, count], idx) => {
-                                                    const percent = Math.round((count / startups.length) * 100);
-                                                    const isOther = sector.startsWith('Other Sectors');
-
-                                                    return (
-                                                        <div key={sector} className="space-y-1">
-                                                            <div className="flex justify-between text-xs text-[#d0d6e0]">
-                                                                <span className={`truncate max-w-[220px] sm:max-w-xs ${isOther ? 'text-[#8a8f98] italic' : ''}`}>
-                                                                    {sector}
-                                                                </span>
-                                                                <span className="text-[#8a8f98] text-[11px] shrink-0 ml-2 font-mono">
-                                                                    {count} ({percent}%)
-                                                                </span>
-                                                            </div>
-                                                            <div className="w-full h-1.5 bg-[#010102] rounded-full overflow-hidden border border-[#23252a]">
-                                                                <motion.div
-                                                                    initial={{ width: 0 }}
-                                                                    animate={{ width: `${Math.max(percent, 2)}%` }}
-                                                                    transition={{ duration: 0.4, delay: Math.min(idx * 0.04, 0.3) }}
-                                                                    className={`h-full ${isOther ? 'bg-[#34343a]' : 'bg-[#5e6ad2]'} rounded-full`}
-                                                                />
-                                                            </div>
+                                        <div className="space-y-2">
+                                            {topMatches.map((pair) => (
+                                                <div
+                                                    key={pair.id}
+                                                    className="p-3 rounded-lg bg-[#141516] border border-[#23252a] hover:border-[#34343a] transition-all space-y-2"
+                                                >
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        {/* Startup & Investor Identity */}
+                                                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                                                            <img
+                                                                src={pair.startup?.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=80&q=80'}
+                                                                alt={pair.startup?.name}
+                                                                className="w-6 h-6 rounded-md object-cover border border-[#23252a] shrink-0"
+                                                            />
+                                                            <span className="text-xs font-medium text-[#f7f8f8] truncate max-w-[90px] sm:max-w-[120px]">
+                                                                {pair.startup?.name}
+                                                            </span>
+                                                            <span className="text-[#62666d] text-xs font-mono">&times;</span>
+                                                            <img
+                                                                src={pair.investor?.avatar || 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=80&q=80'}
+                                                                alt={pair.investor?.name}
+                                                                className="w-6 h-6 rounded-full object-cover border border-[#23252a] shrink-0"
+                                                            />
+                                                            <span className="text-xs font-medium text-[#d0d6e0] truncate max-w-[90px] sm:max-w-[120px]">
+                                                                {pair.investor?.firm}
+                                                            </span>
                                                         </div>
-                                                    );
-                                                })}
-                                            </div>
+
+                                                        {/* Synergy Score Badge & Inspect */}
+                                                        <div className="flex items-center gap-1.5 shrink-0">
+                                                            <span className="font-mono text-xs text-[#828fff] bg-[#5e6ad2]/15 border border-[#5e6ad2]/30 px-2 py-0.5 rounded flex items-center gap-1">
+                                                                <Sparkles className="w-3 h-3 text-[#828fff]" />
+                                                                {pair.analysis?.matching_score || 0}%
+                                                            </span>
+                                                            <button
+                                                                onClick={() => onInspectMatch(pair)}
+                                                                className="text-[11px] font-medium text-[#828fff] hover:text-[#f7f8f8] bg-[#0f1011] hover:bg-[#18191a] border border-[#23252a] hover:border-[#34343a] px-2 py-0.5 rounded cursor-pointer transition-colors"
+                                                            >
+                                                                Inspect
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* 1-Line Reason Summary */}
+                                                    <p className="text-[11px] text-[#8a8f98] truncate leading-relaxed">
+                                                        {pair.analysis?.reason || 'Synergistic sector alignment & funding stage fit.'}
+                                                    </p>
+                                                </div>
+                                            ))}
                                         </div>
                                     );
                                 })()}
                             </div>
-                        </div>
 
-                        {/* Quick AI Match Engine Highlights */}
-                        <div className="bg-[#0f1011] p-5 rounded-xl border border-[#23252a] space-y-4">
-                            <div>
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Sparkles className="w-4 h-4 text-[#828fff]" />
-                                    <h3 className="text-sm font-semibold text-[#f7f8f8]">4-Pillar Evaluation Logic</h3>
+                            {/* Widget 2: Summit Floor & Zone Telemetry */}
+                            <div className="bg-[#0f1011] p-4 rounded-xl border border-[#23252a] space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Grid className="w-4 h-4 text-[#8a8f98]" />
+                                        <h3 className="text-xs font-semibold text-[#f7f8f8] uppercase tracking-wider">
+                                            Summit Floor & Zone Telemetry
+                                        </h3>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#141516] text-[#8a8f98] border border-[#23252a]">
+                                            12 Designated Tables
+                                        </span>
+                                        <button
+                                            onClick={() => setActiveTab('tables')}
+                                            className="text-xs font-mono text-[#828fff] hover:text-[#f7f8f8] flex items-center gap-1 cursor-pointer transition-colors"
+                                        >
+                                            <span>Manage</span>
+                                            <ChevronRight className="w-3 h-3" />
+                                        </button>
+                                    </div>
                                 </div>
-                                <p className="text-xs text-[#8a8f98] leading-relaxed">
-                                    DavaSync evaluates 4 core investment pillars with automated scoring:
-                                </p>
 
-                                <ul className="mt-3.5 space-y-2 text-xs text-[#8a8f98]">
-                                    <li className="flex items-start gap-2 bg-[#141516] p-2.5 rounded-md border border-[#23252a]">
-                                        <CheckCircle2 className="w-3.5 h-3.5 text-[#5e6ad2] shrink-0 mt-0.5" />
-                                        <span><strong className="text-[#f7f8f8]">Sector Fit:</strong> Maps startup taxonomy directly against VC mandate focus areas.</span>
-                                    </li>
-                                    <li className="flex items-start gap-2 bg-[#141516] p-2.5 rounded-md border border-[#23252a]">
-                                        <CheckCircle2 className="w-3.5 h-3.5 text-[#5e6ad2] shrink-0 mt-0.5" />
-                                        <span><strong className="text-[#f7f8f8]">Funding Stage:</strong> Pre-Seed, Seed, and Series A stage check alignment.</span>
-                                    </li>
-                                    <li className="flex items-start gap-2 bg-[#141516] p-2.5 rounded-md border border-[#23252a]">
-                                        <CheckCircle2 className="w-3.5 h-3.5 text-[#5e6ad2] shrink-0 mt-0.5" />
-                                        <span><strong className="text-[#f7f8f8]">Ticket Size:</strong> Matches requested round size against VC minimum/maximum ticket ranges.</span>
-                                    </li>
-                                    <li className="flex items-start gap-2 bg-[#141516] p-2.5 rounded-md border border-[#23252a]">
-                                        <CheckCircle2 className="w-3.5 h-3.5 text-[#5e6ad2] shrink-0 mt-0.5" />
-                                        <span><strong className="text-[#f7f8f8]">Thesis Alignment:</strong> Strategic match with founder background and regional market expansion.</span>
-                                    </li>
-                                </ul>
+                                {/* 4 Zones Mini Grid */}
+                                {(() => {
+                                    const zoneTelemetry = [
+                                        {
+                                            name: 'Zone A',
+                                            subtitle: 'Alpha Suite (HealthTech & AI)',
+                                            tables: ['Table A1', 'Table A2', 'Table A3'],
+                                        },
+                                        {
+                                            name: 'Zone B',
+                                            subtitle: 'Beta Suite (FinTech & SaaS)',
+                                            tables: ['Table B1', 'Table B2', 'Table B3'],
+                                        },
+                                        {
+                                            name: 'Zone C',
+                                            subtitle: 'Gamma Suite (GreenTech)',
+                                            tables: ['Table C1', 'Table C2', 'Table C3'],
+                                        },
+                                        {
+                                            name: 'Zone D',
+                                            subtitle: 'Delta Suite (AgriTech & IoT)',
+                                            tables: ['Table D1', 'Table D2', 'Table D3'],
+                                        },
+                                    ].map((zone) => {
+                                        const occupiedCount = zone.tables.filter((t) =>
+                                            scheduleSlots.some((s) => s.table === t)
+                                        ).length;
+                                        const availableCount = zone.tables.length - occupiedCount;
+                                        return {
+                                            ...zone,
+                                            occupiedCount,
+                                            availableCount,
+                                        };
+                                    });
+
+                                    return (
+                                        <div className="grid grid-cols-2 gap-2">
+                                            {zoneTelemetry.map((z) => (
+                                                <div
+                                                    key={z.name}
+                                                    className="p-2.5 rounded-lg bg-[#141516] border border-[#23252a] space-y-1"
+                                                >
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-xs font-medium text-[#f7f8f8]">{z.name}</span>
+                                                        <span
+                                                            className={`w-1.5 h-1.5 rounded-full ${z.occupiedCount > 0 ? 'bg-[#27a644]' : 'bg-[#62666d]'
+                                                                }`}
+                                                        />
+                                                    </div>
+                                                    <p className="text-[10px] text-[#8a8f98] truncate">{z.subtitle}</p>
+                                                    <div className="flex items-center justify-between text-[11px] font-mono pt-1 border-t border-[#23252a]/60">
+                                                        <span className="text-[#8a8f98]">
+                                                            Occupied: <strong className="text-[#828fff]">{z.occupiedCount}/3</strong>
+                                                        </span>
+                                                        <span className="text-[#8a8f98]">
+                                                            Avail: <strong className="text-[#27a644]">{z.availableCount}</strong>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    );
+                                })()}
+
+                                {/* Next Upcoming Session Notification Bar */}
+                                <div className="p-2.5 rounded-lg bg-[#141516] border border-[#23252a] flex items-center justify-between text-xs">
+                                    <div className="flex items-center gap-2 text-[#d0d6e0]">
+                                        <Clock className="w-3.5 h-3.5 text-[#828fff]" />
+                                        <span className="font-medium">Next Session: 13:00 - 13:30</span>
+                                    </div>
+                                    <span className="text-[10px] font-mono text-[#8a8f98] bg-[#0f1011] px-2 py-0.5 rounded border border-[#23252a]">
+                                        Grand Ballroom
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </motion.div>
