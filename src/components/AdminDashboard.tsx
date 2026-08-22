@@ -24,7 +24,8 @@ import {
     ShieldCheck,
     Layers,
     MapPin,
-    Radio
+    Radio,
+    Loader2
 } from 'lucide-react';
 import { Startup, Investor, MatchPair, MeetingSlot, EventStats } from '../types';
 import { DEFAULT_TIME_SLOTS } from '../utils/scheduler';
@@ -40,6 +41,7 @@ interface AdminDashboardProps {
     onRunMatchmaking: (targetStartup?: Startup) => void;
     onGenerateSchedule: () => void;
     isMatchmakingLoading: boolean;
+    matchingStartupId?: string | null;
     isScheduleLoading: boolean;
     onInspectMatch: (pair: MatchPair) => void;
 }
@@ -130,6 +132,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     onRunMatchmaking,
     onGenerateSchedule,
     isMatchmakingLoading,
+    matchingStartupId,
     isScheduleLoading,
     onInspectMatch,
 }) => {
@@ -1136,15 +1139,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                                     <div className="text-[10px] text-emerald-400">{s.metrics?.growthRate || ''}</div>
                                                 </td>
                                                 <td className="py-3 px-4 whitespace-nowrap">
-                                                    <motion.button
-                                                        whileHover={{ scale: 1.05 }}
-                                                        whileTap={{ scale: 0.95 }}
-                                                        onClick={() => onRunMatchmaking(s)}
-                                                        disabled={isMatchmakingLoading}
-                                                        className="px-3 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition-all cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                                                    >
-                                                        Match VC
-                                                    </motion.button>
+                                                    {(() => {
+                                                        const isThisMatching = matchingStartupId === s.id;
+                                                        return (
+                                                            <motion.button
+                                                                whileHover={!isMatchmakingLoading ? { scale: 1.05 } : undefined}
+                                                                whileTap={!isMatchmakingLoading ? { scale: 0.95 } : undefined}
+                                                                onClick={() => onRunMatchmaking(s)}
+                                                                disabled={isMatchmakingLoading}
+                                                                className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm disabled:cursor-not-allowed ${isThisMatching
+                                                                        ? 'bg-indigo-600 text-white border border-indigo-400 animate-pulse shadow-lg shadow-indigo-500/30'
+                                                                        : 'bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/30 disabled:opacity-40'
+                                                                    }`}
+                                                            >
+                                                                {isThisMatching ? (
+                                                                    <>
+                                                                        <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-200" />
+                                                                        <span>AI Matching...</span>
+                                                                    </>
+                                                                ) : (
+                                                                    <span>Match VC</span>
+                                                                )}
+                                                            </motion.button>
+                                                        );
+                                                    })()}
                                                 </td>
                                             </motion.tr>
                                         ))

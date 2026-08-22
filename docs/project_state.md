@@ -58,6 +58,10 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
   - **Cổng Thông Tin Đại Biểu 2 Chiều (2-Way Dual Persona Portal - 31 Investors 🤝 62 Startups):** 
     * Cho phép chuyển đổi linh hoạt giữa góc nhìn **`💼 Investor (31)`** và **`🚀 Startup (62)`**.
     * Khi ở vai trò **Startup Founder**: Tự động hiển thị thẻ hồ sơ Quỹ VC đối tác (Tên Quỹ, Đại diện, Ticket Size, Bàn họp), xem **`🎯 Pitch Prep (3 Chủ đề VC sẽ chất vấn)`** để chuẩn bị kịch bản trước cuộc gặp, xem phản hồi của Quỹ sau cuộc họp, và nhận gợi ý Workshop Day 1 & Day 2 theo ngành nghề.
+  - **Tối ưu Trải nghiệm Phản hồi Tức thì cho Nút "Match VC" (Instant Visual Feedback & Row-level Loader):**
+    * Bổ sung state `matchingStartupId` theo dõi chính xác Startup nào đang được ghép cặp.
+    * Khi click `Match VC`, hiển thị ngay Toast thông báo tức thì `"🤖 Gemini AI is analyzing thesis synergy for [Startup Name]..."`.
+    * Nút "Match VC" của dòng tương ứng chuyển đổi mượt mà sang icon xoay vòng `Loader2` + text `"AI Matching..."` cùng hiệu ứng viền phát sáng `animate-pulse shadow-indigo-500/30`, đồng thời vô hiệu hóa các nút còn lại để tránh spam click.
     * Khi ở vai trò **Investor**: Xem danh sách Startups gặp trong ngày, xem chỉ số kinh doanh, xem **`💡 AI Ice-breakers (3 Câu hỏi gợi mở để VC hỏi Founder)`**, ghi chép `Investor Notes` thẩm định và tạo Email Follow-up tự động.
   - **Thuật toán Xếp lịch Tăng dần & Khóa Cố định (Slot-Locking Incremental Scheduler):** Khóa cứng giờ họp, số bàn, ghi chú và trạng thái của các cuộc hẹn đã chốt lịch, chỉ phân bổ khung giờ và bàn còn trống cho các cặp mới mà không làm xáo trộn lịch cũ.
 - **Hệ thống Chỉ số Đo lường Động học (100% Dynamic Post-Event Analytics):**

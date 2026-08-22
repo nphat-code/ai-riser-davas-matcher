@@ -40,6 +40,7 @@ export default function App() {
 
     // Loading States
     const [isMatchmakingLoading, setIsMatchmakingLoading] = useState(false);
+    const [matchingStartupId, setMatchingStartupId] = useState<string | null>(null);
     const [isScheduleLoading, setIsScheduleLoading] = useState(false);
 
     // Modals
@@ -580,6 +581,9 @@ export default function App() {
                 }
             }
 
+            setMatchingStartupId(chosenStartup.id);
+            showToast(`🤖 Gemini AI is analyzing thesis synergy for ${chosenStartup.name}...`);
+
             // 2. Choose Best-Fit Investor matching sector, stage & thesis
             const bestInvestor = findBestFitInvestor(chosenStartup, investors, matches);
 
@@ -648,6 +652,7 @@ export default function App() {
             showToast('⚠️ AI Matchmaking evaluation completed with standard criteria.');
         } finally {
             setIsMatchmakingLoading(false);
+            setMatchingStartupId(null);
         }
     };
 
@@ -836,6 +841,7 @@ export default function App() {
                             onRunMatchmaking={handleRunMatchmaking}
                             onGenerateSchedule={handleGenerateSchedule}
                             isMatchmakingLoading={isMatchmakingLoading}
+                            matchingStartupId={matchingStartupId}
                             isScheduleLoading={isScheduleLoading}
                             onInspectMatch={(pair) => setInspectPair(pair)}
                         />
