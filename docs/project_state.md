@@ -80,7 +80,7 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
   * [Header.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/Header.tsx) & [Sidebar.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/Sidebar.tsx): Segmented switcher, dark chrome `#010102`, viền hairline 1px `#23252a`.
   * [AIMatchModal.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/AIMatchModal.tsx) & [FollowUpModal.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/FollowUpModal.tsx): Scrim đen mờ `#000000/75`, surface lift `#141516`, top-edge highlight, badge lavender `#5e6ad2`.
   * [ParticipantPortal.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/ParticipantPortal.tsx): Persona switcher tinh gọn, timeline thanh mảnh, thẻ lịch họp & ghi chú chuẩn Linear.
-  * [AdminDashboard.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/AdminDashboard.tsx): KPI stat cards tối giản, bảng dữ liệu phân trang chuẩn mực, ma trận điều phối 12 bàn (Floor Matrix) sắc nét, hệ thống 2 cột cân xứng tuyệt đối với các Widget nghiệp vụ thực tế (*Top High-Conviction Matches*, *Summit Floor & Zone Telemetry*, *Funding Stage & Capital Pipeline*).
+  * [AdminDashboard.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/AdminDashboard.tsx): KPI stat cards tối giản, bảng dữ liệu phân trang chuẩn mực, ma trận điều phối 12 bàn (Floor Matrix) sắc nét, hệ thống 2 cột cân xứng tuyệt đối với các Widget nghiệp vụ thực tế (*Top High-Conviction Matches*, *Summit Floor & Zone Telemetry*, *Top 8 Deal Flow Density*).
   * [App.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/App.tsx): Hệ thống Linear Toast thông báo động theo ngữ cảnh (AI, Success, Error, Info) với AnimatePresence.
 
 

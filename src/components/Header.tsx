@@ -1,18 +1,17 @@
 import React from 'react';
-import { Sparkles, Monitor, Smartphone, Activity } from 'lucide-react';
+import { Monitor, Smartphone } from 'lucide-react';
 
 interface HeaderProps {
     activeView: 'admin' | 'participant';
     setActiveView: (view: 'admin' | 'participant') => void;
-    isMobileFrame: boolean;
-    setIsMobileFrame: (val: boolean) => void;
-    onRunMatchmaking: () => void;
+    isMobileFrame?: boolean;
+    setIsMobileFrame?: (val: boolean) => void;
+    onRunMatchmaking?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
     activeView,
     setActiveView,
-    onRunMatchmaking,
 }) => {
     return (
         <header className="sticky top-0 z-40 w-full bg-[#010102]/90 backdrop-blur-md border-b border-[#23252a] px-4 lg:px-8 py-2.5">
@@ -47,9 +46,8 @@ export const Header: React.FC<HeaderProps> = ({
                     </div>
                 </div>
 
-                {/* View Switcher & Action Buttons */}
-                <div className="flex items-center flex-wrap justify-center md:justify-end gap-2.5 w-full md:w-auto">
-                    {/* Linear Segmented Switcher */}
+                {/* View Switcher Segment */}
+                <div className="flex items-center justify-center md:justify-end gap-2.5 w-full md:w-auto">
                     <div className="flex items-center p-0.5 bg-[#0f1011] rounded-lg border border-[#23252a]">
                         <button
                             onClick={() => setActiveView('admin')}
@@ -73,15 +71,6 @@ export const Header: React.FC<HeaderProps> = ({
                             <span>Participant Portal</span>
                         </button>
                     </div>
-
-                    {/* Primary Linear Match Engine CTA */}
-                    <button
-                        onClick={() => onRunMatchmaking()}
-                        className="btn-primary text-xs py-1.5 px-3"
-                    >
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>Match Engine</span>
-                    </button>
                 </div>
             </div>
         </header>

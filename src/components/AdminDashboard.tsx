@@ -21,8 +21,7 @@ import {
     Activity,
     Cpu,
     Database,
-    Cloud,
-    DollarSign
+    Cloud
 } from 'lucide-react';
 import { Startup, Investor, MatchPair, MeetingSlot, EventStats } from '../types';
 import { DEFAULT_TIME_SLOTS } from '../utils/scheduler';
@@ -559,232 +558,162 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         transition={{ duration: 0.2 }}
                         className="grid grid-cols-1 lg:grid-cols-3 gap-4"
                     >
-                        {/* Left Column: Post-Event Analytics & Capital Pipeline */}
-                        <div className="lg:col-span-2 space-y-4">
-                            {/* Panel 1: Post-Event Deal Success & Deal Flow Density */}
-                            <div className="bg-[#0f1011] p-5 rounded-xl border border-[#23252a] space-y-5">
-                                <div>
-                                    <h3 className="text-sm font-semibold text-[#f7f8f8] flex items-center gap-2">
-                                        <TrendingUp className="w-4 h-4 text-[#8a8f98]" />
-                                        <span>Post-Event Analytics: Deal Success & Term Sheet Conversion</span>
-                                    </h3>
-                                    <p className="text-xs text-[#8a8f98] mt-0.5">
-                                        Conversion rate from 1:1 business matching to term sheets issued at DAVAS
-                                    </p>
+                        {/* Left Column: Post-Event Analytics & Deal Flow Density */}
+                        <div className="lg:col-span-2 bg-[#0f1011] p-5 rounded-xl border border-[#23252a] space-y-5">
+                            <div>
+                                <h3 className="text-sm font-semibold text-[#f7f8f8] flex items-center gap-2">
+                                    <TrendingUp className="w-4 h-4 text-[#8a8f98]" />
+                                    <span>Post-Event Analytics: Deal Success & Term Sheet Conversion</span>
+                                </h3>
+                                <p className="text-xs text-[#8a8f98] mt-0.5">
+                                    Conversion rate from 1:1 business matching to term sheets issued at DAVAS
+                                </p>
+                            </div>
+
+                            {/* Progress Bar & Success Gauge */}
+                            <div className="space-y-3 bg-[#141516] p-4 rounded-lg border border-[#23252a]">
+                                <div className="flex items-center justify-between text-xs">
+                                    <span className="font-medium text-[#d0d6e0]">Matching-to-Term Sheet Velocity</span>
+                                    <span className="font-mono text-[#828fff]">
+                                        {!stats.dealSuccessRate || stats.dealSuccessRate === 0
+                                            ? 'Pending Data'
+                                            : `${stats.dealSuccessRate}% Target Achieved`}
+                                    </span>
+                                </div>
+                                <div className="w-full h-2 bg-[#010102] rounded-full overflow-hidden border border-[#23252a]">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${stats.dealSuccessRate || 0}%` }}
+                                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                                        className="h-full bg-[#5e6ad2] rounded-full"
+                                    />
                                 </div>
 
-                                {/* Progress Bar & Success Gauge */}
-                                <div className="space-y-3 bg-[#141516] p-4 rounded-lg border border-[#23252a]">
-                                    <div className="flex items-center justify-between text-xs">
-                                        <span className="font-medium text-[#d0d6e0]">Matching-to-Term Sheet Velocity</span>
-                                        <span className="font-mono text-[#828fff]">
-                                            {!stats.dealSuccessRate || stats.dealSuccessRate === 0
-                                                ? 'Pending Data'
-                                                : `${stats.dealSuccessRate}% Target Achieved`}
-                                        </span>
+                                {/* Conversion Funnel Breakdown */}
+                                <div className="grid grid-cols-3 gap-2 pt-1 text-center">
+                                    <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
+                                        <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Confirmed Slots</div>
+                                        <div className="text-sm font-semibold text-[#f7f8f8] mt-0.5">{stats.scheduledMeetings} Slots</div>
                                     </div>
-                                    <div className="w-full h-2 bg-[#010102] rounded-full overflow-hidden border border-[#23252a]">
-                                        <motion.div
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${stats.dealSuccessRate || 0}%` }}
-                                            transition={{ duration: 0.6, ease: 'easeOut' }}
-                                            className="h-full bg-[#5e6ad2] rounded-full"
-                                        />
+                                    <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
+                                        <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Match Pairs</div>
+                                        <div className="text-sm font-semibold text-[#828fff] mt-0.5">{matches.length}</div>
                                     </div>
-
-                                    {/* Conversion Funnel Breakdown */}
-                                    <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-                                        <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
-                                            <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Confirmed Slots</div>
-                                            <div className="text-sm font-semibold text-[#f7f8f8] mt-0.5">{stats.scheduledMeetings} Slots</div>
-                                        </div>
-                                        <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
-                                            <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Match Pairs</div>
-                                            <div className="text-sm font-semibold text-[#828fff] mt-0.5">{matches.length}</div>
-                                        </div>
-                                        <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
-                                            <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Target Capital</div>
-                                            <div className="text-sm font-semibold text-[#27a644] mt-0.5">{formattedMatchFunding}</div>
-                                        </div>
+                                    <div className="p-2.5 rounded-md bg-[#010102] border border-[#23252a]">
+                                        <div className="text-[10px] text-[#8a8f98] uppercase font-mono">Target Capital</div>
+                                        <div className="text-sm font-semibold text-[#27a644] mt-0.5">{formattedMatchFunding}</div>
                                     </div>
-                                </div>
-
-                                {/* Sector Breakdown Bars */}
-                                <div>
-                                    {(() => {
-                                        if (startups.length === 0) {
-                                            return (
-                                                <div>
-                                                    <h4 className="text-xs font-medium uppercase tracking-wider text-[#8a8f98] mb-2">
-                                                        Deal Flow Density by Sector (0 Startups)
-                                                    </h4>
-                                                    <div className="p-4 rounded-lg bg-[#141516] border border-[#23252a] text-center text-xs text-[#8a8f98]">
-                                                        No startups loaded yet. Data will appear once fetched.
-                                                    </div>
-                                                </div>
-                                            );
-                                        }
-
-                                        const sectorCounts: Record<string, number> = {};
-                                        startups.forEach((s) => {
-                                            const rawSector = s.sector || 'General Tech';
-                                            const secList = rawSector.split(',').map((sec) => sec.trim()).filter(Boolean);
-                                            if (secList.length === 0) secList.push('General Tech');
-                                            secList.forEach((sec) => {
-                                                sectorCounts[sec] = (sectorCounts[sec] || 0) + 1;
-                                            });
-                                        });
-
-                                        const sortedSectors = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]);
-                                        const totalUniqueSectors = sortedSectors.length;
-
-                                        const topCount = 5;
-                                        const topSectors = sortedSectors.slice(0, topCount);
-                                        const remainingSectors = sortedSectors.slice(topCount);
-                                        const remainingStartupsCount = remainingSectors.reduce((acc, curr) => acc + curr[1], 0);
-
-                                        const itemsToRender = showAllSectors
-                                            ? sortedSectors
-                                            : [
-                                                ...topSectors,
-                                                ...(remainingSectors.length > 0
-                                                    ? [
-                                                        [
-                                                            `Other Sectors (${remainingSectors.length} categories)`,
-                                                            remainingStartupsCount,
-                                                        ] as [string, number],
-                                                    ]
-                                                    : []),
-                                            ];
-
-                                        return (
-                                            <div className="space-y-2.5">
-                                                <div className="flex items-center justify-between">
-                                                    <h4 className="text-xs font-medium uppercase tracking-wider text-[#8a8f98]">
-                                                        Deal Flow Density by Industry Sector ({startups.length} Startups)
-                                                    </h4>
-                                                    {totalUniqueSectors > topCount && (
-                                                        <button
-                                                            onClick={() => setShowAllSectors(!showAllSectors)}
-                                                            className="px-2 py-0.5 rounded bg-[#141516] hover:bg-[#18191a] text-[#8a8f98] hover:text-[#f7f8f8] border border-[#23252a] text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer"
-                                                        >
-                                                            <span>{showAllSectors ? 'Show Top 5' : `View All (${totalUniqueSectors})`}</span>
-                                                            {showAllSectors ? (
-                                                                <ChevronUp className="w-3 h-3" />
-                                                            ) : (
-                                                                <ChevronDown className="w-3 h-3" />
-                                                            )}
-                                                        </button>
-                                                    )}
-                                                </div>
-
-                                                <div
-                                                    className={`space-y-2 ${showAllSectors
-                                                        ? 'max-h-64 overflow-y-auto pr-1'
-                                                        : ''
-                                                        }`}
-                                                >
-                                                    {itemsToRender.map(([sector, count], idx) => {
-                                                        const percent = Math.min(100, Math.max(1, Math.round((count / startups.length) * 100)));
-                                                        const isOther = sector.startsWith('Other Sectors');
-
-                                                        return (
-                                                            <div key={sector} className="space-y-1">
-                                                                <div className="flex justify-between text-xs text-[#d0d6e0]">
-                                                                    <span className={`truncate max-w-[220px] sm:max-w-xs ${isOther ? 'text-[#8a8f98] italic' : ''}`}>
-                                                                        {sector}
-                                                                    </span>
-                                                                    <span className="text-[#8a8f98] text-[11px] shrink-0 ml-2 font-mono">
-                                                                        {count} ({percent}%)
-                                                                    </span>
-                                                                </div>
-                                                                <div className="w-full h-1.5 bg-[#010102] rounded-full overflow-hidden border border-[#23252a]">
-                                                                    <motion.div
-                                                                        initial={{ width: 0 }}
-                                                                        animate={{ width: `${percent}%` }}
-                                                                        transition={{ duration: 0.4, delay: Math.min(idx * 0.04, 0.3) }}
-                                                                        className={`h-full ${isOther ? 'bg-[#34343a]' : 'bg-[#5e6ad2]'} rounded-full`}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-
-                                                <p className="text-[11px] text-[#62666d] pt-1">
-                                                    *Multi-sector taxonomy: Startups may operate across multiple overlapping domains.
-                                                </p>
-                                            </div>
-                                        );
-                                    })()}
                                 </div>
                             </div>
 
-                            {/* Panel 2: Funding Stage & Capital Pipeline */}
-                            <div className="bg-[#0f1011] p-4 rounded-xl border border-[#23252a] space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <DollarSign className="w-4 h-4 text-[#8a8f98]" />
-                                        <h4 className="text-xs font-semibold text-[#f7f8f8] uppercase tracking-wider">
-                                            Funding Stage & Capital Pipeline
-                                        </h4>
-                                    </div>
-                                    <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#141516] text-[#27a644] border border-[#27a644]/30">
-                                        Total: $44.0M Ask
-                                    </span>
-                                </div>
+                            {/* Sector Breakdown Bars */}
+                            <div>
+                                {(() => {
+                                    if (startups.length === 0) {
+                                        return (
+                                            <div>
+                                                <h4 className="text-xs font-medium uppercase tracking-wider text-[#8a8f98] mb-2">
+                                                    Deal Flow Density by Sector (0 Startups)
+                                                </h4>
+                                                <div className="p-4 rounded-lg bg-[#141516] border border-[#23252a] text-center text-xs text-[#8a8f98]">
+                                                    No startups loaded yet. Data will appear once fetched.
+                                                </div>
+                                            </div>
+                                        );
+                                    }
 
-                                {/* Stage Rows (3 interactive rows) */}
-                                <div className="space-y-2.5">
-                                    {[
-                                        {
-                                            stage: 'Seed',
-                                            range: '$200k - $1M',
-                                            count: 38,
-                                            percent: 61,
-                                            ask: '$18.2M',
-                                        },
-                                        {
-                                            stage: 'Series A',
-                                            range: '$1M - $3M',
-                                            count: 16,
-                                            percent: 26,
-                                            ask: '$24.0M',
-                                        },
-                                        {
-                                            stage: 'Pre-Seed',
-                                            range: '< $200k',
-                                            count: 8,
-                                            percent: 13,
-                                            ask: '$1.8M',
-                                        },
-                                    ].map((item, idx) => (
-                                        <div
-                                            key={item.stage}
-                                            className="p-2.5 rounded-lg bg-[#141516] border border-[#23252a] space-y-1.5 hover:border-[#34343a] transition-colors"
-                                        >
-                                            <div className="flex items-center justify-between text-xs">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-medium text-[#f7f8f8]">{item.stage}</span>
-                                                    <span className="text-[11px] text-[#8a8f98] font-mono">({item.range})</span>
-                                                </div>
-                                                <div className="flex items-center gap-2 font-mono text-[11px]">
-                                                    <span className="text-[#d0d6e0]">{item.count} Startups ({item.percent}%)</span>
-                                                    <span className="text-[#62666d]">&bull;</span>
-                                                    <span className="text-[#828fff]">Ask: {item.ask}</span>
-                                                </div>
+                                    const sectorCounts: Record<string, number> = {};
+                                    startups.forEach((s) => {
+                                        const rawSector = s.sector || 'General Tech';
+                                        const secList = rawSector.split(',').map((sec) => sec.trim()).filter(Boolean);
+                                        if (secList.length === 0) secList.push('General Tech');
+                                        secList.forEach((sec) => {
+                                            sectorCounts[sec] = (sectorCounts[sec] || 0) + 1;
+                                        });
+                                    });
+
+                                    const sortedSectors = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]);
+                                    const totalUniqueSectors = sortedSectors.length;
+
+                                    const topCount = 8;
+                                    const topSectors = sortedSectors.slice(0, topCount);
+                                    const remainingSectors = sortedSectors.slice(topCount);
+                                    const remainingStartupsCount = remainingSectors.reduce((acc, curr) => acc + curr[1], 0);
+
+                                    const itemsToRender = showAllSectors
+                                        ? sortedSectors
+                                        : [
+                                            ...topSectors,
+                                            ...(remainingSectors.length > 0
+                                                ? [
+                                                    [
+                                                        `Other Sectors (${remainingSectors.length} categories)`,
+                                                        remainingStartupsCount,
+                                                    ] as [string, number],
+                                                ]
+                                                : []),
+                                        ];
+
+                                    return (
+                                        <div className="space-y-2.5">
+                                            <div className="flex items-center justify-between">
+                                                <h4 className="text-xs font-medium uppercase tracking-wider text-[#8a8f98]">
+                                                    Deal Flow Density by Industry Sector ({startups.length} Startups)
+                                                </h4>
+                                                {totalUniqueSectors > topCount && (
+                                                    <button
+                                                        onClick={() => setShowAllSectors(!showAllSectors)}
+                                                        className="px-2 py-0.5 rounded bg-[#141516] hover:bg-[#18191a] text-[#8a8f98] hover:text-[#f7f8f8] border border-[#23252a] text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                                                    >
+                                                        <span>{showAllSectors ? 'Show Top 8' : `View All (${totalUniqueSectors})`}</span>
+                                                        {showAllSectors ? (
+                                                            <ChevronUp className="w-3 h-3" />
+                                                        ) : (
+                                                            <ChevronDown className="w-3 h-3" />
+                                                        )}
+                                                    </button>
+                                                )}
                                             </div>
-                                            <div className="w-full h-1.5 bg-[#010102] rounded-full overflow-hidden border border-[#23252a]">
-                                                <motion.div
-                                                    initial={{ width: 0 }}
-                                                    animate={{ width: `${item.percent}%` }}
-                                                    transition={{ duration: 0.5, delay: idx * 0.1 }}
-                                                    className="h-full bg-[#5e6ad2] rounded-full"
-                                                />
+
+                                            <div
+                                                className={`space-y-2 ${showAllSectors
+                                                    ? 'max-h-64 overflow-y-auto pr-1'
+                                                    : ''
+                                                    }`}
+                                            >
+                                                {itemsToRender.map(([sector, count], idx) => {
+                                                    const percent = Math.min(100, Math.max(1, Math.round((count / startups.length) * 100)));
+                                                    const isOther = sector.startsWith('Other Sectors');
+
+                                                    return (
+                                                        <div key={sector} className="space-y-1">
+                                                            <div className="flex justify-between text-xs text-[#d0d6e0]">
+                                                                <span className={`truncate max-w-[220px] sm:max-w-xs ${isOther ? 'text-[#8a8f98] italic' : ''}`}>
+                                                                    {sector}
+                                                                </span>
+                                                                <span className="text-[#8a8f98] text-[11px] shrink-0 ml-2 font-mono">
+                                                                    {count} ({percent}%)
+                                                                </span>
+                                                            </div>
+                                                            <div className="w-full h-1.5 bg-[#010102] rounded-full overflow-hidden border border-[#23252a]">
+                                                                <motion.div
+                                                                    initial={{ width: 0 }}
+                                                                    animate={{ width: `${percent}%` }}
+                                                                    transition={{ duration: 0.4, delay: Math.min(idx * 0.04, 0.3) }}
+                                                                    className={`h-full ${isOther ? 'bg-[#34343a]' : 'bg-[#5e6ad2]'} rounded-full`}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
+
+                                            <p className="text-[11px] text-[#62666d] pt-1">
+                                                *Multi-sector taxonomy: Startups may operate across multiple overlapping domains.
+                                            </p>
                                         </div>
-                                    ))}
-                                </div>
+                                    );
+                                })()}
                             </div>
                         </div>
 
