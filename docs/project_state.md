@@ -73,6 +73,11 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
 - Đã có file `Dockerfile` chuẩn bị cho việc đẩy lên Google Cloud Run.
 - Cần public dự án và test thử.
 
+**8. Giai đoạn 8: Chuẩn hóa Hệ thống Thiết kế Linear (DESIGN.md & index.css)**
+- Tích hợp tài liệu đặc tả chuẩn [DESIGN.md](file:///c:/Study/Projects/ai-riser-davas-matcher/DESIGN.md) (Linear Design System: Canvas `#010102`, 4-step Surface ladder `#0f1011` -> `#191a1b`, Hairlines `#23252a`, Lavender Accent `#5e6ad2`, Ink typography).
+- Cập nhật toàn diện [src/index.css](file:///c:/Study/Projects/ai-riser-davas-matcher/src/index.css) với CSS Variables, Utility classes (`bg-canvas`, `bg-surface-1`, `border-hairline`, `btn-primary`, `btn-secondary`, `linear-card`, `badge-linear`) và thanh cuộn tối giản Minimalist Scrollbar.
+
+
 ## 3. Quy trình tổ chức và tham gia (DAVAS Workflow)
 
 **Phase 1: Chuẩn bị & Tuyển chọn (2–3 tháng trước sự kiện)**

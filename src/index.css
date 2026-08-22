@@ -1,66 +1,248 @@
 @import "tailwindcss";
 
-@layer utilities {
-    .glass-panel {
-        background: rgba(15, 23, 42, 0.75);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .glass-panel-glow {
-        background: rgba(15, 23, 42, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(124, 58, 237, 0.25);
-        box-shadow: 0 0 30px -10px rgba(124, 58, 237, 0.3);
-    }
-
-    .glow-purple {
-        box-shadow: 0 0 25px -5px rgba(124, 58, 237, 0.5);
-    }
-
-    .glow-cyan {
-        box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.5);
-    }
-
-    .text-gradient {
-        background: linear-gradient(135deg, #a855f7 0%, #38bdf8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .bg-gradient-davas {
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #06b6d4 100%);
-    }
-
-    .bg-gradient-dark {
-        background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 70%, #020617 100%);
-    }
+:root {
+    /* Linear Color & Surface Tokens */
+    --color-canvas: #010102;
+    --color-surface-1: #0f1011;
+    --color-surface-2: #141516;
+    --color-surface-3: #18191a;
+    --color-surface-4: #191a1b;
+    --color-hairline: #23252a;
+    --color-hairline-strong: #34343a;
+    --color-hairline-tertiary: #3e3e44;
+    --color-primary: #5e6ad2;
+    --color-primary-hover: #828fff;
+    --color-primary-focus: #5e69d1;
+    --color-ink: #f7f8f8;
+    --color-ink-muted: #d0d6e0;
+    --color-ink-subtle: #8a8f98;
+    --color-ink-tertiary: #62666d;
+    --color-semantic-success: #27a644;
 }
 
+/* Global Reset & Typography */
 body {
-    background-color: #030712;
-    color: #f3f4f6;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
 }
 
-/* Custom Scrollbar */
+/* Custom Linear Utility Classes */
+@layer utilities {
+
+    /* Surfaces */
+    .bg-canvas {
+        background-color: var(--color-canvas);
+    }
+
+    .bg-surface-1 {
+        background-color: var(--color-surface-1);
+    }
+
+    .bg-surface-2 {
+        background-color: var(--color-surface-2);
+    }
+
+    .bg-surface-3 {
+        background-color: var(--color-surface-3);
+    }
+
+    .bg-surface-4 {
+        background-color: var(--color-surface-4);
+    }
+
+    /* Borders & Hairlines */
+    .border-hairline {
+        border-color: var(--color-hairline);
+    }
+
+    .border-hairline-strong {
+        border-color: var(--color-hairline-strong);
+    }
+
+    /* Text colors */
+    .text-ink {
+        color: var(--color-ink);
+    }
+
+    .text-ink-muted {
+        color: var(--color-ink-muted);
+    }
+
+    .text-ink-subtle {
+        color: var(--color-ink-subtle);
+    }
+
+    /* Linear Panel Card */
+    .linear-card {
+        background-color: var(--color-surface-1);
+        border: 1px solid var(--color-hairline);
+        border-radius: 12px;
+        position: relative;
+        box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .linear-card:hover {
+        border-color: var(--color-hairline-strong);
+    }
+
+    /* Linear Buttons */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background-color: var(--color-primary);
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.2;
+        padding: 8px 14px;
+        border-radius: 8px;
+        transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--color-primary-hover);
+    }
+
+    .btn-primary:focus-visible {
+        outline: 2px solid var(--color-primary-focus);
+        outline-offset: 2px;
+    }
+
+    .btn-primary:active {
+        background-color: var(--color-primary-focus);
+        transform: scale(0.98);
+    }
+
+    .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background-color: var(--color-surface-1);
+        color: var(--color-ink);
+        border: 1px solid var(--color-hairline);
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.2;
+        padding: 8px 14px;
+        border-radius: 8px;
+        transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--color-surface-2);
+        border-color: var(--color-hairline-strong);
+        color: #ffffff;
+    }
+
+    .btn-secondary:active {
+        transform: scale(0.98);
+    }
+
+    .btn-secondary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background-color: transparent;
+        color: var(--color-ink-muted);
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.2;
+        padding: 8px 14px;
+        border-radius: 8px;
+        transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .btn-ghost:hover {
+        background-color: var(--color-surface-1);
+        color: var(--color-ink);
+        border-color: var(--color-hairline);
+    }
+
+    /* Linear Status Badges */
+    .badge-linear {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        background-color: var(--color-surface-2);
+        color: var(--color-ink-muted);
+        border: 1px solid var(--color-hairline);
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.4;
+        padding: 2px 8px;
+        border-radius: 9999px;
+    }
+
+    .badge-linear-success {
+        background-color: rgba(39, 166, 68, 0.12);
+        color: #4ade80;
+        border-color: rgba(39, 166, 68, 0.3);
+    }
+
+    .badge-linear-primary {
+        background-color: rgba(94, 106, 210, 0.15);
+        color: #828fff;
+        border-color: rgba(94, 106, 210, 0.35);
+    }
+
+    /* Existing Glass Panel compatibility */
+    .glass-panel {
+        background: rgba(15, 16, 17, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--color-hairline);
+        box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .glass-panel-glow {
+        background: rgba(20, 21, 22, 0.9);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--color-hairline-strong);
+        box-shadow: 0 0 24px -6px rgba(94, 106, 210, 0.25);
+    }
+}
+
+/* Minimalist Dark Scrollbar */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #0b0f19;
+    background: var(--color-canvas);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #1f2937;
+    background: var(--color-hairline-strong);
     border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #374151;
+    background: var(--color-ink-tertiary);
 }
