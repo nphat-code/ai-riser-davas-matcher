@@ -124,9 +124,9 @@ const curatedInvestors = [
   { fund: "Mekong Capital", name: "David Binh", sectors: "HealthTech, AgriTech, E-commerce", ticket: 8000000, thesis: "Transformative growth capital driving consumer-facing supply chain excellence, modern retail, and wellness services." }
 ];
 
-// Generate CSV rows for 62 Startups
+// Generate CSV rows for 62 Startups with Key Metrics
 const startupRows = [
-  "Timestamp,Startup Name,Representative Name,Email Address,Phone Number,Primary Industry,Current Funding Stage,Target Funding Amount in USD,Upload Pitch Deck (PDF)"
+  "Timestamp,Startup Name,Representative Name,Email Address,Phone Number,Primary Industry,Current Funding Stage,Target Funding Amount in USD,Monthly Recurring Revenue (MRR),Growth Rate MoM,Active Traction,Upload Pitch Deck (PDF)"
 ];
 
 curatedStartups.forEach((s, i) => {
@@ -136,7 +136,35 @@ curatedStartups.forEach((s, i) => {
   const phone = `+849${Math.floor(10000000 + Math.random() * 89999999)}`;
   const date = new Date(2026, 6, 1 + (i % 25)).toISOString();
   const deck = `https://drive.google.com/drive/folders/davas2026_startup_${i + 1}`;
-  startupRows.push(`"${date}","${sName}","${fName}","${email}","${phone}","${s.sector}","${s.stage}",${s.ask},"${deck}"`);
+  
+  // Calculate realistic metrics based on stage and ask
+  let mrr = "$25K";
+  let growth = "+20% MoM";
+  let traction = "15K+ Active Users";
+
+  if (s.stage === "Series A") {
+    const mrrVal = Math.round((s.ask / 1000) * 0.045);
+    mrr = `$${mrrVal}K`;
+    growth = `+${15 + (i % 12)}% MoM`;
+    traction = `${20 + (i % 30)} Enterprise Clients`;
+  } else if (s.stage === "Pre-Series A") {
+    const mrrVal = Math.round((s.ask / 1000) * 0.035);
+    mrr = `$${mrrVal}K`;
+    growth = `+${18 + (i % 15)}% MoM`;
+    traction = `${35 + (i % 40)} Paying Clients`;
+  } else if (s.stage === "Seed") {
+    const mrrVal = Math.max(12, Math.round((s.ask / 1000) * 0.05));
+    mrr = `$${mrrVal}K`;
+    growth = `+${20 + (i % 15)}% MoM`;
+    traction = `${10 + (i % 25)}K MAU`;
+  } else {
+    // Pre-Seed
+    mrr = `$${6 + (i % 8)}K`;
+    growth = `+${25 + (i % 20)}% MoM`;
+    traction = "Beta Launch / 5 Pilots";
+  }
+
+  startupRows.push(`"${date}","${sName}","${fName}","${email}","${phone}","${s.sector}","${s.stage}",${s.ask},"${mrr}","${growth}","${traction}","${deck}"`);
 });
 
 fs.writeFileSync("davas_startups.csv", startupRows.join("\n"), "utf8");
