@@ -132,10 +132,10 @@ export default function App() {
                             founderName,
                             founderTitle: 'Founder & CEO',
                             metrics: {
-                                mrr: s["Monthly Recurring Revenue (MRR)"] || s.metrics?.mrr || s.mrr || (stage === 'Series A' ? '$120K' : '$25K'),
-                                arr: s["Annual Recurring Revenue (ARR)"] || s.metrics?.arr || s.arr || (stage === 'Series A' ? '$1.4M' : '$300K'),
-                                growthRate: s["Growth Rate MoM"] || s.metrics?.growthRate || s.growthRate || '+20% MoM',
-                                usersCount: s["Active Traction"] || s.metrics?.usersCount || s.usersCount || '15K MAU',
+                                mrr: s.metrics?.mrr || s.mrr || 'TBD',
+                                arr: s.metrics?.arr || s.arr || 'TBD',
+                                growthRate: s.metrics?.growthRate || s.growthRate || 'N/A',
+                                usersCount: s.metrics?.usersCount || s.usersCount || '10K+',
                             },
                             keyTags: sector.split(',').map((t: string) => t.trim()).filter(Boolean),
                         };

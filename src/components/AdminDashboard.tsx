@@ -1177,16 +1177,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                                     </div>
                                                 </td>
                                                 <td className="py-3 px-4">
-                                                    <div className="flex flex-wrap gap-1 max-w-[220px]">
-                                                        {(s.sector || 'General Tech').split(',').map((sec: string, sIdx: number) => (
-                                                            <span
-                                                                key={sIdx}
-                                                                className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#141516] text-[#d0d6e0] border border-[#23252a] whitespace-nowrap"
-                                                            >
-                                                                {sec.trim()}
-                                                            </span>
-                                                        ))}
-                                                    </div>
+                                                    <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-[#141516] text-[#d0d6e0] border border-[#23252a] whitespace-nowrap">
+                                                        {s.sector || 'General Tech'}
+                                                    </span>
                                                 </td>
                                                 <td className="py-3 px-4 font-mono text-xs text-[#828fff] whitespace-nowrap">{s.stage || 'Seed'}</td>
                                                 <td className="py-3 px-4 whitespace-nowrap">
@@ -1194,12 +1187,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                                     <div className="text-[10px] text-[#8a8f98] font-mono">Val: {s.valuation || 'TBD'}</div>
                                                 </td>
                                                 <td className="py-3 px-4 whitespace-nowrap">
-                                                    <div className="text-[#f7f8f8] font-mono text-xs font-medium">
-                                                        {s.metrics?.mrr ? `${s.metrics.mrr} MRR` : (s.metrics?.arr || 'TBD')}
-                                                    </div>
-                                                    <div className="text-[10px] text-[#8a8f98] font-mono">
-                                                        {s.metrics?.growthRate ? s.metrics.growthRate : (s.metrics?.usersCount || '')}
-                                                    </div>
+                                                    <div className="text-[#f7f8f8] font-mono text-xs">{s.metrics?.mrr || s.metrics?.arr || 'N/A'}</div>
+                                                    <div className="text-[10px] text-[#8a8f98] font-mono">{s.metrics?.growthRate || ''}</div>
                                                 </td>
                                                 <td className="py-3 px-4 whitespace-nowrap text-right">
                                                     {(() => {
