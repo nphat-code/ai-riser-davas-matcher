@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Calendar, Layers, Smartphone, Monitor } from 'lucide-react';
+import { Sparkles, Monitor, Smartphone, Activity } from 'lucide-react';
 
 interface HeaderProps {
     activeView: 'admin' | 'participant';
@@ -12,69 +12,74 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
     activeView,
     setActiveView,
-    isMobileFrame,
-    setIsMobileFrame,
     onRunMatchmaking,
 }) => {
     return (
-        <header className="sticky top-0 z-40 w-full glass-panel border-b border-slate-800 px-4 lg:px-8 py-3">
-            <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <header className="sticky top-0 z-40 w-full bg-[#010102]/90 backdrop-blur-md border-b border-[#23252a] px-4 lg:px-8 py-2.5">
+            <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
                 {/* Brand & DAVAS Title */}
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-davas p-0.5 shadow-lg shadow-indigo-500/20 flex items-center justify-center">
-                        <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                            <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
+                <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+                    <div className="flex items-center gap-2.5">
+                        {/* Linear Logo Glyph */}
+                        <div className="w-8 h-8 rounded-lg bg-[#0f1011] border border-[#23252a] flex items-center justify-center relative shadow-sm">
+                            <span className="w-2 h-2 rounded-full bg-[#5e6ad2] shadow-[0_0_8px_#5e6ad2]" />
+                        </div>
+
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-base font-medium tracking-tight text-[#f7f8f8]">
+                                    DavaSync
+                                </h1>
+                                <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#141516] text-[#d0d6e0] border border-[#23252a]">
+                                    DAVAS 2026
+                                </span>
+                            </div>
+                            <p className="text-xs text-[#8a8f98] flex items-center gap-1.5 mt-0.5">
+                                <span>Da Nang Venture & Angel Summit</span>
+                            </p>
                         </div>
                     </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-1.5">
-                                DavaSync <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Command Center</span>
-                            </h1>
-                        </div>
-                        <p className="text-xs text-slate-400 flex items-center gap-1">
-                            <span>Da Nang Venture & Angel Summit (DAVAS 2026)</span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping ml-1" />
-                            <span className="text-emerald-400 font-medium text-[11px]">LIVE</span>
-                        </p>
+
+                    {/* Live Status Badge */}
+                    <div className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#0f1011] border border-[#23252a] text-[11px] text-[#8a8f98]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#27a644]" />
+                        <span className="text-[#d0d6e0] font-medium">LIVE</span>
                     </div>
                 </div>
 
-                {/* View Switcher & Actions */}
-                <div className="flex items-center flex-wrap justify-center md:justify-end gap-3 w-full md:w-auto">
-                    {/* Main View Switcher Tabs */}
-                    <div className="flex items-center p-1 bg-slate-900/90 rounded-xl border border-slate-800">
+                {/* View Switcher & Action Buttons */}
+                <div className="flex items-center flex-wrap justify-center md:justify-end gap-2.5 w-full md:w-auto">
+                    {/* Linear Segmented Switcher */}
+                    <div className="flex items-center p-0.5 bg-[#0f1011] rounded-lg border border-[#23252a]">
                         <button
                             onClick={() => setActiveView('admin')}
-                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${activeView === 'admin'
-                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/25'
-                                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer ${activeView === 'admin'
+                                    ? 'bg-[#141516] text-[#f7f8f8] border border-[#23252a] shadow-sm'
+                                    : 'text-[#8a8f98] hover:text-[#f7f8f8] hover:bg-[#141516]/50 border border-transparent'
                                 }`}
                         >
-                            <Monitor className="w-3.5 h-3.5" />
+                            <Monitor className="w-3.5 h-3.5 text-[#8a8f98]" />
                             <span>Admin Dashboard</span>
-                            <span className="text-[10px] opacity-75 font-mono px-1 rounded bg-black/20 hidden sm:inline">DESKTOP</span>
                         </button>
 
                         <button
                             onClick={() => setActiveView('participant')}
-                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${activeView === 'participant'
-                                    ? 'bg-gradient-to-r from-cyan-600 to-teal-600 text-white shadow-md shadow-cyan-500/25'
-                                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer ${activeView === 'participant'
+                                    ? 'bg-[#141516] text-[#f7f8f8] border border-[#23252a] shadow-sm'
+                                    : 'text-[#8a8f98] hover:text-[#f7f8f8] hover:bg-[#141516]/50 border border-transparent'
                                 }`}
                         >
-                            <Smartphone className="w-3.5 h-3.5" />
+                            <Smartphone className="w-3.5 h-3.5 text-[#8a8f98]" />
                             <span>Participant Portal</span>
-                            <span className="text-[10px] opacity-75 font-mono px-1 rounded bg-black/20 hidden sm:inline">MOBILE</span>
                         </button>
                     </div>
 
-                    {/* Quick AI Trigger button in header */}
+                    {/* Primary Linear Match Engine CTA */}
                     <button
                         onClick={() => onRunMatchmaking()}
-                        className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 transition-all duration-300 shadow-md shadow-indigo-500/20 active:scale-95 cursor-pointer border border-cyan-400/30"
+                        className="btn-primary text-xs py-1.5 px-3"
                     >
-                        <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-spin" style={{ animationDuration: '4s' }} />
+                        <Sparkles className="w-3.5 h-3.5" />
                         <span>Match Engine</span>
                     </button>
                 </div>

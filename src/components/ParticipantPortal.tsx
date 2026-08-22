@@ -158,27 +158,24 @@ const SUMMIT_3DAY_AGENDA: {
     ],
 };
 
-// Staggered variants for vertical timeline
 const timelineContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.1,
-            delayChildren: 0.1,
+            staggerChildren: 0.08,
+            delayChildren: 0.05,
         },
     },
 };
 
 const timelineItemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 15 },
     visible: {
         opacity: 1,
         y: 0,
         transition: {
-            type: 'spring',
-            stiffness: 300,
-            damping: 24,
+            duration: 0.25,
         },
     },
 };
@@ -289,7 +286,6 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
 
             return sectorMatch || philosophyMatch;
         } else {
-            // Startup Founder Recommendations
             if (!activeStartup) return false;
             const sec = (activeStartup.sector || '').toLowerCase();
             const tagsList = (activeStartup.keyTags || []).map((t) => t.toLowerCase());
@@ -340,69 +336,60 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
             : 0;
 
     return (
-        <div className="max-w-md mx-auto min-h-screen pb-20 space-y-5 px-2 sm:px-0">
-            {/* Mobile Device Frame Header Accent */}
-            <motion.div
-                initial={{ opacity: 0, y: -15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="glass-panel p-5 rounded-3xl border border-cyan-500/30 relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950 shadow-xl"
-            >
-                <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
-
-                {/* 2-WAY PERSONA ROLE SWITCHER (INVESTOR vs STARTUP) */}
-                <div className="mb-4 pb-3.5 border-b border-slate-800/90 space-y-2.5 relative z-10">
-                    <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400">
-                        <span className="flex items-center gap-1.5 text-cyan-400">
-                            <Users className="w-3.5 h-3.5" />
+        <div className="max-w-md mx-auto min-h-screen pb-20 space-y-4 px-2 sm:px-0">
+            {/* Participant Profile Card */}
+            <div className="bg-[#0f1011] border border-[#23252a] rounded-xl p-5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
+                {/* Persona Role Switcher */}
+                <div className="mb-4 pb-3.5 border-b border-[#23252a] space-y-2.5">
+                    <div className="flex items-center justify-between text-[11px] font-medium text-[#8a8f98]">
+                        <span className="flex items-center gap-1.5 text-[#d0d6e0]">
+                            <Users className="w-3.5 h-3.5 text-[#5e6ad2]" />
                             <span>Delegate Role & Persona</span>
                         </span>
-                        <span className="text-[10px] text-slate-500 font-mono">DAVAS 2026</span>
+                        <span className="text-[10px] text-[#62666d] font-mono">DAVAS 2026</span>
                     </div>
 
                     {/* Role Switcher Tabs */}
-                    <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-950/80 rounded-2xl border border-slate-800">
-                        <motion.button
-                            whileTap={{ scale: 0.96 }}
+                    <div className="grid grid-cols-2 gap-1 p-1 bg-[#010102] rounded-lg border border-[#23252a]">
+                        <button
                             onClick={() => setPersonaRole('investor')}
-                            className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${personaRole === 'investor'
-                                    ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-500/20'
-                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                            className={`py-1.5 px-2 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${personaRole === 'investor'
+                                    ? 'bg-[#141516] text-[#f7f8f8] border border-[#34343a] shadow-sm'
+                                    : 'text-[#8a8f98] hover:text-[#f7f8f8]'
                                 }`}
                         >
-                            <Briefcase className="w-3.5 h-3.5" />
+                            <Briefcase className="w-3.5 h-3.5 text-[#8a8f98]" />
                             <span>Investor ({investors.length})</span>
-                        </motion.button>
+                        </button>
 
-                        <motion.button
-                            whileTap={{ scale: 0.96 }}
+                        <button
                             onClick={() => setPersonaRole('startup')}
-                            className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${personaRole === 'startup'
-                                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20'
-                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                            className={`py-1.5 px-2 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${personaRole === 'startup'
+                                    ? 'bg-[#141516] text-[#f7f8f8] border border-[#34343a] shadow-sm'
+                                    : 'text-[#8a8f98] hover:text-[#f7f8f8]'
                                 }`}
                         >
-                            <Rocket className="w-3.5 h-3.5" />
+                            <Rocket className="w-3.5 h-3.5 text-[#8a8f98]" />
                             <span>Startup ({startups.length})</span>
-                        </motion.button>
+                        </button>
                     </div>
 
-                    {/* Persona Dropdown (Investor or Startup) */}
+                    {/* Persona Dropdown Selection */}
                     {personaRole === 'investor' ? (
                         <div className="relative">
                             <select
                                 id="investor-persona-switcher"
                                 value={selectedInvestorId || activeInvestor?.id || ''}
                                 onChange={(e) => handleInvestorChange(e.target.value)}
-                                className="w-full bg-slate-950/90 text-cyan-200 text-xs font-semibold rounded-xl border border-cyan-500/30 px-3 py-2 pr-8 focus:outline-none focus:ring-1 focus:ring-cyan-400 cursor-pointer truncate appearance-none hover:border-cyan-400/60 transition-all shadow-inner"
+                                className="w-full bg-[#010102] text-[#f7f8f8] text-xs font-medium rounded-md border border-[#23252a] px-3 py-2 pr-8 focus:outline-none focus:border-[#5e6ad2] cursor-pointer truncate appearance-none transition-colors"
                             >
                                 {investors.map((inv) => (
-                                    <option key={inv.id} value={inv.id} className="bg-slate-900 text-slate-100 py-1.5">
+                                    <option key={inv.id} value={inv.id} className="bg-[#0f1011] text-[#f7f8f8] py-1.5">
                                         {inv.firm} - {inv.name}
                                     </option>
                                 ))}
                             </select>
-                            <ChevronDown className="w-4 h-4 text-cyan-400/80 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <ChevronDown className="w-4 h-4 text-[#8a8f98] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
                     ) : (
                         <div className="relative">
@@ -410,45 +397,45 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                 id="startup-persona-switcher"
                                 value={selectedStartupId || activeStartup?.id || ''}
                                 onChange={(e) => handleStartupChange(e.target.value)}
-                                className="w-full bg-slate-950/90 text-purple-200 text-xs font-semibold rounded-xl border border-purple-500/30 px-3 py-2 pr-8 focus:outline-none focus:ring-1 focus:ring-purple-400 cursor-pointer truncate appearance-none hover:border-purple-400/60 transition-all shadow-inner"
+                                className="w-full bg-[#010102] text-[#f7f8f8] text-xs font-medium rounded-md border border-[#23252a] px-3 py-2 pr-8 focus:outline-none focus:border-[#5e6ad2] cursor-pointer truncate appearance-none transition-colors"
                             >
                                 {startups.map((st) => (
-                                    <option key={st.id} value={st.id} className="bg-slate-900 text-slate-100 py-1.5">
+                                    <option key={st.id} value={st.id} className="bg-[#0f1011] text-[#f7f8f8] py-1.5">
                                         {st.name} • {st.sector} ({st.stage})
                                     </option>
                                 ))}
                             </select>
-                            <ChevronDown className="w-4 h-4 text-purple-400/80 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <ChevronDown className="w-4 h-4 text-[#8a8f98] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
                     )}
                 </div>
 
-                {/* Welcome Delegate Header (Dynamic based on Persona Role) */}
+                {/* Welcome Delegate Info */}
                 {personaRole === 'investor' ? (
                     <div className="flex items-center gap-3">
                         <div className="relative">
                             <img
                                 src={investorAvatar}
                                 alt={investorName}
-                                className="w-14 h-14 rounded-2xl object-cover border-2 border-cyan-400/40 shadow-lg shadow-cyan-500/20"
+                                className="w-12 h-12 rounded-lg object-cover border border-[#23252a]"
                             />
-                            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-950" />
+                            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#27a644] border-2 border-[#0f1011]" />
                         </div>
 
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5">
-                                <span className="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 text-[10px] font-bold uppercase tracking-wider border border-cyan-500/30">
+                                <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#141516] text-[#d0d6e0] border border-[#23252a]">
                                     DAVAS Investor
                                 </span>
-                                <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                                <span className="text-[10px] text-[#27a644] font-medium flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#27a644]" />
                                     Live Summit
                                 </span>
                             </div>
-                            <h2 className="text-lg font-extrabold text-white tracking-tight mt-0.5 truncate">
+                            <h2 className="text-base font-semibold text-[#f7f8f8] tracking-tight mt-1 truncate">
                                 Welcome, {investorFirm}
                             </h2>
-                            <p className="text-xs text-slate-400 truncate">
+                            <p className="text-xs text-[#8a8f98] truncate">
                                 {investorName} • {investorRole}
                             </p>
                         </div>
@@ -459,184 +446,168 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                             <img
                                 src={startupAvatar}
                                 alt={startupName}
-                                className="w-14 h-14 rounded-2xl object-cover border-2 border-purple-400/40 shadow-lg shadow-purple-500/20"
+                                className="w-12 h-12 rounded-lg object-cover border border-[#23252a]"
                             />
-                            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-purple-400 border-2 border-slate-950" />
+                            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#5e6ad2] border-2 border-[#0f1011]" />
                         </div>
 
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5">
-                                <span className="px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 text-[10px] font-bold uppercase tracking-wider border border-purple-500/30">
+                                <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#141516] text-[#d0d6e0] border border-[#23252a]">
                                     DAVAS Startup
                                 </span>
-                                <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                                <span className="text-[10px] text-[#27a644] font-medium flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#27a644]" />
                                     Live Summit
                                 </span>
                             </div>
-                            <h2 className="text-lg font-extrabold text-white tracking-tight mt-0.5 truncate">
+                            <h2 className="text-base font-semibold text-[#f7f8f8] tracking-tight mt-1 truncate">
                                 Welcome, {startupName}
                             </h2>
-                            <p className="text-xs text-slate-400 truncate">
+                            <p className="text-xs text-[#8a8f98] truncate">
                                 {startupFounder} • {startupTitle} ({startupSector})
                             </p>
                         </div>
                     </div>
                 )}
 
-                {/* Quick Day Stats Banner */}
-                <div className="mt-4 pt-3 border-t border-slate-800 grid grid-cols-3 gap-2 text-center">
-                    <motion.div
-                        whileHover={{ scale: 1.03 }}
-                        className="bg-slate-950/60 p-2 rounded-xl border border-slate-800"
-                    >
-                        <div className="text-[10px] text-slate-400 uppercase font-bold">1:1 Meetings</div>
-                        <div className="text-base font-black text-cyan-300">{roleSlots.length}</div>
-                    </motion.div>
+                {/* Quick Delegate Stats */}
+                <div className="mt-4 pt-3 border-t border-[#23252a] grid grid-cols-3 gap-2 text-center">
+                    <div className="bg-[#141516] p-2 rounded-lg border border-[#23252a]">
+                        <div className="text-[10px] text-[#8a8f98] uppercase font-medium">1:1 Meetings</div>
+                        <div className="text-sm font-semibold text-[#f7f8f8] mt-0.5">{roleSlots.length}</div>
+                    </div>
 
-                    <motion.div
-                        whileHover={{ scale: 1.03 }}
-                        className="bg-slate-950/60 p-2 rounded-xl border border-slate-800"
-                    >
-                        <div className="text-[10px] text-slate-400 uppercase font-bold">
+                    <div className="bg-[#141516] p-2 rounded-lg border border-[#23252a]">
+                        <div className="text-[10px] text-[#8a8f98] uppercase font-medium">
                             {personaRole === 'investor' ? 'Hall Location' : 'Target Ask'}
                         </div>
-                        <div className="text-xs font-bold text-white mt-1 truncate">
+                        <div className="text-xs font-semibold text-[#f7f8f8] mt-0.5 truncate">
                             {personaRole === 'investor' ? 'Furama A1' : startupAsk}
                         </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                        whileHover={{ scale: 1.03 }}
-                        className="bg-slate-950/60 p-2 rounded-xl border border-slate-800"
-                    >
-                        <div className="text-[10px] text-slate-400 uppercase font-bold">
+                    <div className="bg-[#141516] p-2 rounded-lg border border-[#23252a]">
+                        <div className="text-[10px] text-[#8a8f98] uppercase font-medium">
                             {personaRole === 'investor' ? 'Avg Match' : 'Stage'}
                         </div>
-                        <div className="text-base font-black text-yellow-400">
+                        <div className="text-sm font-semibold text-[#828fff] mt-0.5">
                             {personaRole === 'investor' ? (roleSlots.length > 0 ? `${avgMatchScore}%` : '--') : startupStage}
                         </div>
-                    </motion.div>
+                    </div>
                 </div>
-            </motion.div>
+            </div>
 
-            {/* 3-DAY SUMMIT AGENDA SELECTOR TABS */}
-            <div className="space-y-3 px-1">
+            {/* 3-Day Summit Agenda Tabs */}
+            <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-cyan-400" />
+                        <h3 className="text-sm font-semibold text-[#f7f8f8] flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-[#8a8f98]" />
                             <span>DAVAS 2026 Official Agenda</span>
                         </h3>
-                        <p className="text-[11px] text-slate-400">
+                        <p className="text-[11px] text-[#8a8f98]">
                             3-Day Official Schedule & Curated Sessions
                         </p>
                     </div>
-                    <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/40 px-2 py-1 rounded-lg border border-cyan-500/30 font-bold">
+                    <span className="text-[10px] font-mono text-[#d0d6e0] bg-[#141516] px-2 py-0.5 rounded-full border border-[#23252a]">
                         3-Day Pass
                     </span>
                 </div>
 
                 {/* 3-Day Navigation Bar */}
-                <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-inner">
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.96 }}
+                <div className="grid grid-cols-3 gap-1 p-1 bg-[#0f1011] rounded-lg border border-[#23252a]">
+                    <button
                         onClick={() => setSelectedDay('day1')}
-                        className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer flex flex-col items-center justify-center ${selectedDay === 'day1'
-                                ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-500/20 font-bold'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                        className={`py-1.5 px-1 text-center rounded-md transition-all duration-150 cursor-pointer flex flex-col items-center justify-center ${selectedDay === 'day1'
+                                ? 'bg-[#141516] text-[#f7f8f8] border border-[#34343a] font-medium shadow-sm'
+                                : 'text-[#8a8f98] hover:text-[#f7f8f8]'
                             }`}
                     >
-                        <span className="text-xs">🏌️ Day 1</span>
-                        <span className="text-[9px] opacity-80 whitespace-nowrap">Fringe & Golf</span>
-                    </motion.button>
+                        <span className="text-xs">Day 1</span>
+                        <span className="text-[10px] text-[#62666d]">Golf & Fringe</span>
+                    </button>
 
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.96 }}
+                    <button
                         onClick={() => setSelectedDay('day2')}
-                        className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer flex flex-col items-center justify-center ${selectedDay === 'day2'
-                                ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-500/20 font-bold'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                        className={`py-1.5 px-1 text-center rounded-md transition-all duration-150 cursor-pointer flex flex-col items-center justify-center ${selectedDay === 'day2'
+                                ? 'bg-[#141516] text-[#f7f8f8] border border-[#34343a] font-medium shadow-sm'
+                                : 'text-[#8a8f98] hover:text-[#f7f8f8]'
                             }`}
                     >
-                        <span className="text-xs">🏛️ Day 2</span>
-                        <span className="text-[9px] opacity-80 whitespace-nowrap">Summit & Expo</span>
-                    </motion.button>
+                        <span className="text-xs">Day 2</span>
+                        <span className="text-[10px] text-[#62666d]">Summit & Expo</span>
+                    </button>
 
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.96 }}
+                    <button
                         onClick={() => setSelectedDay('day3')}
-                        className={`py-2 px-1 text-center rounded-xl transition-all cursor-pointer flex flex-col items-center justify-center relative ${selectedDay === 'day3'
-                                ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-500/20 font-bold ring-1 ring-cyan-400'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                        className={`py-1.5 px-1 text-center rounded-md transition-all duration-150 cursor-pointer flex flex-col items-center justify-center ${selectedDay === 'day3'
+                                ? 'bg-[#141516] text-[#f7f8f8] border border-[#34343a] font-medium shadow-sm'
+                                : 'text-[#8a8f98] hover:text-[#f7f8f8]'
                             }`}
                     >
                         <span className="text-xs flex items-center gap-1">
-                            🤝 Day 3
-                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                            Day 3
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#5e6ad2]" />
                         </span>
-                        <span className="text-[9px] opacity-80 whitespace-nowrap">1:1 Matching</span>
-                    </motion.button>
+                        <span className="text-[10px] text-[#62666d]">1:1 Matching</span>
+                    </button>
                 </div>
             </div>
 
             {/* DAY 1 CONTENT */}
             {selectedDay === 'day1' && (
                 <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.2 }}
                     className="space-y-3"
                 >
-                    <div className="p-3 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+                    <div className="p-3 rounded-lg bg-[#0f1011] border border-[#23252a] flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Compass className="w-4 h-4 text-cyan-400" />
-                            <span className="text-xs font-bold text-white">Day 1: Kickoff, Golf & Workshops</span>
+                            <Compass className="w-4 h-4 text-[#8a8f98]" />
+                            <span className="text-xs font-medium text-[#f7f8f8]">Day 1: Kickoff, Golf & Workshops</span>
                         </div>
-                        <span className="text-[10px] font-mono text-slate-400">August 11, 2026</span>
+                        <span className="text-[10px] font-mono text-[#8a8f98]">Aug 11, 2026</span>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                         {SUMMIT_3DAY_AGENDA.day1.map((item) => {
                             const recommended = isEventAIRecommended(item.tags, item.title, item.description);
 
                             return (
-                                <motion.div
+                                <div
                                     key={item.id}
-                                    whileHover={{ y: -2 }}
-                                    className={`glass-panel p-4 rounded-2xl border transition-all ${recommended
-                                            ? 'border-cyan-500/50 bg-gradient-to-b from-slate-900/90 to-indigo-950/40 shadow-lg shadow-cyan-500/10'
-                                            : 'border-slate-800/80 bg-slate-950/70 hover:border-slate-700'
+                                    className={`p-4 rounded-xl border transition-all ${recommended
+                                            ? 'border-[#5e6ad2]/40 bg-[#0f1011] shadow-[inset_0_1px_0_0_rgba(94,106,210,0.15)]'
+                                            : 'border-[#23252a] bg-[#0f1011] hover:border-[#34343a]'
                                         }`}
                                 >
-                                    <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/80 gap-2">
-                                        <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-300 font-mono">
-                                            <Clock className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                    <div className="flex items-center justify-between mb-2 pb-2 border-b border-[#23252a] gap-2">
+                                        <div className="flex items-center gap-1.5 text-xs font-medium text-[#f7f8f8] font-mono">
+                                            <Clock className="w-3.5 h-3.5 text-[#8a8f98] shrink-0" />
                                             <span>{item.time}</span>
                                         </div>
-                                        <div className="flex items-center gap-1.5 text-xs text-slate-300 font-medium">
-                                            <MapPin className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                                        <div className="flex items-center gap-1.5 text-xs text-[#8a8f98]">
+                                            <MapPin className="w-3.5 h-3.5 text-[#8a8f98] shrink-0" />
                                             <span className="truncate max-w-[170px]">{item.location}</span>
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
                                         <div className="flex items-start justify-between gap-2">
-                                            <h4 className="text-sm font-extrabold text-white leading-snug">
+                                            <h4 className="text-sm font-medium text-[#f7f8f8] leading-snug">
                                                 {item.title}
                                             </h4>
                                             {recommended && (
-                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0 flex items-center gap-1">
-                                                    <Sparkles className="w-2.5 h-2.5 text-yellow-400" />
-                                                    Recommended for You
+                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#5e6ad2]/15 text-[#828fff] border border-[#5e6ad2]/30 shrink-0 flex items-center gap-1">
+                                                    <Sparkles className="w-2.5 h-2.5 text-[#828fff]" />
+                                                    Recommended
                                                 </span>
                                             )}
                                         </div>
 
-                                        <p className="text-xs text-slate-400 leading-relaxed">
+                                        <p className="text-xs text-[#8a8f98] leading-relaxed">
                                             {item.description}
                                         </p>
 
@@ -644,14 +615,14 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                             {item.tags.map((tag) => (
                                                 <span
                                                     key={tag}
-                                                    className="px-2 py-0.5 rounded-md bg-slate-900 text-[10px] text-slate-400 border border-slate-800 font-medium"
+                                                    className="px-2 py-0.5 rounded bg-[#141516] text-[10px] text-[#8a8f98] border border-[#23252a] font-mono"
                                                 >
                                                     #{tag}
                                                 </span>
                                             ))}
                                         </div>
                                     </div>
-                                </motion.div>
+                                </div>
                             );
                         })}
                     </div>
@@ -661,57 +632,56 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
             {/* DAY 2 CONTENT */}
             {selectedDay === 'day2' && (
                 <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.2 }}
                     className="space-y-3"
                 >
-                    <div className="p-3 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+                    <div className="p-3 rounded-lg bg-[#0f1011] border border-[#23252a] flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Compass className="w-4 h-4 text-cyan-400" />
-                            <span className="text-xs font-bold text-white">Day 2: Main Summit & Tech Expo</span>
+                            <Compass className="w-4 h-4 text-[#8a8f98]" />
+                            <span className="text-xs font-medium text-[#f7f8f8]">Day 2: Main Summit & Tech Expo</span>
                         </div>
-                        <span className="text-[10px] font-mono text-slate-400">August 12, 2026</span>
+                        <span className="text-[10px] font-mono text-[#8a8f98]">Aug 12, 2026</span>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                         {SUMMIT_3DAY_AGENDA.day2.map((item) => {
                             const recommended = isEventAIRecommended(item.tags, item.title, item.description);
 
                             return (
-                                <motion.div
+                                <div
                                     key={item.id}
-                                    whileHover={{ y: -2 }}
-                                    className={`glass-panel p-4 rounded-2xl border transition-all ${recommended
-                                            ? 'border-cyan-500/50 bg-gradient-to-b from-slate-900/90 to-indigo-950/40 shadow-lg shadow-cyan-500/10'
-                                            : 'border-slate-800/80 bg-slate-950/70 hover:border-slate-700'
+                                    className={`p-4 rounded-xl border transition-all ${recommended
+                                            ? 'border-[#5e6ad2]/40 bg-[#0f1011] shadow-[inset_0_1px_0_0_rgba(94,106,210,0.15)]'
+                                            : 'border-[#23252a] bg-[#0f1011] hover:border-[#34343a]'
                                         }`}
                                 >
-                                    <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-800/80 gap-2">
-                                        <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-300 font-mono">
-                                            <Clock className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                    <div className="flex items-center justify-between mb-2 pb-2 border-b border-[#23252a] gap-2">
+                                        <div className="flex items-center gap-1.5 text-xs font-medium text-[#f7f8f8] font-mono">
+                                            <Clock className="w-3.5 h-3.5 text-[#8a8f98] shrink-0" />
                                             <span>{item.time}</span>
                                         </div>
-                                        <div className="flex items-center gap-1.5 text-xs text-slate-300 font-medium">
-                                            <MapPin className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                                        <div className="flex items-center gap-1.5 text-xs text-[#8a8f98]">
+                                            <MapPin className="w-3.5 h-3.5 text-[#8a8f98] shrink-0" />
                                             <span className="truncate max-w-[170px]">{item.location}</span>
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
                                         <div className="flex items-start justify-between gap-2">
-                                            <h4 className="text-sm font-extrabold text-white leading-snug">
+                                            <h4 className="text-sm font-medium text-[#f7f8f8] leading-snug">
                                                 {item.title}
                                             </h4>
                                             {recommended && (
-                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0 flex items-center gap-1">
-                                                    <Sparkles className="w-2.5 h-2.5 text-yellow-400" />
-                                                    Recommended for You
+                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#5e6ad2]/15 text-[#828fff] border border-[#5e6ad2]/30 shrink-0 flex items-center gap-1">
+                                                    <Sparkles className="w-2.5 h-2.5 text-[#828fff]" />
+                                                    Recommended
                                                 </span>
                                             )}
                                         </div>
 
-                                        <p className="text-xs text-slate-400 leading-relaxed">
+                                        <p className="text-xs text-[#8a8f98] leading-relaxed">
                                             {item.description}
                                         </p>
 
@@ -719,14 +689,14 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                             {item.tags.map((tag) => (
                                                 <span
                                                     key={tag}
-                                                    className="px-2 py-0.5 rounded-md bg-slate-900 text-[10px] text-slate-400 border border-slate-800 font-medium"
+                                                    className="px-2 py-0.5 rounded bg-[#141516] text-[10px] text-[#8a8f98] border border-[#23252a] font-mono"
                                                 >
                                                     #{tag}
                                                 </span>
                                             ))}
                                         </div>
                                     </div>
-                                </motion.div>
+                                </div>
                             );
                         })}
                     </div>
@@ -736,84 +706,82 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
             {/* DAY 3 CONTENT (1:1 INVESTMENT SPEED MATCHING & GALA) */}
             {selectedDay === 'day3' && (
                 <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-4"
+                    transition={{ duration: 0.2 }}
+                    className="space-y-3.5"
                 >
                     {/* Day 3 Highlight Cards (Pitching & Gala Banners) */}
                     <div className="grid grid-cols-2 gap-2">
-                        <div className="p-3 rounded-2xl bg-gradient-to-b from-slate-900 to-indigo-950/60 border border-indigo-500/30 space-y-1">
-                            <div className="flex items-center gap-1.5 text-indigo-400 text-xs font-bold">
+                        <div className="p-3 rounded-lg bg-[#0f1011] border border-[#23252a] space-y-1">
+                            <div className="flex items-center gap-1.5 text-[#828fff] text-xs font-medium">
                                 <Mic className="w-3.5 h-3.5" />
                                 <span>Pitch Arena</span>
                             </div>
-                            <div className="text-[11px] font-bold text-white">08:30 - 11:30</div>
-                            <div className="text-[10px] text-slate-400">Grand Ballroom • Top 20</div>
+                            <div className="text-[11px] font-medium text-[#f7f8f8]">08:30 - 11:30</div>
+                            <div className="text-[10px] text-[#8a8f98]">Grand Ballroom • Top 20</div>
                         </div>
 
-                        <div className="p-3 rounded-2xl bg-gradient-to-b from-slate-900 to-purple-950/60 border border-purple-500/30 space-y-1">
-                            <div className="flex items-center gap-1.5 text-purple-400 text-xs font-bold">
+                        <div className="p-3 rounded-lg bg-[#0f1011] border border-[#23252a] space-y-1">
+                            <div className="flex items-center gap-1.5 text-[#828fff] text-xs font-medium">
                                 <Utensils className="w-3.5 h-3.5" />
                                 <span>Gala Dinner</span>
                             </div>
-                            <div className="text-[11px] font-bold text-white">18:00 - 21:00</div>
-                            <div className="text-[10px] text-slate-400">Ocean Ballroom • Awards</div>
+                            <div className="text-[11px] font-medium text-[#f7f8f8]">18:00 - 21:00</div>
+                            <div className="text-[10px] text-[#8a8f98]">Ocean Ballroom • Awards</div>
                         </div>
                     </div>
 
                     {/* 1:1 SPEED MATCHING TIMELINE SECTION */}
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h4 className="text-sm font-extrabold text-white flex items-center gap-2">
-                                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                                <h4 className="text-sm font-semibold text-[#f7f8f8] flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4 text-[#5e6ad2]" />
                                     <span>
                                         {personaRole === 'investor'
-                                            ? 'My 1:1 Speed Meetings (Summit Tables)'
-                                            : 'My Investor Meetings (Summit Tables)'}
+                                            ? 'My 1:1 Speed Meetings'
+                                            : 'My Investor Meetings'}
                                     </span>
                                 </h4>
-                                <p className="text-[11px] text-slate-400">
+                                <p className="text-[11px] text-[#8a8f98]">
                                     09:00 - 16:00 | 12 Designated Summit Tables
                                 </p>
                             </div>
-                            <span className="text-xs font-mono text-cyan-400 bg-cyan-950/40 px-2 py-0.5 rounded-lg border border-cyan-500/30">
-                                August 13, 2026
+                            <span className="text-xs font-mono text-[#8a8f98] bg-[#141516] px-2 py-0.5 rounded border border-[#23252a]">
+                                Aug 13, 2026
                             </span>
                         </div>
 
                         {/* Status Filter Chips */}
-                        <div className="flex items-center gap-2 p-1 bg-slate-900/90 rounded-2xl border border-slate-800">
+                        <div className="flex items-center gap-1 p-1 bg-[#0f1011] rounded-lg border border-[#23252a]">
                             {(['All', 'Upcoming', 'Completed'] as const).map((filter) => (
-                                <motion.button
+                                <button
                                     key={filter}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.95 }}
                                     onClick={() => setActiveFilter(filter)}
-                                    className={`flex-1 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${activeFilter === filter
-                                            ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-500/20'
-                                            : 'text-slate-400 hover:text-white'
+                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all duration-150 cursor-pointer ${activeFilter === filter
+                                            ? 'bg-[#141516] text-[#f7f8f8] border border-[#34343a] shadow-sm'
+                                            : 'text-[#8a8f98] hover:text-[#f7f8f8]'
                                         }`}
                                 >
                                     {filter}
-                                </motion.button>
+                                </button>
                             ))}
                         </div>
                     </div>
 
-                    {/* Vertical Timeline Schedule with Stagger Animation */}
+                    {/* Vertical Timeline Schedule */}
                     {filteredSlots.length === 0 ? (
-                        <div className="glass-panel p-8 rounded-3xl border border-dashed border-slate-800 text-center space-y-3">
-                            <div className="w-12 h-12 mx-auto rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20">
-                                <Calendar className="w-6 h-6" />
+                        <div className="p-8 rounded-xl border border-dashed border-[#23252a] text-center space-y-3 bg-[#0f1011]">
+                            <div className="w-10 h-10 mx-auto rounded-lg bg-[#141516] text-[#8a8f98] flex items-center justify-center border border-[#23252a]">
+                                <Calendar className="w-5 h-5" />
                             </div>
-                            <h4 className="text-sm font-bold text-white">
+                            <h4 className="text-sm font-medium text-[#f7f8f8]">
                                 {personaRole === 'investor'
                                     ? 'No 1:1 Meetings Scheduled'
-                                    : 'No VC Meetings Scheduled for this Startup'}
+                                    : 'No VC Meetings Scheduled'}
                             </h4>
-                            <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+                            <p className="text-xs text-[#8a8f98] max-w-xs mx-auto leading-relaxed">
                                 Generate your personalized speed meeting schedule in the Admin Dashboard to see your timed sessions here.
                             </p>
                         </div>
@@ -822,10 +790,10 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                             variants={timelineContainerVariants}
                             initial="hidden"
                             animate="visible"
-                            className="space-y-4 relative"
+                            className="space-y-3 relative"
                         >
                             {/* Timeline Connecting Line */}
-                            <div className="absolute left-6 top-3 bottom-3 w-0.5 bg-slate-800 pointer-events-none" />
+                            <div className="absolute left-4 top-3 bottom-3 w-px bg-[#23252a] pointer-events-none" />
 
                             {filteredSlots.map((slot) => {
                                 const isCompleted = slot.status === 'Completed';
@@ -835,88 +803,84 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                     <motion.div
                                         key={slot.id}
                                         variants={timelineItemVariants}
-                                        className="relative pl-12 group"
+                                        className="relative pl-9 group"
                                     >
                                         {/* Timeline Indicator Dot */}
                                         <div
-                                            className={`absolute left-3.5 top-5 -translate-x-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center z-10 ${isCompleted
-                                                    ? 'bg-emerald-500 border-emerald-300 text-slate-950'
+                                            className={`absolute left-4 top-5 -translate-x-1/2 w-4 h-4 rounded-full border flex items-center justify-center z-10 ${isCompleted
+                                                    ? 'bg-[#27a644] border-[#27a644] text-white'
                                                     : isInProgress
-                                                        ? 'bg-cyan-500 border-white text-slate-950 animate-pulse'
-                                                        : 'bg-slate-900 border-slate-700 text-slate-500'
+                                                        ? 'bg-[#5e6ad2] border-white text-white'
+                                                        : 'bg-[#0f1011] border-[#34343a] text-[#8a8f98]'
                                                 }`}
                                         >
                                             {isCompleted ? (
-                                                <CheckCircle2 className="w-3.5 h-3.5 stroke-[3]" />
+                                                <CheckCircle2 className="w-3 h-3 stroke-[2.5]" />
                                             ) : (
-                                                <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                                                <div className="w-1 h-1 rounded-full bg-current" />
                                             )}
                                         </div>
 
-                                        {/* Schedule Card Mobile Card with Hover Animation */}
-                                        <motion.div
-                                            whileHover={{
-                                                y: -4,
-                                                boxShadow: '0px 10px 20px rgba(124, 58, 237, 0.2)',
-                                            }}
-                                            className={`glass-panel p-4 rounded-2xl border transition-colors ${isInProgress
-                                                    ? 'border-cyan-400/50 shadow-lg shadow-cyan-500/10 bg-slate-900/90'
-                                                    : 'border-slate-800/80 bg-slate-950/70 hover:border-slate-700'
+                                        {/* Schedule Card */}
+                                        <div
+                                            className={`p-4 rounded-xl border transition-all ${isInProgress
+                                                    ? 'border-[#5e6ad2] bg-[#0f1011] shadow-[inset_0_1px_0_0_rgba(94,106,210,0.2)]'
+                                                    : 'border-[#23252a] bg-[#0f1011] hover:border-[#34343a]'
                                                 }`}
                                         >
                                             {/* Time & Table Banner */}
-                                            <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/80 gap-2">
-                                                <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-300 font-mono whitespace-nowrap">
-                                                    <Clock className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                            <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#23252a] gap-2">
+                                                <div className="flex items-center gap-1.5 text-xs font-medium text-[#f7f8f8] font-mono">
+                                                    <Clock className="w-3.5 h-3.5 text-[#8a8f98] shrink-0" />
                                                     <span>{slot.time}</span>
                                                 </div>
 
                                                 <div className="flex items-center gap-1.5 shrink-0">
-                                                    <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1">
-                                                        <MapPin className="w-3 h-3" />
+                                                    <span className="font-mono text-xs bg-[#141516] border border-[#23252a] text-[#d0d6e0] px-2.5 py-1 rounded-md flex items-center gap-1">
+                                                        <MapPin className="w-3 h-3 text-[#8a8f98]" />
                                                         {slot.table}
                                                     </span>
-                                                    <span className="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 whitespace-nowrap">
+                                                    <span className="font-mono text-xs bg-[#5e6ad2]/15 border border-[#5e6ad2]/30 text-[#828fff] px-2.5 py-1 rounded-md">
                                                         {slot.matchScore}% Match
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            {/* Header Info: Dynamic based on personaRole (If Investor -> Show Startup Info; If Startup -> Show Investor Info) */}
+                                            {/* Header Info: Dynamic based on personaRole */}
                                             {personaRole === 'investor' ? (
                                                 /* INVESTOR VIEW -> SHOW STARTUP PROFILE */
                                                 <div className="flex items-start gap-3">
                                                     <img
                                                         src={slot.startup.logo}
                                                         alt={slot.startup.name}
-                                                        className="w-12 h-12 rounded-xl object-cover border border-slate-700 shrink-0 shadow-md"
+                                                        className="w-10 h-10 rounded-md object-cover border border-[#23252a] shrink-0"
                                                     />
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center justify-between gap-2">
-                                                            <h4 className="text-sm font-extrabold text-white truncate">
+                                                            <h4 className="text-sm font-medium text-[#f7f8f8] truncate">
                                                                 {slot.startup.name}
                                                             </h4>
                                                             <div className="flex items-center gap-1.5 shrink-0">
                                                                 {(slot.notes || slot.followUpGenerated) && (
-                                                                    <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
-                                                                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                                                    <span className="text-[10px] font-medium text-[#27a644] bg-[#27a644]/10 px-2 py-0.5 rounded-full border border-[#27a644]/30 flex items-center gap-1">
+                                                                        <CheckCircle2 className="w-3 h-3 text-[#27a644]" />
                                                                         Logged
                                                                     </span>
                                                                 )}
-                                                                <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                                                                <span className="text-[10px] font-medium text-[#828fff] bg-[#5e6ad2]/10 px-2 py-0.5 rounded border border-[#5e6ad2]/20 font-mono">
                                                                     {slot.startup.stage}
                                                                 </span>
                                                             </div>
                                                         </div>
 
-                                                        <p className="text-xs text-slate-300 line-clamp-2 mt-0.5">
+                                                        <p className="text-xs text-[#8a8f98] line-clamp-2 mt-0.5 leading-relaxed">
                                                             {slot.startup.tagline}
                                                         </p>
 
-                                                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
-                                                            <span>Ask: <strong className="text-white">{slot.startup.targetAsk}</strong></span>
+                                                        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[#8a8f98]">
+                                                            <span>Ask: <strong className="text-[#f7f8f8] font-mono">{slot.startup.targetAsk}</strong></span>
                                                             <span>•</span>
-                                                            <span>Founder: <strong className="text-slate-200">{slot.startup.founderName}</strong></span>
+                                                            <span>Founder: <strong className="text-[#d0d6e0]">{slot.startup.founderName}</strong></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -926,58 +890,58 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                                     <img
                                                         src={slot.investor.avatar}
                                                         alt={slot.investor.firm}
-                                                        className="w-12 h-12 rounded-xl object-cover border border-purple-500/40 shrink-0 shadow-md"
+                                                        className="w-10 h-10 rounded-full object-cover border border-[#23252a] shrink-0"
                                                     />
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center justify-between gap-2">
-                                                            <h4 className="text-sm font-extrabold text-white truncate flex items-center gap-1.5">
-                                                                <Building2 className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                                                            <h4 className="text-sm font-medium text-[#f7f8f8] truncate flex items-center gap-1.5">
+                                                                <Building2 className="w-3.5 h-3.5 text-[#8a8f98] shrink-0" />
                                                                 <span>{slot.investor.firm}</span>
                                                             </h4>
                                                             <div className="flex items-center gap-1.5 shrink-0">
                                                                 {(slot.notes || slot.followUpGenerated) && (
-                                                                    <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
-                                                                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                                                    <span className="text-[10px] font-medium text-[#27a644] bg-[#27a644]/10 px-2 py-0.5 rounded-full border border-[#27a644]/30 flex items-center gap-1">
+                                                                        <CheckCircle2 className="w-3 h-3 text-[#27a644]" />
                                                                         Logged
                                                                     </span>
                                                                 )}
-                                                                <span className="text-[10px] font-semibold text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded border border-purple-500/30">
+                                                                <span className="text-[10px] font-medium text-[#d0d6e0] bg-[#141516] px-2 py-0.5 rounded border border-[#23252a]">
                                                                     {slot.investor.country || 'Global VC'}
                                                                 </span>
                                                             </div>
                                                         </div>
 
-                                                        <p className="text-xs text-slate-300 mt-0.5 flex items-center gap-1">
+                                                        <p className="text-xs text-[#8a8f98] mt-0.5 flex items-center gap-1">
                                                             <span>Representative:</span>
-                                                            <strong className="text-white">{slot.investor.name}</strong>
-                                                            <span className="text-slate-400">({slot.investor.role})</span>
+                                                            <strong className="text-[#f7f8f8]">{slot.investor.name}</strong>
+                                                            <span className="text-[#62666d]">({slot.investor.role})</span>
                                                         </p>
 
-                                                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
-                                                            <span className="flex items-center gap-1 text-emerald-300 font-semibold">
+                                                        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[#8a8f98]">
+                                                            <span className="flex items-center gap-1 text-[#27a644] font-mono">
                                                                 <DollarSign className="w-3 h-3" />
                                                                 Ticket: {slot.investor.ticketSizeRange || '$250K - $1M'}
                                                             </span>
                                                             <span>•</span>
                                                             <span>
-                                                                Target: <strong className="text-slate-200">{slot.investor.targetSectors?.slice(0, 2).join(', ')}</strong>
+                                                                Target: <strong className="text-[#d0d6e0]">{slot.investor.targetSectors?.slice(0, 2).join(', ')}</strong>
                                                             </span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             )}
 
-                                            {/* Ice-breakers (Investor) vs Pitch Prep (Startup) Box */}
+                                            {/* Ice-breakers (Investor) vs Pitch Prep (Startup) Section */}
                                             {personaRole === 'investor' ? (
-                                                <div className="mt-3 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20 space-y-2">
-                                                    <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-300">
-                                                        <Sparkles className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
-                                                        <span>💡 Executive Ice-breakers (Questions to Ask Founder)</span>
+                                                <div className="mt-3 p-3.5 rounded-lg bg-[#141516] border border-[#23252a] space-y-2">
+                                                    <div className="flex items-center gap-1.5 text-xs font-medium text-[#f7f8f8]">
+                                                        <Sparkles className="w-3.5 h-3.5 text-[#828fff] shrink-0" />
+                                                        <span>Executive Ice-breakers (Questions for Founder)</span>
                                                     </div>
                                                     <div className="space-y-1.5">
                                                         {getInvestorIceBreakers(slot).map((q, idx) => (
-                                                            <div key={idx} className="flex items-start gap-2 text-[11px] text-slate-300 leading-snug">
-                                                                <span className="w-4 h-4 rounded-full bg-cyan-500/20 text-cyan-300 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5 border border-cyan-500/30">
+                                                            <div key={idx} className="flex items-start gap-2 text-xs text-[#d0d6e0] leading-relaxed">
+                                                                <span className="w-4 h-4 rounded-full bg-[#5e6ad2]/15 text-[#828fff] border border-[#5e6ad2]/30 font-mono text-[10px] flex items-center justify-center shrink-0 mt-0.5">
                                                                     {idx + 1}
                                                                 </span>
                                                                 <span className="flex-1">{q}</span>
@@ -986,15 +950,15 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="mt-3 p-3 rounded-xl bg-purple-950/30 border border-purple-500/20 space-y-2">
-                                                    <div className="flex items-center gap-1.5 text-xs font-bold text-purple-300">
-                                                        <Sparkles className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
-                                                        <span>🎯 Pitch Prep (Expected Topics VC Will Ask You)</span>
+                                                <div className="mt-3 p-3.5 rounded-lg bg-[#141516] border border-[#23252a] space-y-2">
+                                                    <div className="flex items-center gap-1.5 text-xs font-medium text-[#f7f8f8]">
+                                                        <Sparkles className="w-3.5 h-3.5 text-[#828fff] shrink-0" />
+                                                        <span>Pitch Prep (Expected Topics from VC)</span>
                                                     </div>
                                                     <div className="space-y-1.5">
                                                         {getStartupPitchPrep(slot).map((topic, idx) => (
-                                                            <div key={idx} className="flex items-start gap-2 text-[11px] text-slate-300 leading-snug">
-                                                                <span className="w-4 h-4 rounded-full bg-purple-500/20 text-purple-300 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5 border border-purple-500/30">
+                                                            <div key={idx} className="flex items-start gap-2 text-xs text-[#d0d6e0] leading-relaxed">
+                                                                <span className="w-4 h-4 rounded-full bg-[#5e6ad2]/15 text-[#828fff] border border-[#5e6ad2]/30 font-mono text-[10px] flex items-center justify-center shrink-0 mt-0.5">
                                                                     {idx + 1}
                                                                 </span>
                                                                 <span className="flex-1">{topic}</span>
@@ -1004,30 +968,26 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                                 </div>
                                             )}
 
-                                            {/* Generated Followup / Notes summary pill if present */}
+                                            {/* Logged Notes Summary Preview */}
                                             {(slot.notes || slot.followUpGenerated) && (
-                                                <div className={`mt-3 p-2.5 rounded-xl border text-xs space-y-1 ${personaRole === 'investor'
-                                                        ? 'bg-purple-950/40 border-purple-500/30'
-                                                        : 'bg-indigo-950/40 border-indigo-500/30'
-                                                    }`}>
-                                                    <div className={`flex items-center justify-between font-semibold text-[11px] ${personaRole === 'investor' ? 'text-purple-300' : 'text-indigo-300'
-                                                        }`}>
-                                                        <span className="flex items-center gap-1">
-                                                            <Sparkles className="w-3 h-3 text-yellow-400" />
+                                                <div className="mt-3 p-3 rounded-lg bg-[#141516] border border-[#23252a] text-xs space-y-1">
+                                                    <div className="flex items-center justify-between font-medium text-[11px] text-[#828fff]">
+                                                        <span className="flex items-center gap-1.5">
+                                                            <Sparkles className="w-3 h-3 text-[#828fff]" />
                                                             {personaRole === 'startup'
-                                                                ? 'VC Partner Feedback & Follow-up Draft'
+                                                                ? 'VC Feedback & Follow-up Draft'
                                                                 : slot.followUpGenerated
                                                                     ? 'Follow-up Draft Ready'
                                                                     : 'Meeting Notes Saved'}
                                                         </span>
-                                                        <span className="text-[10px] text-emerald-400 font-mono">Logged</span>
+                                                        <span className="text-[10px] text-[#27a644] font-mono">Logged</span>
                                                     </div>
                                                     {slot.followUpGenerated ? (
-                                                        <p className="text-[11px] text-slate-300 line-clamp-2 italic">
+                                                        <p className="text-xs text-[#8a8f98] line-clamp-2 italic leading-relaxed">
                                                             "{slot.followUpGenerated.emailSubject}"
                                                         </p>
                                                     ) : slot.notes ? (
-                                                        <p className="text-[11px] text-slate-300 line-clamp-2 italic">
+                                                        <p className="text-xs text-[#8a8f98] line-clamp-2 italic leading-relaxed">
                                                             "{slot.notes}"
                                                         </p>
                                                     ) : null}
@@ -1035,27 +995,27 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
                                             )}
 
                                             {/* Primary Action Button */}
-                                            <div className="mt-4 pt-2">
-                                                <motion.button
-                                                    whileHover={{ scale: 1.02 }}
-                                                    whileTap={{ scale: 0.95 }}
+                                            <div className="mt-3.5 pt-1">
+                                                <button
                                                     onClick={() => onOpenFollowUpModal(slot)}
-                                                    className="w-full min-h-[44px] px-4 rounded-xl bg-gradient-to-r from-cyan-600 via-indigo-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white text-xs font-extrabold shadow-lg shadow-cyan-600/20 border border-cyan-400/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                                                    className="w-full bg-[#5e6ad2] hover:bg-[#828fff] text-white rounded-md px-4 py-2.5 text-xs font-medium transition-colors shadow-sm cursor-pointer flex items-center justify-between"
                                                 >
-                                                    <FileText className="w-4 h-4 text-cyan-200" />
-                                                    <span>
-                                                        {personaRole === 'investor'
-                                                            ? (slot.notes || slot.followUpGenerated)
-                                                                ? '📝 View / Edit Notes & Follow-up'
-                                                                : '📝 Add Notes & Follow-up'
-                                                            : (slot.notes || slot.followUpGenerated)
-                                                                ? '📬 View VC Feedback & Email Draft'
-                                                                : '🎯 Review Table Location & Pitch Deck'}
-                                                    </span>
-                                                    <ChevronRight className="w-4 h-4 ml-auto text-cyan-200" />
-                                                </motion.button>
+                                                    <div className="flex items-center gap-2">
+                                                        <FileText className="w-4 h-4" />
+                                                        <span>
+                                                            {personaRole === 'investor'
+                                                                ? (slot.notes || slot.followUpGenerated)
+                                                                    ? 'View / Edit Notes & Follow-up'
+                                                                    : 'Add Notes & Follow-up'
+                                                                : (slot.notes || slot.followUpGenerated)
+                                                                    ? 'View VC Feedback & Email Draft'
+                                                                    : 'Review Table Location & Pitch Deck'}
+                                                        </span>
+                                                    </div>
+                                                    <ChevronRight className="w-4 h-4 text-white/80" />
+                                                </button>
                                             </div>
-                                        </motion.div>
+                                        </div>
                                     </motion.div>
                                 );
                             })}
@@ -1065,9 +1025,9 @@ export const ParticipantPortal: React.FC<ParticipantPortalProps> = ({
             )}
 
             {/* Footnote tips for summit attendees */}
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center text-xs text-slate-400 space-y-1">
-                <div className="flex items-center justify-center gap-1 text-cyan-400 font-semibold">
-                    <Info className="w-3.5 h-3.5" />
+            <div className="p-4 rounded-xl bg-[#0f1011] border border-[#23252a] text-center text-xs text-[#8a8f98] space-y-1">
+                <div className="flex items-center justify-center gap-1.5 text-[#d0d6e0] font-medium">
+                    <Info className="w-3.5 h-3.5 text-[#5e6ad2]" />
                     <span>DAVAS 1:1 Summit Tip</span>
                 </div>
                 <p className="text-[11px] leading-relaxed">

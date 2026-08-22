@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -8,7 +9,7 @@ import { FollowUpModal } from './components/FollowUpModal';
 import { Startup, Investor, MatchPair, MeetingSlot, EventStats } from './types';
 import { generateSmartSchedule } from './utils/scheduler';
 import { FALLBACK_STARTUPS, FALLBACK_INVESTORS } from './data/davasData';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Sparkles, AlertCircle, Info, Calendar } from 'lucide-react';
 
 const INITIAL_STATS: EventStats = {
     totalStartups: FALLBACK_STARTUPS.length,
@@ -18,6 +19,12 @@ const INITIAL_STATS: EventStats = {
     dealSuccessRate: 0,
     topSector: 'Tech & AI',
 };
+
+interface ToastState {
+    id: string;
+    message: string;
+    type?: 'success' | 'info' | 'error' | 'ai';
+}
 
 export default function App() {
     const [activeView, setActiveView] = useState<'admin' | 'participant'>('admin');
@@ -48,12 +55,28 @@ export default function App() {
     const [followUpSlot, setFollowUpSlot] = useState<MeetingSlot | null>(null);
 
     // Toast Notification
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toast, setToast] = useState<ToastState | null>(null);
 
-    const showToast = (msg: string) => {
-        setToastMessage(msg);
+    const showToast = (msg: string, type?: 'success' | 'info' | 'error' | 'ai') => {
+        let resolvedType = type;
+        if (!resolvedType) {
+            if (msg.includes('🤖') || msg.includes('✨') || msg.includes('AI') || msg.includes('Smart Match')) {
+                resolvedType = 'ai';
+            } else if (msg.includes('⚠️') || msg.includes('Failed') || msg.includes('error')) {
+                resolvedType = 'error';
+            } else if (msg.includes('✅') || msg.includes('Successfully') || msg.includes('saved')) {
+                resolvedType = 'success';
+            } else {
+                resolvedType = 'info';
+            }
+        }
+        setToast({
+            id: `toast-${Date.now()}`,
+            message: msg.replace(/^[🤖✨⚠️✅📊📅]\s*/, ''),
+            type: resolvedType,
+        });
         setTimeout(() => {
-            setToastMessage(null);
+            setToast(null);
         }, 3500);
     };
 
@@ -795,14 +818,36 @@ export default function App() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-dark text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
-            {/* Toast Notification */}
-            {toastMessage && (
-                <div className="fixed top-20 right-6 z-50 glass-panel-glow px-4 py-3 rounded-2xl border border-cyan-400/40 shadow-2xl flex items-center gap-3 animate-bounce">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                    <span className="text-xs font-bold text-white">{toastMessage}</span>
-                </div>
-            )}
+        <div className="min-h-screen bg-[#010102] text-[#f7f8f8] flex flex-col font-sans selection:bg-[#5e6ad2] selection:text-white">
+            {/* Toast Notification - Linear Design System */}
+            <div className="fixed top-20 right-6 z-50 pointer-events-none flex flex-col items-end gap-2">
+                <AnimatePresence>
+                    {toast && (
+                        <motion.div
+                            key={toast.id}
+                            initial={{ opacity: 0, y: -12, scale: 0.96 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            transition={{ duration: 0.2, ease: 'easeOut' }}
+                            className="pointer-events-auto bg-[#141516] border border-[#23252a] text-[#f7f8f8] rounded-lg shadow-xl px-4 py-3 text-sm flex items-center gap-3 max-w-md shadow-[0_8px_30px_rgb(0,0,0,0.5)]"
+                        >
+                            {toast.type === 'ai' && (
+                                <Sparkles className="w-4 h-4 text-[#828fff] shrink-0" />
+                            )}
+                            {toast.type === 'success' && (
+                                <CheckCircle2 className="w-4 h-4 text-[#27a644] shrink-0" />
+                            )}
+                            {toast.type === 'error' && (
+                                <AlertCircle className="w-4 h-4 text-[#eb5757] shrink-0" />
+                            )}
+                            {toast.type === 'info' && (
+                                <Info className="w-4 h-4 text-[#8a8f98] shrink-0" />
+                            )}
+                            <span className="text-xs text-[#f7f8f8] leading-snug">{toast.message}</span>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
 
             {/* Top Application Header */}
             <Header

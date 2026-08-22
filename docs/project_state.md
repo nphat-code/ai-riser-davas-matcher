@@ -73,9 +73,16 @@ Dự án đã được chuyển đổi từ việc phụ thuộc vào Google App
 - Đã có file `Dockerfile` chuẩn bị cho việc đẩy lên Google Cloud Run.
 - Cần public dự án và test thử.
 
-**8. Giai đoạn 8: Chuẩn hóa Hệ thống Thiết kế Linear (DESIGN.md & index.css)**
+**8. Giai đoạn 8: Chuẩn hóa Toàn diện Hệ thống Thiết kế Linear (Hoàn thành 100%)**
 - Tích hợp tài liệu đặc tả chuẩn [DESIGN.md](file:///c:/Study/Projects/ai-riser-davas-matcher/DESIGN.md) (Linear Design System: Canvas `#010102`, 4-step Surface ladder `#0f1011` -> `#191a1b`, Hairlines `#23252a`, Lavender Accent `#5e6ad2`, Ink typography).
-- Cập nhật toàn diện [src/index.css](file:///c:/Study/Projects/ai-riser-davas-matcher/src/index.css) với CSS Variables, Utility classes (`bg-canvas`, `bg-surface-1`, `border-hairline`, `btn-primary`, `btn-secondary`, `linear-card`, `badge-linear`) và thanh cuộn tối giản Minimalist Scrollbar.
+- Cập nhật [src/index.css](file:///c:/Study/Projects/ai-riser-davas-matcher/src/index.css) với CSS Variables, Utility classes và thanh cuộn tối giản.
+- Refactor toàn diện 100% các React Components sang phong cách Linear:
+  * [Header.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/Header.tsx) & [Sidebar.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/Sidebar.tsx): Segmented switcher, dark chrome `#010102`, viền hairline 1px `#23252a`.
+  * [AIMatchModal.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/AIMatchModal.tsx) & [FollowUpModal.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/FollowUpModal.tsx): Scrim đen mờ `#000000/75`, surface lift `#141516`, top-edge highlight, badge lavender `#5e6ad2`.
+  * [ParticipantPortal.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/ParticipantPortal.tsx): Persona switcher tinh gọn, timeline thanh mảnh, thẻ lịch họp & ghi chú chuẩn Linear.
+  * [AdminDashboard.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/components/AdminDashboard.tsx): KPI stat cards tối giản, bảng dữ liệu phân trang chuẩn mực, ma trận điều phối 12 bàn (Floor Matrix) sắc nét.
+  * [App.tsx](file:///c:/Study/Projects/ai-riser-davas-matcher/src/App.tsx): Hệ thống Linear Toast thông báo động theo ngữ cảnh (AI, Success, Error, Info) với AnimatePresence.
+
 
 
 ## 3. Quy trình tổ chức và tham gia (DAVAS Workflow)
