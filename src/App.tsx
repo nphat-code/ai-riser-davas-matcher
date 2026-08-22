@@ -117,6 +117,43 @@ export default function App() {
                         const founderName = s["Representative Name"] || s.founderName || 'Founder';
                         const summaryDesc = `A promising ${stage} startup in ${sector}`;
 
+                        // Read MRR directly from Google Sheets columns (fallback to 'TBD' if empty)
+                        const rawMrr =
+                            s["Monthly Recurring Revenue (MRR)"] ??
+                            s["MRR"] ??
+                            s["Monthly Recurring Revenue"] ??
+                            s["Monthly_Recurring_Revenue"] ??
+                            s.metrics?.mrr ??
+                            s.mrr;
+
+                        let parsedMrr = 'TBD';
+                        if (rawMrr !== undefined && rawMrr !== null && String(rawMrr).trim() !== '' && String(rawMrr).trim() !== 'TBD') {
+                            const cleanStr = String(rawMrr).trim();
+                            if (/^\d+(\.\d+)?$/.test(cleanStr.replace(/,/g, ''))) {
+                                parsedMrr = formatCurrency(cleanStr);
+                            } else {
+                                parsedMrr = cleanStr;
+                            }
+                        }
+
+                        // Read Growth Rate directly from Google Sheets columns (fallback to 'N/A' if empty)
+                        const rawGrowth =
+                            s["Growth Rate MoM"] ??
+                            s["Growth Rate"] ??
+                            s["Growth Rate (MoM)"] ??
+                            s["Growth_Rate_MoM"] ??
+                            s.metrics?.growthRate ??
+                            s.growthRate;
+
+                        let parsedGrowth = 'N/A';
+                        if (rawGrowth !== undefined && rawGrowth !== null && String(rawGrowth).trim() !== '' && String(rawGrowth).trim() !== 'N/A') {
+                            parsedGrowth = String(rawGrowth).trim();
+                            if (/^\d+(\.\d+)?%?$/.test(parsedGrowth)) {
+                                if (!parsedGrowth.includes('%')) parsedGrowth = `+${parsedGrowth}% MoM`;
+                                else if (!parsedGrowth.includes('MoM') && !parsedGrowth.includes('YoY')) parsedGrowth = `${parsedGrowth.startsWith('+') ? '' : '+'}${parsedGrowth} MoM`;
+                            }
+                        }
+
                         return {
                             id: s["Email Address"] || s.id || `startup-${idx + 1}`,
                             name,
@@ -132,9 +169,9 @@ export default function App() {
                             founderName,
                             founderTitle: 'Founder & CEO',
                             metrics: {
-                                mrr: s.metrics?.mrr || s.mrr || 'TBD',
+                                mrr: parsedMrr,
                                 arr: s.metrics?.arr || s.arr || 'TBD',
-                                growthRate: s.metrics?.growthRate || s.growthRate || 'N/A',
+                                growthRate: parsedGrowth,
                                 usersCount: s.metrics?.usersCount || s.usersCount || '10K+',
                             },
                             keyTags: sector.split(',').map((t: string) => t.trim()).filter(Boolean),
