@@ -432,9 +432,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <Building2 className="w-4 h-4 text-[#8a8f98]" />
                     </div>
                     <div className="text-2xl font-semibold text-[#f7f8f8] tracking-tight">{stats.totalStartups}</div>
-                    <p className="text-[11px] text-[#8a8f98] font-mono mt-1 flex items-center gap-1">
-                        100% Vetted for DAVAS
-                    </p>
                 </motion.div>
 
                 {/* Total Investors */}
@@ -447,9 +444,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <Users className="w-4 h-4 text-[#8a8f98]" />
                     </div>
                     <div className="text-2xl font-semibold text-[#f7f8f8] tracking-tight">{stats.totalInvestors}</div>
-                    <p className="text-[11px] text-[#8a8f98] font-mono mt-1 flex items-center gap-1">
-                        $250M+ Capital Pool
-                    </p>
                 </motion.div>
 
                 {/* Scheduled Meetings */}
@@ -462,9 +456,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <Calendar className="w-4 h-4 text-[#8a8f98]" />
                     </div>
                     <div className="text-2xl font-semibold text-[#f7f8f8] tracking-tight">{stats.scheduledMeetings}</div>
-                    <p className="text-[11px] text-[#8a8f98] font-mono mt-1">
-                        Across 12 Summit Tables
-                    </p>
                 </motion.div>
 
                 {/* Avg Match Score */}
@@ -479,9 +470,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <div className="text-2xl font-semibold text-[#828fff] tracking-tight">
                         {stats.scheduledMeetings === 0 || stats.avgMatchScore === 0 ? '--' : `${stats.avgMatchScore}%`}
                     </div>
-                    <p className="text-[11px] text-[#8a8f98] font-mono mt-1">
-                        {stats.scheduledMeetings === 0 || stats.avgMatchScore === 0 ? 'Awaiting Match' : '4-Pillar Evaluation'}
-                    </p>
                 </motion.div>
 
                 {/* Deal Success Rate */}
@@ -496,9 +484,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <div className="text-2xl font-semibold text-[#27a644] tracking-tight">
                         {!stats.dealSuccessRate || stats.dealSuccessRate === 0 ? '--' : `${stats.dealSuccessRate}%`}
                     </div>
-                    <p className="text-[11px] text-[#8a8f98] font-mono mt-1">
-                        {!stats.dealSuccessRate || stats.dealSuccessRate === 0 ? 'Post-Meeting Feedback' : 'Term Sheet Target'}
-                    </p>
                 </motion.div>
             </motion.div>
 
