@@ -1193,9 +1193,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                                     </div>
                                                 </td>
                                                 <td className="py-3 px-4 font-mono text-xs text-[#828fff] whitespace-nowrap">{s.stage || 'Seed'}</td>
-                                                <td className="py-3 px-4 whitespace-nowrap">
-                                                    <span className="font-mono font-medium text-[#27a644]">{s.targetAsk || 'TBD'}</span>
-                                                    <div className="text-[10px] text-[#8a8f98] font-mono">Val: {s.valuation || 'TBD'}</div>
+                                                <td className="py-3 px-4 whitespace-nowrap font-mono">
+                                                    <span className="font-medium text-[#27a644]">{s.targetAsk || 'TBD'}</span>
                                                 </td>
                                                 <td className="py-3 px-4 whitespace-nowrap font-mono">
                                                     <div className="text-xs font-semibold text-[#f7f8f8]">
