@@ -38,9 +38,9 @@
   3. Mở **`AI Match Modal`**: Lướt qua 4 thanh tiến độ (*Investment Thesis, Target Sector, Funding Stage, Ticket Size*) và chỉ số **Match Score**.
   4. Cuộn xuống phần **AI Ice-breakers** (3 câu hỏi mở đầu cuộc trò chuyện do Gemini sinh ra).
 * **Lời bình (Voiceover - Tiếng Anh):**
-  > *"Powered by Google Gemini with Structured JSON Outputs, DavaSync doesn't just match keywords. It deeply evaluates 4 core pillars: Sector Alignment, Capital Stage, Ticket Size, and Investment Thesis Synergy. Within milliseconds, Gemini delivers a comprehensive evaluation score and automatically crafts 3 bespoke AI Ice-breaker questions, empowering founders and investors to break the ice and dive straight into high-value discussions."*
+  > *"Powered by Google Gemini with Structured JSON Outputs, DavaSync doesn't just match keywords. It deeply evaluates 4 core pillars: Sector Alignment, Capital Stage, Ticket Size, and Investment Thesis Synergy. In just seconds, Gemini delivers a comprehensive evaluation score and automatically crafts 3 bespoke AI Ice-breaker questions, empowering founders and investors to break the ice and dive straight into high-value discussions."*
 * **Lời bình (Tiếng Việt):**
-  > *"Với bộ não Google Gemini, DavaSync đánh giá toàn diện 4 trụ cột: Ngành nghề, Giai đoạn, Quy mô vốn và Luận điểm đầu tư. Chỉ trong tích tắc, AI đưa ra điểm số khớp lệnh minh bạch và tự động soạn sẵn 3 câu hỏi phá băng (AI Ice-breaker) giúp cuộc gặp 1:1 khởi đầu tự nhiên và hiệu quả."*
+  > *"Với bộ não Google Gemini, DavaSync đánh giá toàn diện 4 trụ cột: Ngành nghề, Giai đoạn, Quy mô vốn và Luận điểm đầu tư. Chỉ trong vài giây, Gemini đưa ra điểm số khớp lệnh minh bạch và tự động soạn sẵn 3 câu hỏi phá băng (AI Ice-breaker) giúp cuộc gặp 1:1 khởi đầu tự nhiên và hiệu quả."*
 
 ---
 
