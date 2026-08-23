@@ -80,25 +80,21 @@ const SUMMIT_ZONES = [
     {
         id: 'zone-a',
         name: 'Zone A',
-        subtitle: 'Alpha Suite (HealthTech & AI)',
         tables: ['Table A1', 'Table A2', 'Table A3'],
     },
     {
         id: 'zone-b',
         name: 'Zone B',
-        subtitle: 'Beta Suite (FinTech & Enterprise SaaS)',
         tables: ['Table B1', 'Table B2', 'Table B3'],
     },
     {
         id: 'zone-c',
         name: 'Zone C',
-        subtitle: 'Gamma Suite (GreenTech & Impact Climate)',
         tables: ['Table C1', 'Table C2', 'Table C3'],
     },
     {
         id: 'zone-d',
         name: 'Zone D',
-        subtitle: 'Delta Suite (AgriTech, IoT & Hardware)',
         tables: ['Table D1', 'Table D2', 'Table D3'],
     },
 ];
@@ -836,28 +832,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                                 {/* 4 Zones Mini Grid */}
                                 {(() => {
-                                    const zoneTelemetry = [
-                                        {
-                                            name: 'Zone A',
-                                            subtitle: 'Alpha Suite (HealthTech & AI)',
-                                            tables: ['Table A1', 'Table A2', 'Table A3'],
-                                        },
-                                        {
-                                            name: 'Zone B',
-                                            subtitle: 'Beta Suite (FinTech & SaaS)',
-                                            tables: ['Table B1', 'Table B2', 'Table B3'],
-                                        },
-                                        {
-                                            name: 'Zone C',
-                                            subtitle: 'Gamma Suite (GreenTech)',
-                                            tables: ['Table C1', 'Table C2', 'Table C3'],
-                                        },
-                                        {
-                                            name: 'Zone D',
-                                            subtitle: 'Delta Suite (AgriTech & IoT)',
-                                            tables: ['Table D1', 'Table D2', 'Table D3'],
-                                        },
-                                    ].map((zone) => {
+                                    const zoneTelemetry = SUMMIT_ZONES.map((zone) => {
                                         const occupiedCount = zone.tables.filter((t) =>
                                             scheduleSlots.some((s) => s.table === t)
                                         ).length;
@@ -874,16 +849,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                             {zoneTelemetry.map((z) => (
                                                 <div
                                                     key={z.name}
-                                                    className="p-2.5 rounded-lg bg-[#141516] border border-[#23252a] space-y-1"
+                                                    className="p-2.5 rounded-lg bg-[#141516] border border-[#23252a] space-y-1.5"
                                                 >
                                                     <div className="flex items-center justify-between">
-                                                        <span className="text-xs font-medium text-[#f7f8f8]">{z.name}</span>
+                                                        <span className="text-xs font-semibold text-[#f7f8f8]">{z.name}</span>
                                                         <span
                                                             className={`w-1.5 h-1.5 rounded-full ${z.occupiedCount > 0 ? 'bg-[#27a644]' : 'bg-[#62666d]'
                                                                 }`}
                                                         />
                                                     </div>
-                                                    <p className="text-[10px] text-[#8a8f98] truncate">{z.subtitle}</p>
                                                     <div className="flex items-center justify-between text-[11px] font-mono pt-1 border-t border-[#23252a]/60">
                                                         <span className="text-[#8a8f98]">
                                                             Occupied: <strong className="text-[#828fff]">{z.occupiedCount}/3</strong>
@@ -1562,14 +1536,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                         {/* Zone Header */}
                                         <div className="flex items-center justify-between pb-2 border-b border-[#23252a]">
                                             <div className="flex items-center gap-2">
-                                                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-[#141516] text-[#d0d6e0] border border-[#23252a]">
+                                                <span className="px-2 py-0.5 rounded text-xs font-mono font-semibold bg-[#141516] text-[#f7f8f8] border border-[#23252a]">
                                                     {zone.name}
                                                 </span>
-                                                <div>
-                                                    <h4 className="text-xs font-medium text-[#f7f8f8]">
-                                                        {zone.subtitle}
-                                                    </h4>
-                                                </div>
                                             </div>
 
                                             <span className="text-[10px] font-mono text-[#8a8f98]">
