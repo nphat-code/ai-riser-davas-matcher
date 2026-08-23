@@ -36,13 +36,13 @@ Welcome to Da Nang Venture and Angel Summit 2026.
 
 Connecting 62 top-tier startups with 31 global venture capital funds traditionally takes weeks of manual coordination — often resulting in schedule collisions and mismatched investment theses. 
 
-Introducing DavaSync — the autonomous AI-powered Business Matching and Smart Scheduling Command Center, built on Google Gemini and the Google Workspace Ecosystem. 
+Introducing DavaSync — the autonomous AI-powered Business Matching and Smart Scheduling Command Center, powered by Google AI Studio, Gemini, and the Google Workspace Ecosystem. 
 
 From day-zero intake to real-time summit operations, DavaSync provides organizers with full visibility over 62 vetted startups, 31 attending funds, and multi-sector deal flow density across Artificial Intelligence, SaaS, and DeepTech.
 ```
 
 #### 🇻🇳 Lời dịch tiếng Việt:
-> *"Chào mừng đến với sự kiện DAVAS 2026 tại Furama Resort Đà Nẵng. Việc kết nối 62 startup xuất sắc với 31 quỹ đầu tư quốc tế từ trước đến nay luôn gặp thách thức lớn về trùng lịch và lệch khẩu vị đầu tư. Xin giới thiệu DavaSync — Trung tâm điều phối Business Matching tự động ứng dụng Google Gemini và Hệ sinh thái Google. Nền tảng mang đến bức tranh toàn cảnh về 62 startup, 31 quỹ đầu tư và mật độ dòng vốn trải dài từ AI, SaaS đến DeepTech."*
+> *"Chào mừng đến với sự kiện DAVAS 2026 tại Furama Resort Đà Nẵng. Việc kết nối 62 startup xuất sắc với 31 quỹ đầu tư quốc tế từ trước đến nay luôn gặp thách thức lớn về trùng lịch và lệch khẩu vị đầu tư. Xin giới thiệu DavaSync — Trung tâm điều phối Business Matching tự động phát triển trên nền tảng Google AI Studio, mô hình Gemini và Hệ sinh thái Google Workspace. Nền tảng mang đến bức tranh toàn cảnh về 62 startup, 31 quỹ đầu tư và mật độ dòng vốn trải dài từ AI, SaaS đến DeepTech."*
 
 ---
 
@@ -83,7 +83,7 @@ Every recommendation comes with transparent qualitative rationale, linking fundi
 
 #### 🗣️ Text ElevenLabs (File `03_gemini_ai_matching.mp3`):
 ```text
-When evaluating a startup, Google Gemini analyzes the opportunity across four rigorous pillars: Sector Alignment, Funding Stage, Ticket Size, and Investment Thesis Synergy. 
+When evaluating a startup, Google AI Studio and Gemini analyze the opportunity across four rigorous pillars: Sector Alignment, Funding Stage, Ticket Size, and Investment Thesis Synergy. 
 
 In just seconds, Gemini returns a structured compatibility breakdown with verifiable evidence. 
 
@@ -91,7 +91,7 @@ Even better, DavaSync automatically generates three bespoke AI Ice-breaker quest
 ```
 
 #### 🇻🇳 Lời dịch tiếng Việt:
-> *"Khi đánh giá một startup, bộ não Google Gemini phân tích đa chiều qua 4 trụ cột nghiêm ngặt: Ngành nghề, Giai đoạn, Quy mô vốn và Luận điểm đầu tư. Chỉ trong vài giây, AI đưa ra bảng điểm chi tiết kèm căn cứ xác thực. Đặc biệt, hệ thống tự động soạn sẵn 3 câu hỏi phá băng (AI Ice-breaker) riêng biệt cho từng cặp đôi, giúp buổi gặp 1:1 khởi đầu tự nhiên và đi thẳng vào trọng tâm."*
+> *"Khi đánh giá một startup, Google AI Studio và Gemini phân tích đa chiều qua 4 trụ cột nghiêm ngặt: Ngành nghề, Giai đoạn, Quy mô vốn và Luận điểm đầu tư. Chỉ trong vài giây, AI đưa ra bảng điểm chi tiết kèm căn cứ xác thực. Đặc biệt, hệ thống tự động soạn sẵn 3 câu hỏi phá băng (AI Ice-breaker) riêng biệt cho từng cặp đôi, giúp buổi gặp 1:1 khởi đầu tự nhiên và đi thẳng vào trọng tâm."*
 
 ---
 
