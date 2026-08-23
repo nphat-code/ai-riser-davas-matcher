@@ -24,7 +24,7 @@
 * **Giao diện quay:** Màn hình chính `Admin Dashboard` (Tab `Overview & Analytics` hoặc `Startups (62)`).
 * **Thao tác:** Rê chuột nhẹ qua 5 thẻ KPI (*62 Startups, 31 VCs, 15 Meetings, 90% Avg Match Score, 73.3% Deal Conversion*).
 * **Lời bình (Voiceover - Tiếng Anh):**
-  > *"Welcome to Da Nang Venture and Angel Summit 2026. Connecting 62 top-tier startups with 31 global venture funds traditionally takes weeks of manual spreadsheets, leading to schedule collisions and mismatched investment theses. Introducing **DavaSync** — the autonomous AI-powered Business Matching & Smart Scheduling Engine built on Google Gemini 2.5 and the Google Workspace Ecosystem."*
+  > *"Welcome to Da Nang Venture and Angel Summit 2026. Connecting 62 top-tier startups with 31 global venture funds traditionally takes weeks of manual spreadsheets, leading to schedule collisions and mismatched investment theses. Introducing **DavaSync** — the autonomous AI-powered Business Matching & Smart Scheduling Engine built on Google Gemini and the Google Workspace Ecosystem."*
 * **Lời bình (Tiếng Việt):**
   > *"Chào mừng đến với sự kiện DAVAS 2026. Việc kết nối 62 startup xuất sắc với 31 quỹ đầu tư quốc tế từ trước đến nay luôn gặp thách thức lớn về trùng lịch và lệch khẩu vị đầu tư. Xin giới thiệu **DavaSync** — Nền tảng điều phối Business Matching tự động ứng dụng trí tuệ nhân tạo Google Gemini và Hệ sinh thái Google Workspace."*
 

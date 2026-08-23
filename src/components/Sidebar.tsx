@@ -126,15 +126,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             <button
                                 onClick={() => setActiveAdminTab('matches')}
                                 className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer ${activeAdminTab === 'matches'
-                                        ? 'bg-[#141516] text-[#828fff] border border-[#5e6ad2]/40 shadow-sm'
+                                        ? 'bg-[#141516] text-[#f7f8f8] border border-[#23252a] shadow-sm'
                                         : 'text-[#8a8f98] hover:text-[#f7f8f8] hover:bg-[#0f1011] border border-transparent'
                                     }`}
                             >
                                 <div className="flex items-center gap-2.5">
-                                    <Sparkles className="w-4 h-4 text-[#828fff]" />
+                                    <Sparkles className="w-4 h-4 text-[#8a8f98]" />
                                     <span>Match Pairings</span>
                                 </div>
-                                <span className="text-[11px] font-mono text-[#828fff] bg-[#5e6ad2]/10 px-1.5 py-0.5 rounded border border-[#5e6ad2]/30">
+                                <span className="text-[11px] font-mono text-[#8a8f98] bg-[#0f1011] px-1.5 py-0.5 rounded border border-[#23252a]">
                                     {matchesCount}
                                 </span>
                             </button>

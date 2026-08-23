@@ -527,7 +527,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <button
                         onClick={() => setActiveTab('matches')}
                         className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${activeTab === 'matches'
-                            ? 'bg-[#141516] text-[#828fff] border border-[#5e6ad2]/40 shadow-sm'
+                            ? 'bg-[#141516] text-[#f7f8f8] border border-[#34343a] shadow-sm'
                             : 'text-[#8a8f98] hover:text-[#f7f8f8]'
                             }`}
                     >
