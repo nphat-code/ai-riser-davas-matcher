@@ -104,7 +104,7 @@ Even better, DavaSync automatically generates three bespoke AI Ice-breaker quest
 
 #### 🗣️ Text ElevenLabs (File `04_smart_scheduling.mp3`):
 ```text
-Scheduling 19 high-stakes meetings without double-booking is mathematically solved in one click. 
+Scheduling all high-stakes meetings without double-booking is mathematically solved in one click. 
 
 Our Greedy Smart Scheduling Algorithm automatically maps confirmed pairs across eight daily time slots and 12 dedicated summit tables in Zones A through D at Furama Resort Danang. 
 
@@ -112,7 +112,7 @@ The floor plan guarantees zero time collisions for founders, investors, and phys
 ```
 
 #### 🇻🇳 Lời dịch tiếng Việt:
-> *"Bài toán xếp lịch 19 cuộc gặp cấp cao không bao giờ bị trùng được giải quyết chỉ với một cú click. Thuật toán Smart Scheduling tự động phân bổ các cặp gặp gỡ vào 8 khung giờ và 12 bàn họp thuộc các phân khu Zone A đến Zone D tại Furama Resort Đà Nẵng. Hệ thống đảm bảo 100% không trùng lịch, đồng thời hiển thị tỷ lệ lấp đầy bàn họp đạt 100% trong khung giờ cao điểm."*
+> *"Bài toán xếp lịch cho toàn bộ các cuộc gặp cấp cao không bao giờ bị trùng được giải quyết chỉ với một cú click. Thuật toán Smart Scheduling tự động phân bổ các cặp gặp gỡ vào 8 khung giờ và 12 bàn họp thuộc các phân khu Zone A đến Zone D tại Furama Resort Đà Nẵng. Hệ thống đảm bảo 100% không trùng lịch, đồng thời hiển thị tỷ lệ lấp đầy bàn họp đạt 100% trong khung giờ cao điểm."*
 
 ---
 
