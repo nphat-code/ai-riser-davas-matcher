@@ -27,7 +27,7 @@
 * **Màn hình quay:** Tab `Overview & Analytics` (Admin Dashboard).
 * **Thao tác chuột:**
   1. *0:00 - 0:15:* Rê chuột từ Logo `DavaSync • DAVAS 2026` sang nhãn `Furama Resort Danang`.
-  2. *0:15 - 0:30:* Lướt qua 5 thẻ KPI đầu trang: **62 Startups**, **31 VCs/Angels**, **19 Matches**, **90% Avg Match Score**, **73.3% Deal Conversion**.
+  2. *0:15 - 0:30:* Lướt qua 5 thẻ KPI đầu trang: **62 Startups**, **31 VCs/Angels**, **19 Matches**, **90% Avg Match Score**, **57.9% Deal Conversion**.
   3. *0:30 - 0:45:* Cuộn nhẹ xuống cột trái xem biểu đồ **Deal Flow Density by Industry Sector** (AI 31%, SaaS 29%, DeepTech 26%, IoT 15%, Cleantech 15%...).
 
 #### 🗣️ Text ElevenLabs (File `01_intro_command_center.mp3`):
@@ -100,7 +100,7 @@ Even better, DavaSync automatically generates three bespoke AI Ice-breaker quest
 * **Màn hình quay:** Bấm nút **`Generate Smart Schedule`** $\to$ Chuyển sang Tab **`Summit Tables (12)`**.
 * **Thao tác chuột:**
   1. *2:05 - 2:20:* Bấm **`Generate Smart Schedule`** $\to$ Thông báo `Smart Schedule Generated` xuất hiện.
-  2. *2:20 - 2:40:* Chuyển tab qua lại giữa các khung giờ (`S1 09:00`, `S2 09:40`, `S3 10:20`) $\to$ Rê chuột qua 4 phân khu: **Zone A** đến **Zone D** tại Furama Resort. Chỉ vào thanh **Slot Occupancy: 92%**.
+  2. *2:20 - 2:40:* Chuyển tab qua lại giữa các khung giờ (`S1 09:00`, `S2 09:40`, `S3 10:20`) $\to$ Rê chuột qua 4 phân khu: **Zone A** đến **Zone D** tại Furama Resort. Chỉ vào thanh **Slot Occupancy: 100%**.
 
 #### 🗣️ Text ElevenLabs (File `04_smart_scheduling.mp3`):
 ```text
@@ -108,11 +108,11 @@ Scheduling 19 high-stakes meetings without double-booking is mathematically solv
 
 Our Greedy Smart Scheduling Algorithm automatically maps confirmed pairs across eight daily time slots and 12 dedicated summit tables in Zones A through D at Furama Resort Danang. 
 
-The floor plan guarantees zero time collisions for founders, investors, and physical tables, while venue coordinators monitor real-time table occupancy with a live 92% utilization rate.
+The floor plan guarantees zero time collisions for founders, investors, and physical tables, while venue coordinators monitor real-time table occupancy with full 100% utilization across peak morning slots.
 ```
 
 #### 🇻🇳 Lời dịch tiếng Việt:
-> *"Bài toán xếp lịch 19 cuộc gặp cấp cao không bao giờ bị trùng được giải quyết chỉ với một cú click. Thuật toán Smart Scheduling tự động phân bổ các cặp gặp gỡ vào 8 khung giờ và 12 bàn họp thuộc các phân khu Zone A đến Zone D tại Furama Resort Đà Nẵng. Hệ thống đảm bảo 100% không trùng lịch, đồng thời hiển thị tỷ lệ lấp đầy bàn họp thực tế đạt 92%."*
+> *"Bài toán xếp lịch 19 cuộc gặp cấp cao không bao giờ bị trùng được giải quyết chỉ với một cú click. Thuật toán Smart Scheduling tự động phân bổ các cặp gặp gỡ vào 8 khung giờ và 12 bàn họp thuộc các phân khu Zone A đến Zone D tại Furama Resort Đà Nẵng. Hệ thống đảm bảo 100% không trùng lịch, đồng thời hiển thị tỷ lệ lấp đầy bàn họp đạt 100% trong khung giờ cao điểm."*
 
 ---
 
