@@ -1,89 +1,149 @@
-# DAVAS 2026 AI Matchmaker - Video Demo Script & Screenplay
-**Dự án:** DavaSync — Hệ thống Tối ưu hóa Lịch kết nối Business Matching DAVAS 2026  
-**Thời lượng mục tiêu:** 2 phút 30 giây – 3 phút  
-**Ngôn ngữ thuyết minh:** Tiếng Anh hoặc Tiếng Việt (có phụ đề tiếng Anh)  
-**Mục tiêu:** Thể hiện trọn vẹn sức mạnh của Gemini AI, Hệ sinh thái Google và trải nghiệm người dùng đẳng cấp thế giới.
+# DAVAS 2026 AI Matchmaker - Kịch Bản Video Demo Toàn Diện (Full Screenplay)
+**Dự án:** DavaSync — Autonomous AI Business Matching & Smart Scheduling Engine  
+**Sự kiện:** Da Nang Venture and Angel Summit (DAVAS 2026) — Furama Resort Danang  
+**Thời lượng mục tiêu:** 3 phút 00 giây – 3 phút 20 giây  
+**Bộ công cụ:** ElevenLabs (TTS), CapCut / Premiere, OBS Studio  
 
 ---
 
-## 🎬 CẤU TRÚC KỊCH BẢN TỔNG QUAN
+## 🎬 CẤU TRÚC PHÂN ĐOẠN VIDEO
 
-| Phân đoạn | Thời lượng | Nội dung chính | Thao tác trên màn hình (Screen Action) |
-|---|---|---|---|
-| **Phần 1: Intro & Bài toán** | 0:00 - 0:30 (30s) | Nỗi đau của sự kiện DAVAS & Giới thiệu DavaSync | Quay góc nhìn tổng quan Command Center, số liệu 62 Startups & 31 VCs |
-| **Phần 2: AI Matchmaking** | 0:30 - 1:15 (45s) | Bộ não Gemini AI phân tích 4 trụ cột & Sinh 3 câu hỏi Ice-breaker | Bấm nút "Run Matchmaking" / "Match VC" $\to$ Mở modal thẩm định AI |
-| **Phần 3: Smart Scheduler** | 1:15 - 1:50 (35s) | Thuật toán xếp lịch không trùng lặp & Sơ đồ 12 bàn họp / 4 khu vực | Bấm "Generate Smart Schedule" $\to$ Chuyển tab "Summit Tables" xem 8 Time Slots |
-| **Phần 4: Participant Portal & Follow-up** | 1:50 - 2:30 (40s) | Góc nhìn Founder/VC, Ghi chú cuộc họp & AI sinh Email Follow-up tự động | Chuyển sang "Participant Portal" $\to$ Ghi chú $\to$ Sinh email cảm ơn & Deal Tracker |
-| **Phần 5: Google Ecosystem & Kết luận** | 2:30 - 2:50 (20s) | Đồng bộ 2 chiều Google Sheets, Calendar, Cloud Run | Chiếu nhanh Google Sheets & Google Calendar tự tạo lịch $\to$ Kết bài |
-
----
-
-## 🎙️ KỊCH BẢN CHI TIẾT TỪNG PHÂN ĐOẠN
-
-### ⏱️ PHẦN 1: MỞ ĐẦU & ĐẶT VẤN ĐỀ (0:00 - 0:30)
-* **Giao diện quay:** Màn hình chính `Admin Dashboard` (Tab `Overview & Analytics` hoặc `Startups (62)`).
-* **Thao tác:** Rê chuột nhẹ qua 5 thẻ KPI (*62 Startups, 31 VCs, 15 Meetings, 90% Avg Match Score, 73.3% Deal Conversion*).
-* **Lời bình (Voiceover - Tiếng Anh):**
-  > *"Welcome to Da Nang Venture and Angel Summit 2026. Connecting 62 top-tier startups with 31 global venture funds traditionally takes weeks of manual spreadsheets, leading to schedule collisions and mismatched investment theses. Introducing **DavaSync** — the autonomous AI-powered Business Matching & Smart Scheduling Engine built on Google Gemini and the Google Workspace Ecosystem."*
-* **Lời bình (Tiếng Việt):**
-  > *"Chào mừng đến với sự kiện DAVAS 2026. Việc kết nối 62 startup xuất sắc với 31 quỹ đầu tư quốc tế từ trước đến nay luôn gặp thách thức lớn về trùng lịch và lệch khẩu vị đầu tư. Xin giới thiệu **DavaSync** — Nền tảng điều phối Business Matching tự động ứng dụng trí tuệ nhân tạo Google Gemini và Hệ sinh thái Google Workspace."*
+| Phân đoạn | Thời lượng | Nội dung & Điểm nhấn màn hình |
+|---|---|---|
+| **Phần 1: Intro & Command Center Overview** | `0:00 - 0:45` (45s) | Giới thiệu DavaSync, 5 KPI Cards, Deal Flow Density (8 ngành) & Sơ đồ 4 Zone Telemetry |
+| **Phần 2: Post-Event Analytics & Deal Velocity** | `0:45 - 1:20` (35s) | Post-Event Analytics: Matching-to-Term Sheet Velocity (57.9%), $27.4M Target Capital & Top Matches |
+| **Phần 3: Gemini AI Matching & Ice-breakers** | `1:20 - 2:05` (45s) | Thẩm định 4 trụ cột (Thesis, Sector, Stage, Ticket) & 3 câu hỏi AI Ice-breaker mở đầu cuộc gặp |
+| **Phần 4: Zero-Collision Smart Scheduler** | `2:05 - 2:40` (35s) | Tự động xếp lịch 19 cuộc gặp vào 12 bàn họp / 4 Zones tại Furama Resort không trùng lặp |
+| **Phần 5: Participant Portal & Google Sync** | `2:40 - 3:15` (35s) | Lịch trình cá nhân hóa, AI sinh Email Follow-up tức thì & Đồng bộ Google Sheets / Calendar |
 
 ---
 
-### ⏱️ PHẦN 2: BỘ NÃO GEMINI AI MATCHMAKER & ICE-BREAKER (0:30 - 1:15)
-* **Giao diện quay:** Tab `Startups (62)` $\to$ Chọn một startup (ví dụ: `QuantumGen Solutions` hoặc `PayFlow Vietnam`).
-* **Thao tác:** 
-  1. Rê chuột qua cột `Key Metrics` và `Sector` để thấy dữ liệu tài chính thực tế.
-  2. Bấm nút **`Match VC`** $\to$ Animation Matching xuất hiện.
-  3. Mở **`AI Match Modal`**: Lướt qua 4 thanh tiến độ (*Investment Thesis, Target Sector, Funding Stage, Ticket Size*) và chỉ số **Match Score**.
-  4. Cuộn xuống phần **AI Ice-breakers** (3 câu hỏi mở đầu cuộc trò chuyện do Gemini sinh ra).
-* **Lời bình (Voiceover - Tiếng Anh):**
-  > *"Powered by Google Gemini with Structured JSON Outputs, DavaSync doesn't just match keywords. It deeply evaluates 4 core pillars: Sector Alignment, Capital Stage, Ticket Size, and Investment Thesis Synergy. In just seconds, Gemini delivers a comprehensive evaluation score and automatically crafts 3 bespoke AI Ice-breaker questions, empowering founders and investors to break the ice and dive straight into high-value discussions."*
-* **Lời bình (Tiếng Việt):**
-  > *"Với bộ não Google Gemini, DavaSync đánh giá toàn diện 4 trụ cột: Ngành nghề, Giai đoạn, Quy mô vốn và Luận điểm đầu tư. Chỉ trong vài giây, Gemini đưa ra điểm số khớp lệnh minh bạch và tự động soạn sẵn 3 câu hỏi phá băng (AI Ice-breaker) giúp cuộc gặp 1:1 khởi đầu tự nhiên và hiệu quả."*
+## 🎙️ KỊCH BẢN CHI TIẾT & TEXT CHO ELEVENLABS
 
 ---
 
-### ⏱️ PHẦN 3: SMART SCHEDULER & SƠ ĐỒ 12 BÀN HỘP THỰC ĐỊA (1:15 - 1:50)
-* **Giao diện quay:** Bấm nút **`Generate Smart Schedule`** $\to$ Chuyển qua tab **`Summit Tables (12)`**.
-* **Thao tác:**
-  1. Bấm chuyển đổi giữa các khung giờ (`S1 09:00`, `S2 09:40`, `S3 10:20`).
-  2. Rê chuột qua **4 Phân khu chuyên đề (Zone A - Alpha Suite đến Zone D - Delta Suite)** tại Furama Resort Danang.
-  3. Chỉ vào thanh **Slot Occupancy: 92%**.
-* **Lời bình (Voiceover - Tiếng Anh):**
-  > *"With a single click, our Greedy Smart Scheduling Algorithm allocates all 1:1 sessions across 8 time slots and 12 dedicated summit tables in 4 thematic zones at Furama Resort Danang — with mathematical zero collisions. Venue coordinators can monitor real-time floor occupancy and slot density instantly from the command center."*
-* **Lời bình (Tiếng Việt):**
-  > *"Chỉ với một cú click, thuật toán Smart Scheduling tự động phân bổ toàn bộ cuộc hẹn vào 8 khung giờ và 12 bàn họp thuộc 4 phân khu tại Furama Resort Đà Nẵng — cam kết triệt tiêu 100% xung đột lịch. Ban tổ chức dễ dàng theo dõi tỷ lệ lấp đầy bàn họp theo thời gian thực."*
+### ⏱️ PHẦN 1: MỞ ĐẦU & TỔNG QUAN COMMAND CENTER (0:00 – 0:45)
+
+* **Màn hình quay:** Tab `Overview & Analytics` (Admin Dashboard).
+* **Thao tác chuột:**
+  1. *0:00 - 0:15:* Rê chuột từ Logo `DavaSync • DAVAS 2026` sang nhãn `Furama Resort Danang`.
+  2. *0:15 - 0:30:* Lướt qua 5 thẻ KPI đầu trang: **62 Startups**, **31 VCs/Angels**, **19 Matches**, **90% Avg Match Score**, **73.3% Deal Conversion**.
+  3. *0:30 - 0:45:* Cuộn nhẹ xuống cột trái xem biểu đồ **Deal Flow Density by Industry Sector** (AI 31%, SaaS 29%, DeepTech 26%, IoT 15%, Cleantech 15%...).
+
+#### 🗣️ Text ElevenLabs (File `01_intro_command_center.mp3`):
+```text
+Welcome to Da Nang Venture and Angel Summit 2026. 
+
+Connecting 62 top-tier startups with 31 global venture capital funds traditionally takes weeks of manual coordination — often resulting in schedule collisions and mismatched investment theses. 
+
+Introducing DavaSync — the autonomous AI-powered Business Matching and Smart Scheduling Command Center, built on Google Gemini and the Google Workspace Ecosystem. 
+
+From day-zero intake to real-time summit operations, DavaSync provides organizers with full visibility over 62 vetted startups, 31 attending funds, and multi-sector deal flow density across Artificial Intelligence, SaaS, and DeepTech.
+```
+
+#### 🇻🇳 Lời dịch tiếng Việt:
+> *"Chào mừng đến với sự kiện DAVAS 2026 tại Furama Resort Đà Nẵng. Việc kết nối 62 startup xuất sắc với 31 quỹ đầu tư quốc tế từ trước đến nay luôn gặp thách thức lớn về trùng lịch và lệch khẩu vị đầu tư. Xin giới thiệu DavaSync — Trung tâm điều phối Business Matching tự động ứng dụng Google Gemini và Hệ sinh thái Google. Nền tảng mang đến bức tranh toàn cảnh về 62 startup, 31 quỹ đầu tư và mật độ dòng vốn trải dài từ AI, SaaS đến DeepTech."*
 
 ---
 
-### ⏱️ PHẦN 4: PARTICIPANT PORTAL & AI FOLLOW-UP TRACKING (1:50 - 2:30)
-* **Giao diện quay:** Góc trên bên phải $\to$ Bấm chuyển sang **`Participant Portal`**.
-* **Thao tác:**
-  1. Chọn một Nhà đầu tư (ví dụ: `Mekong Capital - David Binh` hoặc `Sequoia Surge - Alex Chen`).
-  2. Xem lịch trình cá nhân hóa trong ngày (Timeline các cuộc hẹn 1:1).
-  3. Bấm **`Post-Meeting Follow-up / Add Notes`** trên một cuộc hẹn.
-  4. Nhập vài dòng ghi chú (hoặc bấm mẫu Quick Notes) $\to$ Bấm **`Generate AI Follow-up Draft`**.
-  5. Xem email chuyên nghiệp 4 đoạn do Gemini tự động soạn thảo $\to$ Bấm **`Save & Send`**.
-* **Lời bình (Voiceover - Tiếng Anh):**
-  > *"For participants, the dedicated Portal provides a personalized agenda. Right after each 1:1 meeting, investors can log quick takeaways. Gemini instantly generates a polished, professional follow-up email draft, seamlessly synchronizing notes to Google Sheets and tracking post-event deal conversion in real-time."*
-* **Lời bình (Tiếng Việt):**
-  > *"Dành riêng cho người tham dự, Participant Portal hiển thị lịch trình cá nhân hóa. Ngay sau cuộc họp, nhà đầu tư nhập ghi chú nhanh và Gemini AI sẽ tự động tạo email cảm ơn & đề xuất bước tiếp theo chuẩn mực, đồng thời cập nhật tỷ lệ chốt deal lên biểu đồ sau sự kiện."*
+### ⏱️ PHẦN 2: POST-EVENT ANALYTICS & TERM SHEET VELOCITY (0:45 – 1:20)
+
+* **Màn hình quay:** Khu vực **Post-Event Analytics: Deal Success & Term Sheet Conversion** và cột **Top High-Conviction Matches**.
+* **Thao tác chuột:**
+  1. *0:45 - 1:00:* Chỉ vào thanh tiến độ **Matching-to-Term Sheet Velocity: 57.9% Target Achieved**, chỉ số **$27.4M Total Target Capital**, và **19 Confirmed Slots**.
+  2. *1:00 - 1:20:* Rê chuột sang cột phải lướt qua **Top High-Conviction Matches**:
+     * *CarbonLink Labs × East Ventures (96% Match)*
+     * *CyberCore Labs × Sequoia Surge (96% Match)*
+     * *LogiFlow Vietnam × Monk's Hill Ventures (95% Match)*
+  3. Lướt qua widget **Summit Floor & Zone Telemetry** (12 Designated Tables, 4 Zones kín lịch).
+
+#### 🗣️ Text ElevenLabs (File `02_analytics_and_matches.mp3`):
+```text
+Beyond simple matching, DavaSync tracks the entire deal lifecycle with Post-Event Conversion Analytics. 
+
+With over 27.4 million dollars in target capital in motion, organizers can track term sheet velocity in real-time, achieving a 57.9% conversion milestone. 
+
+On the operational front, our system continuously surfaces Top High-Conviction Matches — such as CarbonLink Labs with East Ventures at 96% fit, and CyberCore Labs with Sequoia Surge. 
+
+Every recommendation comes with transparent qualitative rationale, linking funding ask, stage, and deep investment thesis alignment.
+```
+
+#### 🇻🇳 Lời dịch tiếng Việt:
+> *"Vượt trên cả việc ghép đôi thông thường, DavaSync theo dõi toàn bộ vòng đời thương vụ với hệ thống Phân tích Chuyển đổi sau sự kiện. Với hơn 27.4 triệu USD nhu cầu gọi vốn, hệ thống ghi nhận tỷ lệ xúc tiến Term Sheet đạt 57.9%. Hệ thống liên tục đề xuất các cặp khớp lệnh đỉnh cao như CarbonLink Labs và East Ventures đạt 96% độ tương thích, kèm theo phân tích định tính minh bạch và chặt chẽ."*
 
 ---
 
-### ⏱️ PHẦN 5: GOOGLE WORKSPACE SYNC & KẾT LUẬN (2:30 - 2:50)
-* **Giao diện quay:** Chiếu lướt nhanh tab Google Sheets đang mở (dữ liệu live cập nhật) + Google Calendar (lịch họp được tạo tự động).
-* **Thao tác:** Quay lại màn hình chính DavaSync hiển thị logo DAVAS 2026.
-* **Lời bình (Voiceover - Tiếng Anh):**
-  > *"Zero setup friction with Google Forms, Google Sheets, Google Calendar, and deployed live on Google Cloud Run. DavaSync — Elevating Da Nang's innovation ecosystem into the global spotlight. Thank you!"*
-* **Lời bình (Tiếng Việt):**
-  > *"Tích hợp hoàn hảo với Google Forms, Google Sheets, Google Calendar và triển khai công khai trên Google Cloud Run. DavaSync — Nâng tầm kết nối đầu tư cho Hệ sinh thái Đổi mới Sáng tạo Đà Nẵng. Xin cảm ơn!"*
+### ⏱️ PHẦN 3: GEMINI AI MATCHING & AI ICE-BREAKERS (1:20 – 2:05)
+
+* **Màn hình quay:** Chuyển sang Tab `Startups (62)` $\to$ Chọn một startup $\to$ Bấm `Match VC` $\to$ Mở `AI Match Modal`.
+* **Thao tác chuột:**
+  1. *1:20 - 1:35:* Lướt qua bảng Startups (cột `Sector` dạng tags, `Target Ask`, và chỉ số tài chính `Key Metrics: MRR & Growth MoM`).
+  2. *1:35 - 1:50:* Bấm nút **`Match VC`** $\to$ Modal thẩm định AI mở ra.
+  3. *1:50 - 2:05:* Lướt qua **4 Trụ cột Thẩm định (Thesis, Sector, Stage, Ticket)** $\to$ Cuộn xuống xem **3 câu hỏi AI Ice-breakers**.
+
+#### 🗣️ Text ElevenLabs (File `03_gemini_ai_matching.mp3`):
+```text
+When evaluating a startup, Google Gemini analyzes the opportunity across four rigorous pillars: Sector Alignment, Funding Stage, Ticket Size, and Investment Thesis Synergy. 
+
+In just seconds, Gemini returns a structured compatibility breakdown with verifiable evidence. 
+
+Even better, DavaSync automatically generates three bespoke AI Ice-breaker questions tailored specifically to each founder and investor pair — eliminating awkward small talk and accelerating meaningful conversations from minute one.
+```
+
+#### 🇻🇳 Lời dịch tiếng Việt:
+> *"Khi đánh giá một startup, bộ não Google Gemini phân tích đa chiều qua 4 trụ cột nghiêm ngặt: Ngành nghề, Giai đoạn, Quy mô vốn và Luận điểm đầu tư. Chỉ trong vài giây, AI đưa ra bảng điểm chi tiết kèm căn cứ xác thực. Đặc biệt, hệ thống tự động soạn sẵn 3 câu hỏi phá băng (AI Ice-breaker) riêng biệt cho từng cặp đôi, giúp buổi gặp 1:1 khởi đầu tự nhiên và đi thẳng vào trọng tâm."*
 
 ---
 
-## 🎯 CHECKLIST CHUẨN BỊ TRƯỚC KHI QUAY:
-1. [ ] Mở sẵn web app trên trình duyệt ở chế độ Full Screen (F11 hoặc ẩn thanh bookmark).
-2. [ ] Mở sẵn 1 tab Google Sheets (đã có dữ liệu 62 Startups & 31 VCs) để chuyển tab 2 giây minh họa.
-3. [ ] Bật micro thu âm rõ ràng hoặc sử dụng công cụ lồng tiếng AI (ElevenLabs / Gemini TTS) với giọng đọc tiếng Anh chuyên nghiệp.
-4. [ ] Dùng phần mềm quay màn hình chuẩn 1080p / 60fps (OBS Studio, Camtasia, hoặc Chrome Screen Recorder).
+### ⏱️ PHẦN 4: SMART SCHEDULER & SƠ ĐỒ 12 BÀN HỘP THỰC ĐỊA (2:05 – 2:40)
+
+* **Màn hình quay:** Bấm nút **`Generate Smart Schedule`** $\to$ Chuyển sang Tab **`Summit Tables (12)`**.
+* **Thao tác chuột:**
+  1. *2:05 - 2:20:* Bấm **`Generate Smart Schedule`** $\to$ Thông báo `Smart Schedule Generated` xuất hiện.
+  2. *2:20 - 2:40:* Chuyển tab qua lại giữa các khung giờ (`S1 09:00`, `S2 09:40`, `S3 10:20`) $\to$ Rê chuột qua 4 phân khu: **Zone A (Alpha Suite)** đến **Zone D (Delta Suite)** tại Furama Resort. Chỉ vào thanh **Slot Occupancy: 92%**.
+
+#### 🗣️ Text ElevenLabs (File `04_smart_scheduling.mp3`):
+```text
+Scheduling 19 high-stakes meetings without double-booking is mathematically solved in one click. 
+
+Our Greedy Smart Scheduling Algorithm automatically maps confirmed pairs across eight daily time slots and 12 dedicated summit tables within four thematic zones at Furama Resort Danang. 
+
+The floor plan guarantees zero time collisions for founders, investors, and physical tables, while venue coordinators monitor real-time table occupancy with a live 92% utilization rate.
+```
+
+#### 🇻🇳 Lời dịch tiếng Việt:
+> *"Bài toán xếp lịch 19 cuộc gặp cấp cao không bao giờ bị trùng được giải quyết chỉ với một cú click. Thuật toán Smart Scheduling tự động phân bổ các cặp gặp gỡ vào 8 khung giờ và 12 bàn họp thuộc 4 phân khu chuyên đề tại Furama Resort Đà Nẵng. Hệ thống đảm bảo 100% không trùng lịch, đồng thời hiển thị tỷ lệ lấp đầy bàn họp thực tế đạt 92%."*
+
+---
+
+### ⏱️ PHẦN 5: PARTICIPANT PORTAL, FOLLOW-UP & GOOGLE SYNC (2:40 – 3:15)
+
+* **Màn hình quay:** Bấm chuyển sang **`Participant Portal`** $\to$ Mở **`FollowUpModal`** $\to$ Chiếu tab Google Sheets & Calendar.
+* **Thao tác chuột:**
+  1. *2:40 - 2:55:* Chọn một Nhà đầu tư (ví dụ: `Mekong Capital - David Binh`) $\to$ Xem lịch họp cá nhân hóa $\to$ Bấm **`Post-Meeting Follow-up / Add Notes`**.
+  2. *2:55 - 3:05:* Nhập ghi chú $\to$ Bấm **`Generate AI Follow-up Draft`** $\to$ Xem email 4 đoạn chuẩn mực $\to$ Bấm **`Save & Send`**.
+  3. *3:05 - 3:15:* Chuyển tab 2 giây qua Google Sheets và Google Calendar tự tạo lịch $\to$ Quay lại logo DavaSync.
+
+#### 🗣️ Text ElevenLabs (File `05_portal_and_google_sync.mp3`):
+```text
+For participants on the floor, the dedicated Participant Portal delivers an intuitive personal agenda. 
+
+Right after each meeting, investors log quick impressions, and Gemini instantly crafts a polished 4-paragraph follow-up email draft. 
+
+Everything synchronizes bi-directionally with Google Sheets, Google Calendar, and runs live on Google Cloud Run. 
+
+DavaSync — Autonomous AI Matchmaking, elevating Da Nang's innovation ecosystem into the global spotlight. Thank you!
+```
+
+#### 🇻🇳 Lời dịch tiếng Việt:
+> *"Dành riêng cho người tham dự, Participant Portal hiển thị lịch trình cá nhân hóa trực quan. Ngay sau cuộc họp, nhà đầu tư nhập ghi chú nhanh và Gemini AI sẽ tự động soạn thảo email cảm ơn chuyên nghiệp 4 đoạn. Mọi dữ liệu đều được đồng bộ 2 chiều với Google Sheets, Google Calendar và triển khai trên Google Cloud Run. DavaSync — Nâng tầm kết nối đầu tư cho Hệ sinh thái Đổi mới Sáng tạo Đà Nẵng. Xin cảm ơn!"*
+
+---
+
+## 🎧 TỔNG HỢP 5 FILE AUDIO CẦN TẠO TRÊN ELEVENLABS:
+1. `01_intro_command_center.mp3` (~42s)
+2. `02_analytics_and_matches.mp3` (~33s)
+3. `03_gemini_ai_matching.mp3` (~40s)
+4. `04_smart_scheduling.mp3` (~32s)
+5. `05_portal_and_google_sync.mp3` (~33s)
+**👉 Tổng thời lượng:** `3 phút 00 giây` (Chuẩn mực cho một Video Pitch Hackathon quốc tế).
