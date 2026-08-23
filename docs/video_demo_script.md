@@ -116,17 +116,17 @@ The floor plan guarantees zero time collisions for founders, investors, and phys
 
 ---
 
-### ⏱️ PHẦN 5: PARTICIPANT PORTAL, FOLLOW-UP & GOOGLE SYNC (2:40 – 3:15)
+### ⏱️ PHẦN 5: PARTICIPANT PORTAL, WORKSHOPS & GOOGLE SYNC (2:40 – 3:15)
 
-* **Màn hình quay:** Bấm chuyển sang **`Participant Portal`** $\to$ Mở **`FollowUpModal`** $\to$ Chiếu tab Google Sheets & Calendar.
+* **Màn hình quay:** Bấm chuyển sang **`Participant Portal`** $\to$ Chuyển tab Day 1/Day 2 xem Hội thảo chuyên đề $\to$ Mở **`FollowUpModal`** $\to$ Chiếu tab Google Sheets & Calendar.
 * **Thao tác chuột:**
-  1. *2:40 - 2:55:* Chọn một Nhà đầu tư (ví dụ: `Mekong Capital - David Binh`) $\to$ Xem lịch họp cá nhân hóa $\to$ Bấm **`Post-Meeting Follow-up / Add Notes`**.
-  2. *2:55 - 3:05:* Nhập ghi chú $\to$ Bấm **`Generate AI Follow-up Draft`** $\to$ Xem email 4 đoạn chuẩn mực $\to$ Bấm **`Save & Send`**.
+  1. *2:40 - 2:55:* Chọn Nhà đầu tư (ví dụ: `Jessica Tran - East Ventures` hoặc `Mekong Capital`) $\to$ Xem lịch họp 1:1 cá nhân hóa $\to$ Lướt qua danh sách **Hội thảo & Diễn đàn chuyên đề (AI & Semiconductor Forum, Web3 Builders Summit, Market Access Workshop)**.
+  2. *2:55 - 3:05:* Bấm **`Post-Meeting Follow-up / Add Notes`** $\to$ Nhập ghi chú $\to$ Bấm **`Generate AI Follow-up Draft`** $\to$ Xem email 4 đoạn chuẩn mực $\to$ Bấm **`Save & Send`**.
   3. *3:05 - 3:15:* Chuyển tab 2 giây qua Google Sheets và Google Calendar tự tạo lịch $\to$ Quay lại logo DavaSync.
 
 #### 🗣️ Text ElevenLabs (File `05_portal_and_google_sync.mp3`):
 ```text
-For participants on the floor, the dedicated Participant Portal delivers an intuitive personal agenda. 
+For participants on the floor, the dedicated Participant Portal delivers an intuitive personal agenda alongside curated thematic workshops — from AI and Semiconductor forums to Web3 masterclasses. 
 
 Right after each meeting, investors log quick impressions, and Gemini instantly crafts a polished 4-paragraph follow-up email draft. 
 
@@ -136,7 +136,7 @@ DavaSync — Autonomous AI Matchmaking, elevating Da Nang's innovation ecosystem
 ```
 
 #### 🇻🇳 Lời dịch tiếng Việt:
-> *"Dành riêng cho người tham dự, Participant Portal hiển thị lịch trình cá nhân hóa trực quan. Ngay sau cuộc họp, nhà đầu tư nhập ghi chú nhanh và Gemini AI sẽ tự động soạn thảo email cảm ơn chuyên nghiệp 4 đoạn. Mọi dữ liệu đều được đồng bộ 2 chiều với Google Sheets, Google Calendar và triển khai trên Google Cloud Run. DavaSync — Nâng tầm kết nối đầu tư cho Hệ sinh thái Đổi mới Sáng tạo Đà Nẵng. Xin cảm ơn!"*
+> *"Dành riêng cho người tham dự, Participant Portal hiển thị lịch trình cá nhân hóa trực quan kết hợp gợi ý các hội thảo và diễn đàn chuyên đề phù hợp — từ Diễn đàn AI & Bán dẫn đến Hội nghị Web3. Ngay sau cuộc họp, nhà đầu tư nhập ghi chú nhanh và Gemini AI sẽ tự động soạn thảo email cảm ơn chuyên nghiệp 4 đoạn. Mọi dữ liệu đều được đồng bộ 2 chiều với Google Sheets, Google Calendar và triển khai trên Google Cloud Run. DavaSync — Nâng tầm kết nối đầu tư cho Hệ sinh thái Đổi mới Sáng tạo Đà Nẵng. Xin cảm ơn!"*
 
 ---
 
