@@ -61,14 +61,14 @@ Post-meeting, investors log quick bullet notes, and Gemini instantly crafts a **
 ## 🌐 Full-Stack Google Ecosystem Integration (+20 Bonus Architecture)
 
 ```mermaid
-graph TD
-    A[Google Forms Intake] -->|Submissions| B[(Google Sheets Database)]
-    B -->|Bi-directional Sync| C[Google Apps Script Middleware]
-    C -->|CacheService 3600s RAM Cache| D[DavaSync Express Backend]
-    D -->|@google/genai SDK| E[Google AI Studio / Gemini API]
-    D -->|Calendar Events Sync| F[Google Calendar API]
-    D -->|Docker Container| G[Google Cloud Run Serverless]
-    G -->|Interactive UI| H[Linear-Styled React 19 Frontend]
+flowchart TD
+    A["Google Forms Intake"] -->|"Submissions"| B[("Google Sheets Database")]
+    B -->|"Bi-directional Sync"| C["Google Apps Script Middleware"]
+    C -->|"CacheService 3600s RAM Cache"| D["DavaSync Express Backend"]
+    D -->|"Google GenAI SDK"| E["Google AI Studio & Gemini API"]
+    D -->|"Calendar Events Sync"| F["Google Calendar API"]
+    D -->|"Docker Container"| G["Google Cloud Run Serverless"]
+    G -->|"Interactive UI"| H["Linear-Styled React 19 Frontend"]
 ```
 
 - **🧠 Google AI Studio & Gemini API:** Core intelligence engine for 4-pillar matching, ice-breakers, and email follow-up generation.
