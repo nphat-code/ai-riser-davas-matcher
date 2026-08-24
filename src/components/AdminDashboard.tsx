@@ -715,13 +715,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                         {/* Right Operational Column: High-Conviction Matches & Floor Telemetry */}
                         <div className="space-y-4">
-                            {/* Widget 1: Top High-Conviction Matches */}
+                            {/* Widget 1: Top Matches */}
                             <div className="bg-[#0f1011] p-4 rounded-xl border border-[#23252a] space-y-3">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <Sparkles className="w-4 h-4 text-[#828fff]" />
                                         <h3 className="text-xs font-semibold text-[#f7f8f8] uppercase tracking-wider">
-                                            Top High-Conviction Matches
+                                            Top Matches
                                         </h3>
                                     </div>
                                     <button
@@ -740,7 +740,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                                     if (topMatches.length === 0) {
                                         return (
-                                            <div className="p-4 rounded-lg bg-[#141516] border border-[#23252a] text-center space-y-1.5">
+                                            <div className="p-4 rounded-xl bg-[#141516] border border-[#23252a] text-center space-y-1.5">
                                                 <p className="text-xs text-[#8a8f98]">No matches evaluated yet.</p>
                                                 <button
                                                     onClick={() => onRunMatchmaking()}
@@ -753,53 +753,56 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     }
 
                                     return (
-                                        <div className="space-y-2">
+                                        <div className="space-y-2.5">
                                             {topMatches.map((pair) => (
                                                 <div
                                                     key={pair.id}
-                                                    className="p-3 rounded-lg bg-[#141516] border border-[#23252a] hover:border-[#34343a] transition-all space-y-2"
+                                                    className="p-3 rounded-xl bg-[#141516] border border-[#23252a] hover:border-[#34343a] transition-all space-y-2"
                                                 >
-                                                    <div className="flex items-center justify-between gap-2">
-                                                        {/* Startup & Investor Identity */}
-                                                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                                                    {/* Line 1: Full Names Row */}
+                                                    <div className="flex items-center justify-between gap-2 min-w-0">
+                                                        <div className="flex items-center gap-1.5 min-w-0">
                                                             <img
                                                                 src={pair.startup?.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=80&q=80'}
                                                                 alt={pair.startup?.name}
-                                                                className="w-6 h-6 rounded-md object-cover border border-[#23252a] shrink-0"
+                                                                className="w-5 h-5 rounded-md object-cover border border-[#23252a] shrink-0"
                                                             />
-                                                            <span className="text-xs font-medium text-[#f7f8f8] truncate max-w-[90px] sm:max-w-[120px]">
+                                                            <span className="font-semibold text-xs text-[#f7f8f8] truncate">
                                                                 {pair.startup?.name}
                                                             </span>
-                                                            <span className="text-[#62666d] text-xs font-mono">&times;</span>
+                                                        </div>
+                                                        <span className="text-[#62666d] text-xs font-mono shrink-0">&times;</span>
+                                                        <div className="flex items-center gap-1.5 min-w-0">
                                                             <img
                                                                 src={pair.investor?.avatar || 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=80&q=80'}
                                                                 alt={pair.investor?.name}
-                                                                className="w-6 h-6 rounded-full object-cover border border-[#23252a] shrink-0"
+                                                                className="w-5 h-5 rounded-full object-cover border border-[#23252a] shrink-0"
                                                             />
-                                                            <span className="text-xs font-medium text-[#d0d6e0] truncate max-w-[90px] sm:max-w-[120px]">
+                                                            <span className="font-semibold text-xs text-[#d0d6e0] truncate">
                                                                 {pair.investor?.firm}
                                                             </span>
                                                         </div>
-
-                                                        {/* Synergy Score Badge & Inspect */}
-                                                        <div className="flex items-center gap-1.5 shrink-0">
-                                                            <span className="font-mono text-xs text-[#828fff] bg-[#5e6ad2]/15 border border-[#5e6ad2]/30 px-2 py-0.5 rounded flex items-center gap-1">
-                                                                <Sparkles className="w-3 h-3 text-[#828fff]" />
-                                                                {pair.analysis?.matching_score || 0}%
-                                                            </span>
-                                                            <button
-                                                                onClick={() => onInspectMatch(pair)}
-                                                                className="text-[11px] font-medium text-[#828fff] hover:text-[#f7f8f8] bg-[#0f1011] hover:bg-[#18191a] border border-[#23252a] hover:border-[#34343a] px-2 py-0.5 rounded cursor-pointer transition-colors"
-                                                            >
-                                                                Inspect
-                                                            </button>
-                                                        </div>
                                                     </div>
 
-                                                    {/* 1-Line Reason Summary */}
-                                                    <p className="text-[11px] text-[#8a8f98] truncate leading-relaxed">
-                                                        {pair.analysis?.reason || 'Synergistic sector alignment & funding stage fit.'}
-                                                    </p>
+                                                    {/* Line 2: Metadata & Action Row */}
+                                                    <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#23252a]/60">
+                                                        <div className="flex items-center gap-2 min-w-0">
+                                                            <span className="font-mono text-xs text-[#828fff] bg-[#5e6ad2]/15 border border-[#5e6ad2]/30 px-2 py-0.5 rounded flex items-center gap-1 shrink-0">
+                                                                <Sparkles className="w-3 h-3 text-[#828fff]" />
+                                                                {pair.analysis?.matching_score || 0}% Fit
+                                                            </span>
+                                                            <span className="text-[#8a8f98] font-mono text-[11px] truncate">
+                                                                {pair.startup?.sector || 'Tech'} • {pair.startup?.stage || 'Seed'}
+                                                            </span>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => onInspectMatch(pair)}
+                                                            className="text-xs font-mono text-[#828fff] hover:text-[#f7f8f8] flex items-center gap-0.5 cursor-pointer transition-colors shrink-0"
+                                                        >
+                                                            <span>Inspect</span>
+                                                            <ChevronRight className="w-3 h-3" />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -807,81 +810,71 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 })()}
                             </div>
 
-                            {/* Widget 2: Summit Floor & Zone Telemetry */}
+                            {/* Widget 2: Summit Zones (12 Tables) */}
                             <div className="bg-[#0f1011] p-4 rounded-xl border border-[#23252a] space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Grid className="w-4 h-4 text-[#8a8f98]" />
-                                        <h3 className="text-xs font-semibold text-[#f7f8f8] uppercase tracking-wider">
-                                            Summit Floor & Zone Telemetry
-                                        </h3>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#141516] text-[#8a8f98] border border-[#23252a]">
-                                            12 Designated Tables
-                                        </span>
-                                        <button
-                                            onClick={() => setActiveTab('tables')}
-                                            className="text-xs font-mono text-[#828fff] hover:text-[#f7f8f8] flex items-center gap-1 cursor-pointer transition-colors"
-                                        >
-                                            <span>Manage</span>
-                                            <ChevronRight className="w-3 h-3" />
-                                        </button>
-                                    </div>
+                                <div className="flex items-center gap-2">
+                                    <Grid className="w-4 h-4 text-[#8a8f98]" />
+                                    <h3 className="text-xs font-semibold text-[#f7f8f8] uppercase tracking-wider">
+                                        Summit Zones (12 Tables)
+                                    </h3>
                                 </div>
 
-                                {/* 4 Zones Mini Grid */}
+                                {/* 4 Clean Single-Line Rows */}
                                 {(() => {
-                                    const zoneTelemetry = SUMMIT_ZONES.map((zone) => {
+                                    const zoneRows = SUMMIT_ZONES.map((zone) => {
                                         const occupiedCount = zone.tables.filter((t) =>
                                             scheduleSlots.some((s) => s.table === t)
                                         ).length;
-                                        const availableCount = zone.tables.length - occupiedCount;
+                                        const totalCount = zone.tables.length;
+                                        const startTable = zone.tables[0].replace('Table ', '');
+                                        const endTable = zone.tables[zone.tables.length - 1].replace('Table ', '');
+                                        const tableRange = `${startTable}–${endTable}`;
+
                                         return {
                                             ...zone,
                                             occupiedCount,
-                                            availableCount,
+                                            totalCount,
+                                            tableRange,
                                         };
                                     });
 
                                     return (
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {zoneTelemetry.map((z) => (
+                                        <div className="space-y-2">
+                                            {zoneRows.map((z) => (
                                                 <div
                                                     key={z.name}
-                                                    className="p-2.5 rounded-lg bg-[#141516] border border-[#23252a] space-y-1.5"
+                                                    className="p-2.5 rounded-lg bg-[#141516] border border-[#23252a] flex items-center justify-between"
                                                 >
-                                                    <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-2">
                                                         <span className="text-xs font-semibold text-[#f7f8f8]">{z.name}</span>
+                                                        <span className="text-[11px] font-mono text-[#8a8f98]">(Tables {z.tableRange})</span>
+                                                    </div>
+                                                    <span
+                                                        className={`text-[11px] font-mono flex items-center gap-1.5 px-2 py-0.5 rounded border ${z.occupiedCount > 0
+                                                                ? 'bg-[#27a644]/10 text-[#27a644] border-[#27a644]/30'
+                                                                : 'bg-[#0f1011] text-[#8a8f98] border-[#23252a]'
+                                                            }`}
+                                                    >
                                                         <span
                                                             className={`w-1.5 h-1.5 rounded-full ${z.occupiedCount > 0 ? 'bg-[#27a644]' : 'bg-[#62666d]'
                                                                 }`}
                                                         />
-                                                    </div>
-                                                    <div className="flex items-center justify-between text-[11px] font-mono pt-1 border-t border-[#23252a]/60">
-                                                        <span className="text-[#8a8f98]">
-                                                            Occupied: <strong className="text-[#828fff]">{z.occupiedCount}/3</strong>
-                                                        </span>
-                                                        <span className="text-[#8a8f98]">
-                                                            Avail: <strong className="text-[#27a644]">{z.availableCount}</strong>
-                                                        </span>
-                                                    </div>
+                                                        {z.occupiedCount}/{z.totalCount} Booked
+                                                    </span>
                                                 </div>
                                             ))}
                                         </div>
                                     );
                                 })()}
 
-                                {/* Next Upcoming Session Notification Bar */}
-                                <div className="p-2.5 rounded-lg bg-[#141516] border border-[#23252a] flex items-center justify-between text-xs">
-                                    <div className="flex items-center gap-2 text-[#d0d6e0]">
-                                        <Clock className="w-3.5 h-3.5 text-[#828fff]" />
-                                        <span className="font-medium">Next Session: 13:00 - 13:30</span>
-                                    </div>
-                                    <span className="text-[10px] font-mono text-[#8a8f98] bg-[#0f1011] px-2 py-0.5 rounded border border-[#23252a]">
-                                        Grand Ballroom
-                                    </span>
-                                </div>
+                                {/* View Interactive Floor Plan Link */}
+                                <button
+                                    onClick={() => setActiveTab('tables')}
+                                    className="w-full text-xs font-mono text-[#828fff] hover:text-[#f7f8f8] p-2 rounded-lg bg-[#141516] hover:bg-[#18191b] border border-[#23252a] hover:border-[#34343a] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                >
+                                    <span>View Interactive Floor Plan</span>
+                                    <ChevronRight className="w-3 h-3" />
+                                </button>
                             </div>
                         </div>
                     </motion.div>
