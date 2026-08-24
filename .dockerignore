@@ -3,5 +3,11 @@ dist
 .git
 .gitignore
 .env
+.env.*
 README.md
 docs/
+assets/
+*.mp3
+*.wav
+*.mp4
+*.webm
